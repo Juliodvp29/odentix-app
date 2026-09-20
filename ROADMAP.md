@@ -240,7 +240,7 @@ hand-written.
 
 - [x] `npm start`, `npm test`, `npm run build`, `npm run lint`, and
       `npm run generate:api-types` all work.
-- [ ] CI blocks a broken PR.
+- [x] CI blocks a broken PR.
 - [x] First commit pushed to GitHub.
 
 ---

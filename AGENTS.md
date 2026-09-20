@@ -298,6 +298,8 @@ either.)_
 - E2E tool: **assumed Playwright, not yet confirmed** with Julio.
 - Deployment target: **Vercel** (decided after FASE0-01 — SPA fallback
   and Node version pinned in `vercel.json` / `.nvmrc`).
+- Phase status: **Fase 0 complete** (project foundations, CI + Vercel
+  deploy wired). Next: Fase 1 shared UI kit.
 - `DESIGN.md`: exists at the repo root (full token system + component
   specs). All UI work must follow it; Fase 1 can start in earnest.
 
