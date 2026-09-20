@@ -286,16 +286,16 @@ deferred (see `AGENTS.md`'s current-state note).
 
 **Tasks:**
 
-- [ ] `Button` component with variants (primary/secondary/danger/ghost,
+- [x] `Button` component with variants (primary/secondary/danger/ghost,
       per `DESIGN.md`) and states (default/hover/focus/disabled/loading).
-- [ ] Loading state shows a spinner/inline indicator without shifting
+- [x] Loading state shows a spinner/inline indicator without shifting
       the button's size.
-- [ ] Tests covering each variant renders and the disabled state blocks
+- [x] Tests covering each variant renders and the disabled state blocks
       clicks.
 
 **Acceptance criteria:**
 
-- [ ] Every state in `DESIGN.md` for buttons is represented and covered
+- [x] Every state in `DESIGN.md` for buttons is represented and covered
       by a test.
 
 ---
