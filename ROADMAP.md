@@ -108,18 +108,18 @@ CSS-first configuration — no `tailwind.config.js`.
 
 **Tasks:**
 
-- [ ] Configure ESLint with Angular's recommended rules plus a rule set
+- [x] Configure ESLint with Angular's recommended rules plus a rule set
       that flags legacy patterns (`*ngIf`/`*ngFor`, `@Input()`
       decorators, NgModules) as errors, not warnings — this project
       should not be able to silently drift back into pre-signals
       patterns.
-- [ ] Configure Prettier, consistent with what's already used in
+- [x] Configure Prettier, consistent with what's already used in
       `odentix-backend` where applicable (e.g. print width).
-- [ ] `npm run lint` and `npm run format` scripts in `package.json`.
+- [x] `npm run lint` and `npm run format` scripts in `package.json`.
 
 **Acceptance criteria:**
 
-- [ ] Writing a component with `*ngIf` triggers a lint error, not just
+- [x] Writing a component with `*ngIf` triggers a lint error, not just
       a style nitpick.
 
 ---
@@ -226,7 +226,7 @@ hand-written.
 **Tasks:**
 
 - [ ] GitHub Actions workflow: checkout, install, lint, `npm run
-  test:ci`, build — triggered on push/PR to `dev` and `main`.
+test:ci`, build — triggered on push/PR to `dev` and `main`.
 - [ ] Protect `main` (and `dev` if applicable) requiring the pipeline to
       pass before merge.
 

@@ -1,0 +1,3 @@
+# Normalize line endings to LF on checkin, and check out LF everywhere so
+# Prettier (endOfLine: lf) and CI see the same bytes on every OS.
+* text=auto eol=lf
