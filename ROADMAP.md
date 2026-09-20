@@ -457,17 +457,17 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] HTTP interceptor attaching the JWT (from the backend's login) to
+- [x] HTTP interceptor attaching the JWT (from the backend's login) to
       outgoing requests.
-- [ ] Decide and document where the token lives (memory vs. storage) —
+- [x] Decide and document where the token lives (memory vs. storage) —
       this is a security-relevant decision, flag it explicitly in the
       plan step before implementing.
-- [ ] Handle `401` responses by redirecting to login and clearing the
+- [x] Handle `401` responses by redirecting to login and clearing the
       stored session.
 
 **Acceptance criteria:**
 
-- [ ] An authenticated request includes the token; a `401` response
+- [x] An authenticated request includes the token; a `401` response
       redirects to `/login` without a manual page reload.
 
 ---
