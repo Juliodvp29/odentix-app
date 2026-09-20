@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { IconButton } from './icon-button';
+import { IconButton } from '@shared/icon-button/icon-button';
 
 describe('IconButton', () => {
   let fixture: ComponentFixture<IconButton>;

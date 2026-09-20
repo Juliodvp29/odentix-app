@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Button, ButtonVariant } from './button';
+import { Button, ButtonVariant } from '@shared/button/button';
 
 const variants: Array<{ variant: ButtonVariant; expectedClass: string; hoverClass: string }> = [
   { variant: 'primary', expectedClass: 'bg-teal', hoverClass: 'hover:bg-teal-deep' },

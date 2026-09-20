@@ -1,6 +1,6 @@
 import { Component, computed, forwardRef, input } from '@angular/core';
 import { Field, FormField } from '@angular/forms/signals';
-import { FormFieldControl } from '../form-field/form-field-control';
+import { FormFieldControl } from '@shared/form-field/form-field-control';
 
 let nextSelectId = 0;
 

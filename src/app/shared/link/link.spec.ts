@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Link } from './link';
+import { Link } from '@shared/link/link';
 
 describe('Link', () => {
   let fixture: ComponentFixture<Link>;

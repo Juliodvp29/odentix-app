@@ -1,8 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { form, required } from '@angular/forms/signals';
-import { FormField } from '../form-field/form-field';
-import { TextInput } from '../text-input/text-input';
+import { FormField } from '@shared/form-field/form-field';
+import { TextInput } from '@shared/text-input/text-input';
 
 @Component({
   imports: [FormField, TextInput],

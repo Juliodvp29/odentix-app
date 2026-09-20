@@ -1,8 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { form, required } from '@angular/forms/signals';
-import { FormField } from '../form-field/form-field';
-import { Select } from './select';
+import { FormField } from '@shared/form-field/form-field';
+import { Select } from '@shared/select/select';
 
 @Component({
   imports: [FormField, Select],

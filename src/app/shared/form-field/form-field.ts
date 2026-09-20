@@ -1,6 +1,6 @@
 import { Component, computed, contentChild, input } from '@angular/core';
 import { Field } from '@angular/forms/signals';
-import { FormFieldControl } from './form-field-control';
+import { FormFieldControl } from '@shared/form-field/form-field-control';
 
 @Component({
   selector: 'app-form-field',
