@@ -9,7 +9,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "generate:api-types": "openapi-typescript http://localhost:8081/v3/api-docs -o src/app/core/api/schema.ts"
   },
   "private": true,
   "packageManager": "npm@11.19.0",

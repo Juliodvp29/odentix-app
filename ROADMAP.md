@@ -157,14 +157,14 @@ Establish the `core/` / `shared/` / `features/` convention from
 
 **Tasks:**
 
-- [ ] Confirm Vitest is wired up as the test runner (Angular 22 default
+- [x] Confirm Vitest is wired up as the test runner (Angular 22 default
       — verify the exact config Angular CLI generated).
-- [ ] Write one trivial test (e.g. the root component renders) to prove
+- [x] Write one trivial test (e.g. the root component renders) to prove
       the pipeline works end to end.
 
 **Acceptance criteria:**
 
-- [ ] `npm test` runs and passes that one test.
+- [x] `npm test` runs and passes that one test.
 
 ---
 
@@ -180,18 +180,18 @@ hand-written.
 
 **Tasks:**
 
-- [ ] `npm run generate:api-types` script wrapping:
+- [x] `npm run generate:api-types` script wrapping:
       `openapi-typescript http://localhost:8081/v3/api-docs -o src/app/core/api/schema.ts`.
-- [ ] Run it once against the real backend and commit the resulting
+- [x] Run it once against the real backend and commit the resulting
       `schema.ts` (so the project builds without requiring the backend
       to be running).
-- [ ] Document in `core/api/README.md` (or similar) that this file is
+- [x] Document in `core/api/README.md` (or similar) that this file is
       generated and must be regenerated, never hand-edited, whenever
       the backend's API changes.
 
 **Acceptance criteria:**
 
-- [ ] `schema.ts` exists, is committed, and its types match the
+- [x] `schema.ts` exists, is committed, and its types match the
       backend's current OpenAPI spec.
 
 ---
@@ -204,15 +204,15 @@ hand-written.
 
 **Tasks:**
 
-- [ ] `environment.ts` (dev) and `environment.prod.ts` — both
+- [x] `environment.ts` (dev) and `environment.prod.ts` — both
       git-ignored once they contain real values.
-- [ ] `environment.example.ts` — committed, with placeholder values
+- [x] `environment.example.ts` — committed, with placeholder values
       (`apiUrl: 'http://localhost:8081/api/v1'`, etc.) so anyone cloning
       the repo knows what to fill in.
 
 **Acceptance criteria:**
 
-- [ ] `environment.ts` and `environment.prod.ts` are in `.gitignore`;
+- [x] `environment.ts` and `environment.prod.ts` are in `.gitignore`;
       `environment.example.ts` is committed with no real values.
 
 ---
