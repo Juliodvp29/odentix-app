@@ -5,9 +5,9 @@ export type ButtonType = 'button' | 'submit' | 'reset';
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: 'bg-teal text-paper hover:bg-teal-deep',
-  secondary: 'bg-surface-alt text-ink',
+  secondary: 'bg-surface-alt text-ink hover:bg-hairline',
   ghost: 'bg-transparent text-ink hover:bg-surface-alt',
-  danger: 'bg-danger text-paper',
+  danger: 'bg-danger text-paper hover:bg-danger-deep',
 };
 
 @Component({

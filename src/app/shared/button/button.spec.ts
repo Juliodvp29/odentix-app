@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Button, ButtonVariant } from './button';
 
-const variants: Array<{ variant: ButtonVariant; expectedClass: string }> = [
-  { variant: 'primary', expectedClass: 'bg-teal' },
-  { variant: 'secondary', expectedClass: 'bg-surface-alt' },
-  { variant: 'ghost', expectedClass: 'bg-transparent' },
-  { variant: 'danger', expectedClass: 'bg-danger' },
+const variants: Array<{ variant: ButtonVariant; expectedClass: string; hoverClass: string }> = [
+  { variant: 'primary', expectedClass: 'bg-teal', hoverClass: 'hover:bg-teal-deep' },
+  { variant: 'secondary', expectedClass: 'bg-surface-alt', hoverClass: 'hover:bg-hairline' },
+  { variant: 'ghost', expectedClass: 'bg-transparent', hoverClass: 'hover:bg-surface-alt' },
+  { variant: 'danger', expectedClass: 'bg-danger', hoverClass: 'hover:bg-danger-deep' },
 ];
 
 describe('Button', () => {
@@ -21,11 +21,12 @@ describe('Button', () => {
     fixture = TestBed.createComponent(Button);
   });
 
-  for (const { variant, expectedClass } of variants) {
+  for (const { variant, expectedClass, hoverClass } of variants) {
     it(`should render the ${variant} variant`, () => {
       fixture.componentRef.setInput('variant', variant);
       fixture.detectChanges();
       expect(buttonElement().className).toContain(expectedClass);
+      expect(buttonElement().className).toContain(hoverClass);
     });
   }
 

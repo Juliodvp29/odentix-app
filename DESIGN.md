@@ -216,8 +216,9 @@ starts loading.
 **Role:** paired secondary action (Cancel beside Save)
 
 Background `--color-surface-alt`, text `--color-ink`, no border, same
-radius/padding/font as Primary. Reads as a tonal sibling, not a weaker
-option — same shape and weight, differing only in fill.
+radius/padding/font as Primary. Hover: `--color-hairline`. Reads as a
+tonal sibling, not a weaker option — same shape and weight, differing
+only in fill.
 
 ### Button — Ghost
 
@@ -230,7 +231,8 @@ Transparent background, text `--color-ink`, no border. Hover reveals
 
 **Role:** destructive confirmation (Delete, Cancel appointment)
 
-Background `--color-danger`, text `--color-paper`. Reserved exclusively
+Background `--color-danger`, text `--color-paper`. Hover:
+`--color-danger-deep`. Reserved exclusively
 for actions with irreversible or costly consequences — never for
 ordinary negative actions like "close" or "dismiss."
 
