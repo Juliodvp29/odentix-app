@@ -1,0 +1,11 @@
+# Dependencies and build output
+node_modules/
+dist/
+.angular/
+
+# Generated files are never reformatted by hand tooling
+src/app/core/api/schema.ts
+package-lock.json
+
+# Third-party skill reference docs, not project code
+.agents/

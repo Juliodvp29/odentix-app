@@ -85,17 +85,17 @@ CSS-first configuration — no `tailwind.config.js`.
 
 **Tasks:**
 
-- [ ] Install `tailwindcss` and the Angular/PostCSS integration
+- [x] Install `tailwindcss` and the Angular/PostCSS integration
       following Tailwind's current official docs (verify the exact
       steps at install time — this has changed between v3 and v4).
-- [ ] `@import "tailwindcss";` in `src/styles.css`, with `@source`
+- [x] `@import "tailwindcss";` in `src/styles.css`, with `@source`
       directives if needed for anything outside the default scan path.
-- [ ] Verify a Tailwind utility class actually applies in a test
+- [x] Verify a Tailwind utility class actually applies in a test
       element.
 
 **Acceptance criteria:**
 
-- [ ] A component using a Tailwind class (e.g. `class="text-red-500"`)
+- [x] A component using a Tailwind class (e.g. `class="text-red-500"`)
       renders with that style applied.
 
 ---
@@ -108,18 +108,18 @@ CSS-first configuration — no `tailwind.config.js`.
 
 **Tasks:**
 
-- [ ] Configure ESLint with Angular's recommended rules plus a rule set
+- [x] Configure ESLint with Angular's recommended rules plus a rule set
       that flags legacy patterns (`*ngIf`/`*ngFor`, `@Input()`
       decorators, NgModules) as errors, not warnings — this project
       should not be able to silently drift back into pre-signals
       patterns.
-- [ ] Configure Prettier, consistent with what's already used in
+- [x] Configure Prettier, consistent with what's already used in
       `odentix-backend` where applicable (e.g. print width).
-- [ ] `npm run lint` and `npm run format` scripts in `package.json`.
+- [x] `npm run lint` and `npm run format` scripts in `package.json`.
 
 **Acceptance criteria:**
 
-- [ ] Writing a component with `*ngIf` triggers a lint error, not just
+- [x] Writing a component with `*ngIf` triggers a lint error, not just
       a style nitpick.
 
 ---
@@ -136,15 +136,15 @@ Establish the `core/` / `shared/` / `features/` convention from
 
 **Tasks:**
 
-- [ ] Create the base folders with a short `README.md` inside each
+- [x] Create the base folders with a short `README.md` inside each
       explaining its purpose (mirrors what the backend did for its
       package convention in FASE0-03).
-- [ ] Confirm routing is set up for lazy-loaded feature routes from the
+- [x] Confirm routing is set up for lazy-loaded feature routes from the
       start (even with just a placeholder route).
 
 **Acceptance criteria:**
 
-- [ ] The folder structure and its rationale are documented in the repo,
+- [x] The folder structure and its rationale are documented in the repo,
       not only in this roadmap.
 
 ---
@@ -157,14 +157,14 @@ Establish the `core/` / `shared/` / `features/` convention from
 
 **Tasks:**
 
-- [ ] Confirm Vitest is wired up as the test runner (Angular 22 default
+- [x] Confirm Vitest is wired up as the test runner (Angular 22 default
       — verify the exact config Angular CLI generated).
-- [ ] Write one trivial test (e.g. the root component renders) to prove
+- [x] Write one trivial test (e.g. the root component renders) to prove
       the pipeline works end to end.
 
 **Acceptance criteria:**
 
-- [ ] `npm test` runs and passes that one test.
+- [x] `npm test` runs and passes that one test.
 
 ---
 
@@ -180,18 +180,18 @@ hand-written.
 
 **Tasks:**
 
-- [ ] `npm run generate:api-types` script wrapping:
+- [x] `npm run generate:api-types` script wrapping:
       `openapi-typescript http://localhost:8081/v3/api-docs -o src/app/core/api/schema.ts`.
-- [ ] Run it once against the real backend and commit the resulting
+- [x] Run it once against the real backend and commit the resulting
       `schema.ts` (so the project builds without requiring the backend
       to be running).
-- [ ] Document in `core/api/README.md` (or similar) that this file is
+- [x] Document in `core/api/README.md` (or similar) that this file is
       generated and must be regenerated, never hand-edited, whenever
       the backend's API changes.
 
 **Acceptance criteria:**
 
-- [ ] `schema.ts` exists, is committed, and its types match the
+- [x] `schema.ts` exists, is committed, and its types match the
       backend's current OpenAPI spec.
 
 ---
@@ -204,15 +204,15 @@ hand-written.
 
 **Tasks:**
 
-- [ ] `environment.ts` (dev) and `environment.prod.ts` — both
+- [x] `environment.ts` (dev) and `environment.prod.ts` — both
       git-ignored once they contain real values.
-- [ ] `environment.example.ts` — committed, with placeholder values
+- [x] `environment.example.ts` — committed, with placeholder values
       (`apiUrl: 'http://localhost:8081/api/v1'`, etc.) so anyone cloning
       the repo knows what to fill in.
 
 **Acceptance criteria:**
 
-- [ ] `environment.ts` and `environment.prod.ts` are in `.gitignore`;
+- [x] `environment.ts` and `environment.prod.ts` are in `.gitignore`;
       `environment.example.ts` is committed with no real values.
 
 ---
@@ -225,7 +225,7 @@ hand-written.
 
 **Tasks:**
 
-- [ ] GitHub Actions workflow: checkout, install, lint, `npm run
+- [x] GitHub Actions workflow: checkout, install, lint, `npm run
   test:ci`, build — triggered on push/PR to `dev` and `main`.
 - [ ] Protect `main` (and `dev` if applicable) requiring the pipeline to
       pass before merge.
@@ -238,10 +238,10 @@ hand-written.
 
 ### ✅ Fase 0 exit checklist
 
-- [ ] `npm start`, `npm test`, `npm run build`, `npm run lint`, and
+- [x] `npm start`, `npm test`, `npm run build`, `npm run lint`, and
       `npm run generate:api-types` all work.
 - [ ] CI blocks a broken PR.
-- [ ] First commit pushed to GitHub.
+- [x] First commit pushed to GitHub.
 
 ---
 
