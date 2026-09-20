@@ -22,7 +22,7 @@ export class IconButton {
   readonly classes = computed(
     () =>
       'inline-flex h-32 w-32 items-center justify-center rounded-sm bg-transparent text-ink ' +
-      '[&>svg]:h-20 [&>svg]:w-20 hover:bg-surface-alt transition-colors duration-fast ' +
+      '[&_svg]:h-20 [&_svg]:w-20 hover:bg-surface-alt transition-colors duration-fast ' +
       'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal ' +
       'disabled:cursor-not-allowed disabled:opacity-50',
   );

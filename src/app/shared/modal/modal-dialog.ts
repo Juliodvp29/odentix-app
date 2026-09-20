@@ -1,6 +1,7 @@
 import { Component, computed, inject, output, signal, TemplateRef } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { DIALOG_DATA } from '@angular/cdk/dialog';
+import { Icon } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
 
 export interface ModalData {
@@ -10,21 +11,13 @@ export interface ModalData {
 
 @Component({
   selector: 'app-modal-dialog',
-  imports: [IconButton, NgTemplateOutlet],
+  imports: [Icon, IconButton, NgTemplateOutlet],
   template: `
     <div [class]="panelClasses()">
       <div class="mb-16 flex items-center justify-between gap-16">
         <h2 class="text-heading-sm text-ink">{{ data.title }}</h2>
         <app-icon-button label="Close dialog" (clicked)="dismiss.emit()">
-          <svg
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            aria-hidden="true"
-          >
-            <path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round" />
-          </svg>
+          <app-icon name="x" />
         </app-icon-button>
       </div>
       <ng-container *ngTemplateOutlet="data.template" />

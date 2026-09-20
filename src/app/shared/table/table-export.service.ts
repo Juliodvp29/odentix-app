@@ -12,7 +12,7 @@ export class TableExportService {
     filename: string,
   ): Promise<Blob> {
     const XLSX = await import('xlsx');
-    const sheetData: Array<Array<string>> = [
+    const sheetData: Array<Array<string | number>> = [
       columns.map((column) => column.header),
       ...rows.map((row) => columns.map((column) => resolveCellValue(column, row))),
     ];

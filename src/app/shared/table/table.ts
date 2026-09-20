@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import {
   Component,
   TemplateRef,
@@ -9,92 +8,65 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { Skeleton } from '@shared/skeleton/skeleton';
 import { CellDef } from './cell-def';
+import { TableActiveFilters } from './table-active-filters';
+import { TableBar } from './table-bar';
 import { TableExportService } from './table-export.service';
+import { TableFilterPanel } from './table-filter-panel';
+import { TableGrid } from './table-grid';
 import {
   ExportDataProvider,
+  FilterValue,
   SortDirection,
   TableColumn,
   TableQuery,
   TableRow,
-  resolveCellValue,
+  activeFilterCount as countActiveFilters,
+  isFilterActive,
 } from './table-models';
-import { TableHeader } from './table-header';
 import { TablePagination } from './table-pagination';
-import { TableToolbar } from './table-toolbar';
 
 @Component({
   selector: 'app-table',
-  imports: [NgTemplateOutlet, Skeleton, TableHeader, TableToolbar, TablePagination],
+  imports: [TableActiveFilters, TableBar, TableFilterPanel, TableGrid, TablePagination],
   template: `
     <div class="space-y-16">
-      <app-table-toolbar
+      <app-table-bar
         [search]="query().search ?? ''"
+        [activeFilterCount]="activeFilterCount()"
+        [filtersOpen]="showFilters()"
         [canExport]="exportData() !== undefined"
         [exporting]="exporting()"
-        [hasActiveFilters]="hasActiveFilters()"
         (searchChange)="onSearch($event)"
+        (filtersToggle)="showFilters.update((open) => !open)"
         (exportRequested)="onExport()"
-        (clearRequested)="onClear()"
       />
-      <div class="overflow-x-auto rounded-card bg-paper shadow-resting">
-        <table class="w-full border-collapse text-left" [attr.aria-busy]="loading()">
-          <thead
-            appTableHeader
-            [columns]="columns()"
-            [sortKey]="query().sortKey"
-            [sortDir]="query().sortDir"
-            [filters]="query().filters"
-            (sortRequested)="onSortRequested($event)"
-            (filterChanged)="onFilter($event.key, $event.value)"
-          ></thead>
-          <tbody>
-            @if (loading()) {
-              @for (row of skeletonRows(); track row) {
-                <tr>
-                  @for (column of columns(); track column.key) {
-                    <td class="border-b border-hairline px-16 py-12">
-                      <app-skeleton variant="line" />
-                    </td>
-                  }
-                </tr>
-              }
-            } @else if (rows().length === 0) {
-              <tr>
-                <td [attr.colspan]="columns().length" class="px-16 py-32 text-center">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    aria-hidden="true"
-                    class="mx-auto mb-8 h-24 w-24 text-faint-gray"
-                  >
-                    <rect x="3" y="4" width="18" height="16" rx="2" />
-                    <path d="M3 9h18M9 9v11" />
-                  </svg>
-                  <p class="text-body text-mid-gray">{{ emptyMessage() }}</p>
-                </td>
-              </tr>
-            } @else {
-              @for (row of rows(); track $index) {
-                <tr class="transition-colors duration-fast hover:bg-surface-alt">
-                  @for (column of columns(); track column.key) {
-                    <td class="border-b border-hairline px-16 py-12 text-body text-ink">
-                      @if (cellTemplate(column.key); as template) {
-                        <ng-container *ngTemplateOutlet="template; context: { $implicit: row }" />
-                      } @else {
-                        {{ cellText(column, row) }}
-                      }
-                    </td>
-                  }
-                </tr>
-              }
-            }
-          </tbody>
-        </table>
-      </div>
+      @if (showFilters()) {
+        <app-table-filter-panel
+          [columns]="columns()"
+          [filters]="query().filters"
+          (filterChanged)="onFilter($event.key, $event.value)"
+          (clearRequested)="onClear()"
+        />
+      }
+      <app-table-active-filters
+        [columns]="columns()"
+        [filters]="query().filters"
+        (remove)="onFilter($event, '')"
+      />
+      <app-table-grid
+        [columns]="columns()"
+        [rows]="rows()"
+        [loading]="loading()"
+        [sortKey]="query().sortKey"
+        [sortDir]="query().sortDir"
+        [pageSize]="query().pageSize"
+        [emptyMessage]="emptyMessage()"
+        [hasActions]="rowActions() !== null"
+        [templates]="templates()"
+        [actions]="rowActions()"
+        (sortRequested)="onSortRequested($event)"
+      />
       <app-table-pagination
         [page]="query().page"
         [pageSize]="query().pageSize"
@@ -114,26 +86,18 @@ export class Table {
   readonly emptyMessage = input('No results found');
   readonly exportData = input<ExportDataProvider | undefined>(undefined);
   readonly exportFilename = input('export.xlsx');
+  readonly rowActions = input<TemplateRef<{ $implicit: TableRow }> | null>(null);
   readonly queryChange = output<TableQuery>();
 
   private readonly exports = inject(TableExportService);
   private readonly cellDefs = contentChildren(CellDef);
   readonly exporting = signal(false);
+  readonly showFilters = signal(false);
 
   readonly templates = computed(
     () => new Map(this.cellDefs().map((def) => [def.key(), def.template])),
   );
-  readonly hasActiveFilters = computed(() => {
-    const query = this.query();
-    return !!query.search || Object.keys(query.filters).length > 0;
-  });
-  readonly skeletonRows = computed(() =>
-    Array.from({ length: this.query().pageSize }, (_, i) => i),
-  );
-
-  cellTemplate(key: string): TemplateRef<{ $implicit: TableRow }> | null {
-    return (this.templates().get(key) as TemplateRef<{ $implicit: TableRow }>) ?? null;
-  }
+  readonly activeFilterCount = computed(() => countActiveFilters(this.query().filters));
 
   onSortRequested(key: string): void {
     const query = this.query();
@@ -146,9 +110,9 @@ export class Table {
     this.patch({ search }, true);
   }
 
-  onFilter(key: string, value: string): void {
+  onFilter(key: string, value: FilterValue): void {
     const filters = { ...this.query().filters };
-    if (value) {
+    if (isFilterActive(value)) {
       filters[key] = value;
     } else {
       delete filters[key];
@@ -193,9 +157,5 @@ export class Table {
   private patch(patch: Partial<TableQuery>, resetPage = false): void {
     const query = this.query();
     this.queryChange.emit({ ...query, ...patch, page: resetPage ? 1 : (patch.page ?? query.page) });
-  }
-
-  cellText(column: TableColumn, row: TableRow): string {
-    return resolveCellValue(column, row);
   }
 }

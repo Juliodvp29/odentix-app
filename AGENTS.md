@@ -300,6 +300,9 @@ either.)_
   and Node version pinned in `vercel.json` / `.nvmrc`).
 - Phase status: **Fase 0 complete** (project foundations, CI + Vercel
   deploy wired). Next: Fase 1 shared UI kit.
+- Fase 3 reminder: the shared table deferred configurable columns
+  (show/hide) and density options — add them when the patients list
+  defines the real need.
 - `DESIGN.md`: exists at the repo root (full token system + component
   specs). All UI work must follow it; Fase 1 can start in earnest.
 

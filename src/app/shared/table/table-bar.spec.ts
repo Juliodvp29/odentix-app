@@ -1,14 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TableToolbar } from './table-toolbar';
+import { TableBar } from './table-bar';
 
-describe('TableToolbar', () => {
-  let fixture: ComponentFixture<TableToolbar>;
-
-  const searchInput = (): HTMLInputElement =>
-    fixture.nativeElement.querySelector('input[type="search"]') as HTMLInputElement;
+describe('TableBar', () => {
+  let fixture: ComponentFixture<TableBar>;
 
   function typeSearch(value: string): void {
-    const input = searchInput();
+    const input = fixture.nativeElement.querySelector('input[type="search"]') as HTMLInputElement;
     input.value = value;
     input.dispatchEvent(new Event('input', { bubbles: true }));
     fixture.detectChanges();
@@ -16,9 +13,9 @@ describe('TableToolbar', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TableToolbar],
+      imports: [TableBar],
     }).compileComponents();
-    fixture = TestBed.createComponent(TableToolbar);
+    fixture = TestBed.createComponent(TableBar);
     fixture.detectChanges();
     vi.useFakeTimers();
   });
@@ -36,8 +33,17 @@ describe('TableToolbar', () => {
     expect(emitted).toBe('ada');
   });
 
-  it('should hide the export button without an export provider', () => {
-    expect(fixture.nativeElement.textContent).not.toContain('Export');
+  it('should show the active filter count and toggle the panel', () => {
+    let toggled = 0;
+    fixture.componentInstance.filtersToggle.subscribe(() => toggled++);
+    fixture.componentRef.setInput('activeFilterCount', 2);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('2');
+    const buttons = Array.from(
+      fixture.nativeElement.querySelectorAll('button'),
+    ) as Array<HTMLButtonElement>;
+    buttons.find((button) => button.textContent?.includes('Filters'))?.click();
+    expect(toggled).toBe(1);
   });
 
   it('should emit exportRequested when export is clicked', () => {
@@ -47,20 +53,8 @@ describe('TableToolbar', () => {
     fixture.detectChanges();
     const buttons = Array.from(
       fixture.nativeElement.querySelectorAll('button'),
-    ) as HTMLButtonElement[];
+    ) as Array<HTMLButtonElement>;
     buttons.find((button) => button.textContent?.includes('Export'))?.click();
-    expect(emitted).toBe(1);
-  });
-
-  it('should emit clearRequested when clear is clicked', () => {
-    let emitted = 0;
-    fixture.componentInstance.clearRequested.subscribe(() => emitted++);
-    fixture.componentRef.setInput('hasActiveFilters', true);
-    fixture.detectChanges();
-    const buttons = Array.from(
-      fixture.nativeElement.querySelectorAll('button'),
-    ) as HTMLButtonElement[];
-    buttons.find((button) => button.textContent?.includes('Clear'))?.click();
     expect(emitted).toBe(1);
   });
 });

@@ -1,18 +1,17 @@
-import { Component, computed, inject, signal, TemplateRef, viewChild } from '@angular/core';
+import { Component, inject, signal, TemplateRef, viewChild } from '@angular/core';
 import { email, form, required, submit } from '@angular/forms/signals';
 import { Button } from '@shared/button/button';
 import { FormField } from '@shared/form-field/form-field';
+import { Icon } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
 import { Link } from '@shared/link/link';
 import { ModalService } from '@shared/modal/modal.service';
 import { Select } from '@shared/select/select';
 import { Skeleton } from '@shared/skeleton/skeleton';
-import { Table } from '@shared/table/table';
-import { CellDef } from '@shared/table/cell-def';
-import { TableColumn, TableQuery, TableRow, createInitialQuery } from '@shared/table/table-models';
 import { TextInput } from '@shared/text-input/text-input';
 import { ToastService } from '@shared/toast/toast.service';
 import { Toasts } from '@shared/toast/toasts';
+import { TableDemo } from './table-demo';
 
 // Temporary kit preview to judge the shared components visually.
 // Removed once the first real feature lands.
@@ -20,13 +19,13 @@ import { Toasts } from '@shared/toast/toasts';
   selector: 'app-placeholder',
   imports: [
     Button,
-    CellDef,
     FormField,
+    Icon,
     IconButton,
     Link,
     Select,
     Skeleton,
-    Table,
+    TableDemo,
     TextInput,
     Toasts,
   ],
@@ -44,15 +43,7 @@ import { Toasts } from '@shared/toast/toasts';
         </div>
         <div class="flex items-center gap-8">
           <app-icon-button label="Close dialog">
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              aria-hidden="true"
-            >
-              <path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round" />
-            </svg>
+            <app-icon name="x" />
           </app-icon-button>
           <app-link href="/placeholder">Internal link</app-link>
           <app-link href="https://angular.dev" [external]="true">External link</app-link>
@@ -70,10 +61,11 @@ import { Toasts } from '@shared/toast/toasts';
             <app-text-input [field]="demoForm.email" type="email" placeholder="you@example.com" />
           </app-form-field>
           <app-form-field label="Country" [field]="demoForm.country">
-            <app-select [field]="demoForm.country">
-              <option value="">Choose a country</option>
-              <option value="co">Colombia</option>
-            </app-select>
+            <app-select
+              [field]="demoForm.country"
+              placeholder="Choose a country"
+              [options]="countryOptions"
+            />
           </app-form-field>
           <app-button type="submit">Submit</app-button>
         </form>
@@ -111,22 +103,7 @@ import { Toasts } from '@shared/toast/toasts';
           <app-skeleton variant="block" />
         </div>
       </section>
-      <section class="space-y-16">
-        <h2 class="text-heading-sm text-ink">Table</h2>
-        <app-table
-          [columns]="tableColumns"
-          [rows]="tableRows()"
-          [total]="tableTotal()"
-          [query]="tableQuery()"
-          (queryChange)="onTableQuery($event)"
-          [exportData]="exportMembers"
-          exportFilename="demo-team.xlsx"
-        >
-          <ng-template appCell="role" let-row>
-            <span>{{ row.role }}</span>
-          </ng-template>
-        </app-table>
-      </section>
+      <app-table-demo />
     </div>
     <app-toasts />
   `,
@@ -137,6 +114,7 @@ export class Placeholder {
   private readonly demo = viewChild('demo', { read: TemplateRef });
 
   readonly model = signal({ email: '', country: '' });
+  readonly countryOptions = [{ value: 'co', label: 'Colombia' }];
   readonly demoForm = form(this.model, (s) => {
     required(s.email, { message: 'Email is required' });
     email(s.email, { message: 'Enter a valid email address' });
@@ -157,57 +135,4 @@ export class Placeholder {
   toast(type: 'success' | 'error' | 'info' | 'warning'): void {
     this.notifications.show(`Demo ${type} toast`, type);
   }
-
-  readonly tableColumns: ReadonlyArray<TableColumn> = [
-    { key: 'name', header: 'Name', sortable: true, filterable: true },
-    {
-      key: 'role',
-      header: 'Role',
-      filterable: true,
-      filterOptions: [
-        { value: 'Dentist', label: 'Dentist' },
-        { value: 'Nurse', label: 'Nurse' },
-      ],
-    },
-  ];
-  readonly tableQuery = signal<TableQuery>(createInitialQuery(5));
-  readonly members: ReadonlyArray<TableRow> = [
-    { name: 'Ada', role: 'Dentist' },
-    { name: 'Marie', role: 'Dentist' },
-    { name: 'Luis', role: 'Nurse' },
-    { name: 'Ana', role: 'Reception' },
-    { name: 'José', role: 'Nurse' },
-    { name: 'Elena', role: 'Dentist' },
-  ];
-
-  readonly tableFiltered = computed(() => {
-    const query = this.tableQuery();
-    const search = (query.search ?? '').toLowerCase();
-    const role = query.filters['role'] ?? '';
-    const matching = this.members.filter(
-      (row) =>
-        (!search || String(row['name']).toLowerCase().includes(search)) &&
-        (!role || row['role'] === role),
-    );
-    if (query.sortKey === 'name') {
-      matching.sort((a, b) =>
-        query.sortDir === 'desc'
-          ? String(b['name']).localeCompare(String(a['name']))
-          : String(a['name']).localeCompare(String(b['name'])),
-      );
-    }
-    return matching;
-  });
-  readonly tableTotal = computed(() => this.tableFiltered().length);
-  readonly tableRows = computed(() => {
-    const query = this.tableQuery();
-    const start = (query.page - 1) * query.pageSize;
-    return this.tableFiltered().slice(start, start + query.pageSize);
-  });
-
-  onTableQuery(query: TableQuery): void {
-    this.tableQuery.set(query);
-  }
-
-  readonly exportMembers = async (): Promise<ReadonlyArray<TableRow>> => [...this.members];
 }

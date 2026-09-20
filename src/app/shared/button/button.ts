@@ -1,7 +1,9 @@
 import { Component, computed, input, output } from '@angular/core';
+import { Icon, IconName } from '@shared/icon/icon';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonType = 'button' | 'submit' | 'reset';
+export type ButtonIconPosition = 'start' | 'end';
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: 'bg-teal text-paper hover:bg-teal-deep',
@@ -12,6 +14,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 
 @Component({
   selector: 'app-button',
+  imports: [Icon],
   template: `
     <button
       [type]="type()"
@@ -20,9 +23,15 @@ const variantClasses: Record<ButtonVariant, string> = {
       [class]="classes()"
       (click)="handleClick()"
     >
+      @if (startIcon(); as iconName) {
+        <app-icon [name]="iconName" />
+      }
       <span [class.invisible]="loading()">
         <ng-content />
       </span>
+      @if (endIcon(); as iconName) {
+        <app-icon [name]="iconName" />
+      }
       @if (loading()) {
         <span
           data-testid="loading-spinner"
@@ -38,9 +47,17 @@ export class Button {
   readonly type = input<ButtonType>('button');
   readonly disabled = input(false);
   readonly loading = input(false);
+  readonly icon = input<IconName | null>(null);
+  readonly iconPosition = input<ButtonIconPosition>('start');
   readonly clicked = output<void>();
 
   readonly isDisabled = computed(() => this.disabled() || this.loading());
+  readonly startIcon = computed(() =>
+    this.iconPosition() === 'start' && !this.loading() ? this.icon() : null,
+  );
+  readonly endIcon = computed(() =>
+    this.iconPosition() === 'end' && !this.loading() ? this.icon() : null,
+  );
 
   readonly classes = computed(
     () =>
@@ -48,6 +65,7 @@ export class Button {
       'text-body font-medium transition-colors duration-fast ' +
       'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal ' +
       'disabled:cursor-not-allowed disabled:opacity-50 ' +
+      (this.icon() ? 'gap-8 ' : '') +
       variantClasses[this.variant()],
   );
 

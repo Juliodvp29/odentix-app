@@ -1,4 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
+import { Icon } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
 import { Toast, ToastService, ToastType } from './toast.service';
 
@@ -11,7 +12,7 @@ const borderClasses: Record<ToastType, string> = {
 
 @Component({
   selector: 'app-toasts',
-  imports: [IconButton],
+  imports: [Icon, IconButton],
   template: `
     <div class="fixed top-24 right-24 z-50 flex flex-col items-end gap-8" aria-live="polite">
       @for (toast of toasts(); track toast.id) {
@@ -23,15 +24,7 @@ const borderClasses: Record<ToastType, string> = {
         >
           <p class="text-body text-ink">{{ toast.message }}</p>
           <app-icon-button label="Dismiss notification" (clicked)="dismiss(toast.id)">
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              aria-hidden="true"
-            >
-              <path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round" />
-            </svg>
+            <app-icon name="x" />
           </app-icon-button>
         </div>
       }

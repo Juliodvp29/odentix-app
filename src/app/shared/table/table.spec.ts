@@ -1,20 +1,29 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CellDef } from './cell-def';
+import { Icon } from '@shared/icon/icon';
+import { IconButton } from '@shared/icon-button/icon-button';
 import { Table } from './table';
 import { TableExportService } from './table-export.service';
-import { TableColumn, TableQuery, TableRow, createInitialQuery } from './table-models';
+import {
+  DateRange,
+  NumberRange,
+  TableColumn,
+  TableQuery,
+  TableRow,
+  createInitialQuery,
+} from './table-models';
 
 const ALL_MEMBERS: ReadonlyArray<TableRow> = [
-  { name: 'Ada', role: 'Dentist' },
-  { name: 'Marie', role: 'Dentist' },
-  { name: 'Luis', role: 'Nurse' },
-  { name: 'Ana', role: 'Reception' },
-  { name: 'José', role: 'Nurse' },
+  { name: 'Ada', role: 'Dentist', status: 'active', joined: '2026-01-12', salary: 1200000 },
+  { name: 'Marie', role: 'Dentist', status: 'on-leave', joined: '2025-11-03', salary: 1500000 },
+  { name: 'Luis', role: 'Nurse', status: 'active', joined: '2026-02-20', salary: 800000 },
+  { name: 'Ana', role: 'Reception', status: 'active', joined: '2024-06-15', salary: 900000 },
+  { name: 'José', role: 'Nurse', status: 'inactive', joined: '2023-03-30', salary: 820000 },
+  { name: 'Elena', role: 'Dentist', status: 'active', joined: '2026-01-05', salary: 1400000 },
 ];
 
 @Component({
-  imports: [CellDef, Table],
+  imports: [Icon, IconButton, Table],
   template: `
     <app-table
       [columns]="columns"
@@ -25,40 +34,93 @@ const ALL_MEMBERS: ReadonlyArray<TableRow> = [
       (queryChange)="onQuery($event)"
       [exportData]="exporter"
       exportFilename="team.xlsx"
+      [rowActions]="rowActions"
     >
-      <ng-template appCell="role" let-row>
-        <span class="badge">{{ row.role }}</span>
+      <ng-template #rowActions let-row>
+        <app-icon-button label="Edit member" (clicked)="onEdit(row)">
+          <app-icon name="pencil" />
+        </app-icon-button>
       </ng-template>
     </app-table>
   `,
 })
 class MembersHost {
   readonly columns: ReadonlyArray<TableColumn> = [
-    { key: 'name', header: 'Name', sortable: true, filterable: true },
+    { key: 'name', header: 'Name', sortable: true },
     {
       key: 'role',
       header: 'Role',
-      filterable: true,
-      filterOptions: [
-        { value: 'Dentist', label: 'Dentist' },
-        { value: 'Nurse', label: 'Nurse' },
-      ],
+      filter: {
+        kind: 'select',
+        options: [
+          { value: 'Dentist', label: 'Dentist' },
+          { value: 'Nurse', label: 'Nurse' },
+        ],
+      },
     },
+    {
+      key: 'status',
+      header: 'Status',
+      type: 'status',
+      statusTones: { active: 'success', 'on-leave': 'warning', inactive: 'danger' },
+      filter: {
+        kind: 'multi',
+        options: [
+          { value: 'active', label: 'Active' },
+          { value: 'on-leave', label: 'On leave' },
+        ],
+      },
+    },
+    { key: 'joined', header: 'Joined', type: 'date', filter: { kind: 'date' } },
+    { key: 'salary', header: 'Salary', type: 'currency', filter: { kind: 'number' } },
   ];
   readonly query = signal<TableQuery>(createInitialQuery(2));
   readonly loading = signal(false);
   lastQuery: TableQuery | null = null;
+  lastEdited: string | null = null;
   readonly exporter = vi.fn(async (): Promise<ReadonlyArray<TableRow>> => [...ALL_MEMBERS]);
 
   get filtered(): Array<TableRow> {
     const query = this.query();
     const search = (query.search ?? '').toLowerCase();
-    const role = query.filters['role'] ?? '';
-    const matching = ALL_MEMBERS.filter(
-      (row) =>
-        (!search || String(row['name']).toLowerCase().includes(search)) &&
-        (!role || row['role'] === role),
-    );
+    const role = query.filters['role'];
+    const statuses = query.filters['status'];
+    const joined = query.filters['joined'];
+    const salary = query.filters['salary'];
+    const matching = ALL_MEMBERS.filter((row) => {
+      if (search && !String(row['name']).toLowerCase().includes(search)) {
+        return false;
+      }
+      if (typeof role === 'string' && role !== '' && row['role'] !== role) {
+        return false;
+      }
+      if (
+        Array.isArray(statuses) &&
+        statuses.length > 0 &&
+        !statuses.includes(String(row['status']))
+      ) {
+        return false;
+      }
+      if (joined !== undefined && !Array.isArray(joined) && typeof joined !== 'string') {
+        const range = joined as DateRange;
+        if (range.from && String(row['joined']) < range.from) {
+          return false;
+        }
+        if (range.to && String(row['joined']) > range.to) {
+          return false;
+        }
+      }
+      if (salary !== undefined && !Array.isArray(salary) && typeof salary !== 'string') {
+        const range = salary as NumberRange;
+        if (range.min !== undefined && Number(row['salary']) < range.min) {
+          return false;
+        }
+        if (range.max !== undefined && Number(row['salary']) > range.max) {
+          return false;
+        }
+      }
+      return true;
+    });
     if (query.sortKey === 'name') {
       matching.sort((a, b) =>
         query.sortDir === 'desc'
@@ -83,6 +145,10 @@ class MembersHost {
     this.lastQuery = query;
     this.query.set(query);
   }
+
+  onEdit(row: TableRow): void {
+    this.lastEdited = String(row['name']);
+  }
 }
 
 describe('Table', () => {
@@ -91,6 +157,14 @@ describe('Table', () => {
   const bodyText = (): string => fixture.nativeElement.textContent as string;
   const sortButton = (): HTMLButtonElement =>
     fixture.nativeElement.querySelector('th button') as HTMLButtonElement;
+
+  function openFilters(): void {
+    const buttons = Array.from(
+      fixture.nativeElement.querySelectorAll('button'),
+    ) as Array<HTMLButtonElement>;
+    buttons.find((button) => button.textContent?.includes('Filters'))?.click();
+    fixture.detectChanges();
+  }
 
   function searchFor(value: string): void {
     const input = fixture.nativeElement.querySelector('input[type="search"]') as HTMLInputElement;
@@ -124,9 +198,10 @@ describe('Table', () => {
     expect(bodyText()).not.toContain('Luis');
   });
 
-  it('should render custom cell templates', () => {
-    const badge = fixture.nativeElement.querySelector('.badge') as HTMLElement;
-    expect(badge?.textContent).toBe('Dentist');
+  it('should render rich cells with tones and formats', () => {
+    expect(bodyText()).toContain('active');
+    expect(bodyText()).toContain('2026');
+    expect(bodyText()).toContain('1.200.000');
   });
 
   it('should emit sorting on header click', () => {
@@ -146,22 +221,79 @@ describe('Table', () => {
     expect(bodyText()).not.toContain('Ada');
   });
 
-  it('should emit column filters and reset to the first page', () => {
-    const select = fixture.nativeElement.querySelector('td select') as HTMLSelectElement;
-    select.value = 'Nurse';
-    select.dispatchEvent(new Event('change', { bubbles: true }));
+  it('should filter by select from the panel and show a chip', () => {
+    openFilters();
+    const radios = Array.from(
+      fixture.nativeElement.querySelectorAll('input[type="radio"]'),
+    ) as Array<HTMLInputElement>;
+    radios[0].click();
     fixture.detectChanges();
-    expect(fixture.componentInstance.lastQuery?.filters['role']).toBe('Nurse');
-    expect(fixture.componentInstance.lastQuery?.page).toBe(1);
-    expect(bodyText()).toContain('Luis');
-    expect(bodyText()).not.toContain('Ada');
+    expect(fixture.componentInstance.lastQuery?.filters['role']).toBe('Dentist');
+    expect(bodyText()).toContain('Role: Dentist');
+  });
+
+  it('should remove a filter through its chip', () => {
+    openFilters();
+    const radios = Array.from(
+      fixture.nativeElement.querySelectorAll('input[type="radio"]'),
+    ) as Array<HTMLInputElement>;
+    radios[0].click();
+    fixture.detectChanges();
+    const remove = fixture.nativeElement.querySelector(
+      '[aria-label="Remove filter Role: Dentist"]',
+    ) as HTMLButtonElement;
+    remove.click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.lastQuery?.filters['role']).toBeUndefined();
+  });
+
+  it('should filter by multiple statuses from the panel', () => {
+    openFilters();
+    const boxes = Array.from(
+      fixture.nativeElement.querySelectorAll('input[type="checkbox"]'),
+    ) as Array<HTMLInputElement>;
+    boxes[0].click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.lastQuery?.filters['status']).toEqual(['active']);
+  });
+
+  it('should filter by date range from the panel', () => {
+    openFilters();
+    const from = fixture.nativeElement.querySelector(
+      '[aria-label="Joined from"]',
+    ) as HTMLInputElement;
+    from.value = '2026-01-01';
+    from.dispatchEvent(new Event('change', { bubbles: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.lastQuery?.filters['joined']).toEqual({
+      from: '2026-01-01',
+    });
+  });
+
+  it('should filter by salary minimum from the panel', () => {
+    openFilters();
+    const min = fixture.nativeElement.querySelector(
+      '[aria-label="Salary minimum"]',
+    ) as HTMLInputElement;
+    min.value = '1000000';
+    min.dispatchEvent(new Event('change', { bubbles: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.lastQuery?.filters['salary']).toEqual({ min: 1000000 });
+  });
+
+  it('should run row actions with their row', () => {
+    const edit = fixture.nativeElement.querySelector(
+      '[aria-label="Edit member"]',
+    ) as HTMLButtonElement;
+    edit.click();
+    expect(fixture.componentInstance.lastEdited).toBe('Ada');
   });
 
   it('should show skeleton rows matching the table shape while loading', () => {
     fixture.componentInstance.loading.set(true);
     fixture.detectChanges();
     const skeletons = fixture.nativeElement.querySelectorAll('.skeleton');
-    expect(skeletons.length).toBe(2 * 2);
+    expect(skeletons.length).toBe(2 * (5 + 1));
     expect(bodyText()).not.toContain('Ada');
   });
 
