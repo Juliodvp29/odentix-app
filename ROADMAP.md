@@ -227,12 +227,12 @@ hand-written.
 
 - [x] GitHub Actions workflow: checkout, install, lint, `npm run
   test:ci`, build — triggered on push/PR to `dev` and `main`.
-- [ ] Protect `main` (and `dev` if applicable) requiring the pipeline to
+- [x] Protect `main` (and `dev` if applicable) requiring the pipeline to
       pass before merge.
 
 **Acceptance criteria:**
 
-- [ ] A PR with a failing test or lint error is blocked automatically.
+- [x] A PR with a failing test or lint error is blocked automatically.
 
 ---
 

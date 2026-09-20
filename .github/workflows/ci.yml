@@ -9,6 +9,11 @@ on:
 jobs:
   build-test-lint:
     runs-on: ubuntu-latest
+    # No code reads the API URL yet, so CI builds with a dummy value. The
+    # prebuild script still fails loudly on real deploys without a URL.
+    # Revisit with a secret backend URL once E2E tests need one.
+    env:
+      ODENTIX_API_URL: http://localhost:8081/api/v1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
