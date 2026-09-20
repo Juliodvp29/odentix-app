@@ -57,4 +57,32 @@ describe('Button', () => {
     buttonElement().click();
     expect(emitted).toBe(0);
   });
+
+  it('should render no icon by default', () => {
+    fixture.detectChanges();
+    expect(buttonElement().querySelector('app-icon')).toBeNull();
+  });
+
+  it('should render the icon before the label by default', () => {
+    fixture.componentRef.setInput('icon', 'download');
+    fixture.detectChanges();
+    const button = buttonElement();
+    expect(button.querySelector('app-icon')).not.toBeNull();
+    expect(button.firstElementChild?.tagName).toBe('APP-ICON');
+  });
+
+  it('should render the icon after the label at the end', () => {
+    fixture.componentRef.setInput('icon', 'download');
+    fixture.componentRef.setInput('iconPosition', 'end');
+    fixture.detectChanges();
+    const button = buttonElement();
+    expect(button.lastElementChild?.tagName).toBe('APP-ICON');
+  });
+
+  it('should hide the icon while loading', () => {
+    fixture.componentRef.setInput('icon', 'download');
+    fixture.componentRef.setInput('loading', true);
+    fixture.detectChanges();
+    expect(buttonElement().querySelector('app-icon')).toBeNull();
+  });
 });

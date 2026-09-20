@@ -1,7 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Icon, IconName } from './icon';
 
-const names: ReadonlyArray<IconName> = ['x', 'chevron-down', 'pencil', 'trash-2'];
+const names: ReadonlyArray<IconName> = [
+  'x',
+  'chevron-down',
+  'pencil',
+  'trash-2',
+  'download',
+  'check',
+];
 
 describe('Icon', () => {
   let fixture: ComponentFixture<Icon>;

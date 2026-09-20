@@ -37,6 +37,8 @@ const SEARCH_DEBOUNCE_MS = 300;
           <app-button
             variant="secondary"
             [loading]="exporting()"
+            icon="download"
+            iconPosition="end"
             (clicked)="exportRequested.emit()"
           >
             Export

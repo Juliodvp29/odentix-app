@@ -61,10 +61,11 @@ import { TableDemo } from './table-demo';
             <app-text-input [field]="demoForm.email" type="email" placeholder="you@example.com" />
           </app-form-field>
           <app-form-field label="Country" [field]="demoForm.country">
-            <app-select [field]="demoForm.country">
-              <option value="">Choose a country</option>
-              <option value="co">Colombia</option>
-            </app-select>
+            <app-select
+              [field]="demoForm.country"
+              placeholder="Choose a country"
+              [options]="countryOptions"
+            />
           </app-form-field>
           <app-button type="submit">Submit</app-button>
         </form>
@@ -113,6 +114,7 @@ export class Placeholder {
   private readonly demo = viewChild('demo', { read: TemplateRef });
 
   readonly model = signal({ email: '', country: '' });
+  readonly countryOptions = [{ value: 'co', label: 'Colombia' }];
   readonly demoForm = form(this.model, (s) => {
     required(s.email, { message: 'Email is required' });
     email(s.email, { message: 'Enter a valid email address' });
