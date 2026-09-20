@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Placeholder } from './placeholder';
+import { Placeholder } from '@features/placeholder/placeholder';
 
 describe('Placeholder', () => {
   beforeEach(async () => {

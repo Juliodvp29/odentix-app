@@ -240,7 +240,7 @@ hand-written.
 
 - [x] `npm start`, `npm test`, `npm run build`, `npm run lint`, and
       `npm run generate:api-types` all work.
-- [ ] CI blocks a broken PR.
+- [x] CI blocks a broken PR.
 - [x] First commit pushed to GitHub.
 
 ---
@@ -265,15 +265,15 @@ deferred (see `AGENTS.md`'s current-state note).
 
 **Tasks:**
 
-- [ ] Translate `DESIGN.md`'s colors, spacing, typography, and radii
+- [x] Translate `DESIGN.md`'s colors, spacing, typography, and radii
       into CSS custom properties and/or Tailwind v4 `@theme` tokens in
       `styles.css`.
-- [ ] No component may use a raw hex color or arbitrary spacing value
+- [x] No component may use a raw hex color or arbitrary spacing value
       after this ticket — everything routes through these tokens.
 
 **Acceptance criteria:**
 
-- [ ] Changing a token's value in one place visibly updates every
+- [x] Changing a token's value in one place visibly updates every
       component using it.
 
 ---
@@ -286,16 +286,16 @@ deferred (see `AGENTS.md`'s current-state note).
 
 **Tasks:**
 
-- [ ] `Button` component with variants (primary/secondary/danger/ghost,
+- [x] `Button` component with variants (primary/secondary/danger/ghost,
       per `DESIGN.md`) and states (default/hover/focus/disabled/loading).
-- [ ] Loading state shows a spinner/inline indicator without shifting
+- [x] Loading state shows a spinner/inline indicator without shifting
       the button's size.
-- [ ] Tests covering each variant renders and the disabled state blocks
+- [x] Tests covering each variant renders and the disabled state blocks
       clicks.
 
 **Acceptance criteria:**
 
-- [ ] Every state in `DESIGN.md` for buttons is represented and covered
+- [x] Every state in `DESIGN.md` for buttons is represented and covered
       by a test.
 
 ---
@@ -308,15 +308,15 @@ deferred (see `AGENTS.md`'s current-state note).
 
 **Tasks:**
 
-- [ ] Text input, select, and a `FormField` wrapper (label + control +
+- [x] Text input, select, and a `FormField` wrapper (label + control +
       error message) designed to plug into Signal Forms cleanly.
-- [ ] Error state styling and screen-reader-friendly error association
+- [x] Error state styling and screen-reader-friendly error association
       (`aria-describedby` or equivalent via CDK).
-- [ ] Tests: renders, shows validation error, is keyboard-navigable.
+- [x] Tests: renders, shows validation error, is keyboard-navigable.
 
 **Acceptance criteria:**
 
-- [ ] A Signal Form using these components shows validation errors
+- [x] A Signal Form using these components shows validation errors
       correctly without extra glue code per field.
 
 ---
@@ -333,17 +333,17 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Built on Angular CDK's overlay/dialog primitives (focus trap,
+- [x] Built on Angular CDK's overlay/dialog primitives (focus trap,
       escape-to-close, backdrop click, scroll lock — all free from CDK,
       don't reimplement).
-- [ ] Enter/exit animation that feels smooth, not instant pop-in/out —
+- [x] Enter/exit animation that feels smooth, not instant pop-in/out —
       per `DESIGN.md`'s motion guidance if it defines one, otherwise a
       short, consistent transition.
-- [ ] Tests: opens, closes on escape/backdrop, traps focus.
+- [x] Tests: opens, closes on escape/backdrop, traps focus.
 
 **Acceptance criteria:**
 
-- [ ] Opening and closing the modal has no visible jank or layout
+- [x] Opening and closing the modal has no visible jank or layout
       shift, verified manually and noted as such when marking the
       ticket done.
 
@@ -357,16 +357,16 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] A signal-based service to trigger toasts (`success`/`error`/
+- [x] A signal-based service to trigger toasts (`success`/`error`/
       `info`/`warning`) from anywhere in the app.
-- [ ] Toast component with auto-dismiss and manual dismiss, animated
+- [x] Toast component with auto-dismiss and manual dismiss, animated
       in/out consistently with the modal's approach (FASE1-04).
-- [ ] Tests: triggering a toast shows it; it auto-dismisses after its
+- [x] Tests: triggering a toast shows it; it auto-dismisses after its
       configured time.
 
 **Acceptance criteria:**
 
-- [ ] Any feature can show a toast via the service without importing a
+- [x] Any feature can show a toast via the service without importing a
       component directly into its template.
 
 ---
@@ -379,17 +379,17 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Generic, reusable table (column definitions passed in, not
+- [x] Generic, reusable table (column definitions passed in, not
       hardcoded per feature) supporting pagination, loading state, and
       empty state.
-- [ ] Loading state is a skeleton matching the table's shape, not a
+- [x] Loading state is a skeleton matching the table's shape, not a
       spinner (per `AGENTS.md` §7).
-- [ ] Tests: renders rows, shows skeleton while loading, shows empty
+- [x] Tests: renders rows, shows skeleton while loading, shows empty
       state with no rows.
 
 **Acceptance criteria:**
 
-- [ ] The patients list (Fase 3) can be built on top of this table
+- [x] The patients list (Fase 3) can be built on top of this table
       without any table-specific logic duplicated in that feature.
 
 ---
@@ -402,13 +402,13 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Reusable skeleton primitives (line, block, avatar/circle) that
+- [x] Reusable skeleton primitives (line, block, avatar/circle) that
       compose into feature-specific skeletons (e.g. a "patient card
       skeleton" built from these pieces).
 
 **Acceptance criteria:**
 
-- [ ] At least one real loading state elsewhere in the shared kit
+- [x] At least one real loading state elsewhere in the shared kit
       (e.g. the table in FASE1-06) uses these primitives instead of a
       one-off skeleton.
 
