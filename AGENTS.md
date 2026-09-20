@@ -296,7 +296,8 @@ either.)_
 - Frontend repo: not yet created — this file and `ROADMAP.md`
   are being written before Fase 0 starts.
 - E2E tool: **assumed Playwright, not yet confirmed** with Julio.
-- Deployment target: **not yet decided.**
+- Deployment target: **Vercel** (decided after FASE0-01 — SPA fallback
+  and Node version pinned in `vercel.json` / `.nvmrc`).
 - `DESIGN.md`: not created yet — Julio is building it separately. Until
   it exists, do not build final-styled UI; scaffold structure and
   behavior only, and flag anywhere a design decision is being deferred.

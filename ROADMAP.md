@@ -59,18 +59,18 @@ Tailwind v4 compatibility.
 
 **Tasks:**
 
-- [ ] `ng new odentix-frontend` with: stylesheet format **CSS**, SSR
+- [x] `ng new odentix-frontend` with: stylesheet format **CSS**, SSR
       **as decided with Julio** (not yet confirmed — ask before
       enabling it if it isn't already settled).
-- [ ] Confirm the generated project uses standalone components and
+- [x] Confirm the generated project uses standalone components and
       zoneless by default (Angular 22's default — verify, don't assume
       silently).
-- [ ] Push the empty project to GitHub with an appropriate
+- [x] Push the empty project to GitHub with an appropriate
       `.gitignore` (`node_modules`, `dist`, `.angular/cache`, `.env`).
 
 **Acceptance criteria:**
 
-- [ ] `npm start` serves the default app without errors.
+- [x] `npm start` serves the default app without errors.
 
 ---
 
