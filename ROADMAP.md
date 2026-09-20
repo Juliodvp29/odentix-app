@@ -308,15 +308,15 @@ deferred (see `AGENTS.md`'s current-state note).
 
 **Tasks:**
 
-- [ ] Text input, select, and a `FormField` wrapper (label + control +
+- [x] Text input, select, and a `FormField` wrapper (label + control +
       error message) designed to plug into Signal Forms cleanly.
-- [ ] Error state styling and screen-reader-friendly error association
+- [x] Error state styling and screen-reader-friendly error association
       (`aria-describedby` or equivalent via CDK).
-- [ ] Tests: renders, shows validation error, is keyboard-navigable.
+- [x] Tests: renders, shows validation error, is keyboard-navigable.
 
 **Acceptance criteria:**
 
-- [ ] A Signal Form using these components shows validation errors
+- [x] A Signal Form using these components shows validation errors
       correctly without extra glue code per field.
 
 ---
