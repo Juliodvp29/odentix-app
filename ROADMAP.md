@@ -265,15 +265,15 @@ deferred (see `AGENTS.md`'s current-state note).
 
 **Tasks:**
 
-- [ ] Translate `DESIGN.md`'s colors, spacing, typography, and radii
+- [x] Translate `DESIGN.md`'s colors, spacing, typography, and radii
       into CSS custom properties and/or Tailwind v4 `@theme` tokens in
       `styles.css`.
-- [ ] No component may use a raw hex color or arbitrary spacing value
+- [x] No component may use a raw hex color or arbitrary spacing value
       after this ticket — everything routes through these tokens.
 
 **Acceptance criteria:**
 
-- [ ] Changing a token's value in one place visibly updates every
+- [x] Changing a token's value in one place visibly updates every
       component using it.
 
 ---
