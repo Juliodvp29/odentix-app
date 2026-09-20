@@ -438,13 +438,13 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Base API client/service using `httpResource()` or `HttpClient`
+- [x] Base API client/service using `httpResource()` or `HttpClient`
       typed against `core/api/schema.ts`.
-- [ ] Central place for the API base URL (from `environment.ts`).
+- [x] Central place for the API base URL (from `environment.ts`).
 
 **Acceptance criteria:**
 
-- [ ] A call to any backend endpoint is fully typed end to end, with no
+- [x] A call to any backend endpoint is fully typed end to end, with no
       manually-written response interfaces duplicating `schema.ts`.
 
 ---

@@ -4,6 +4,10 @@
 // On hosts without the real files (e.g. Vercel), they are generated at
 // build time from ODENTIX_API_URL (prod) and ODENTIX_API_URL_DEV (dev,
 // falls back to the localhost URL below).
-export const environment = {
+export interface Environment {
+  apiUrl: string;
+}
+
+export const environment: Environment = {
   apiUrl: 'http://localhost:8081/api/v1',
 };
