@@ -4,6 +4,9 @@
 
 @import 'tailwindcss';
 
+/* Structural styles required by Angular CDK Overlay (positioning only). */
+@import '@angular/cdk/overlay-prebuilt.css';
+
 @theme {
   /* Colors — Neutrals */
   --color-canvas: #faf9f7;
@@ -108,4 +111,39 @@
       'ss01' on,
       'cv11' on;
   }
+}
+
+/* Modal enter/exit transitions (see ModalService EXIT_ANIMATION_MS). */
+@keyframes modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-8)) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modal-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(var(--spacing-4)) scale(0.98);
+  }
+}
+
+.modal-pane {
+  max-width: calc(100vw - var(--spacing-32));
+}
+
+.modal-panel-enter {
+  animation: modal-enter var(--duration-slow) var(--ease-decelerate);
+}
+
+.modal-panel-exit {
+  animation: modal-leave var(--duration-base) var(--ease-accelerate) forwards;
 }

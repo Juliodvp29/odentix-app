@@ -333,17 +333,17 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Built on Angular CDK's overlay/dialog primitives (focus trap,
+- [x] Built on Angular CDK's overlay/dialog primitives (focus trap,
       escape-to-close, backdrop click, scroll lock — all free from CDK,
       don't reimplement).
-- [ ] Enter/exit animation that feels smooth, not instant pop-in/out —
+- [x] Enter/exit animation that feels smooth, not instant pop-in/out —
       per `DESIGN.md`'s motion guidance if it defines one, otherwise a
       short, consistent transition.
-- [ ] Tests: opens, closes on escape/backdrop, traps focus.
+- [x] Tests: opens, closes on escape/backdrop, traps focus.
 
 **Acceptance criteria:**
 
-- [ ] Opening and closing the modal has no visible jank or layout
+- [x] Opening and closing the modal has no visible jank or layout
       shift, verified manually and noted as such when marking the
       ticket done.
 
