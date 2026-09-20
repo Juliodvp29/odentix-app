@@ -7,12 +7,14 @@ import { Link } from '@shared/link/link';
 import { ModalService } from '@shared/modal/modal.service';
 import { Select } from '@shared/select/select';
 import { TextInput } from '@shared/text-input/text-input';
+import { ToastService } from '@shared/toast/toast.service';
+import { Toasts } from '@shared/toast/toasts';
 
 // Temporary kit preview to judge the shared components visually.
 // Removed once the first real feature lands.
 @Component({
   selector: 'app-placeholder',
-  imports: [Button, FormField, IconButton, Link, Select, TextInput],
+  imports: [Button, FormField, IconButton, Link, Select, TextInput, Toasts],
   template: `
     <div class="space-y-24 p-24">
       <section class="space-y-16">
@@ -69,11 +71,23 @@ import { TextInput } from '@shared/text-input/text-input';
           <p>Demo modal body to judge the enter/exit transitions.</p>
         </ng-template>
       </section>
+
+      <section class="space-y-16">
+        <h2 class="text-heading-sm text-ink">Toasts</h2>
+        <div class="flex flex-wrap gap-8">
+          <app-button variant="secondary" (clicked)="toast('success')">Success</app-button>
+          <app-button variant="secondary" (clicked)="toast('error')">Error</app-button>
+          <app-button variant="secondary" (clicked)="toast('info')">Info</app-button>
+          <app-button variant="secondary" (clicked)="toast('warning')">Warning</app-button>
+        </div>
+      </section>
     </div>
+    <app-toasts />
   `,
 })
 export class Placeholder {
   private readonly modals = inject(ModalService);
+  private readonly notifications = inject(ToastService);
   private readonly demo = viewChild('demo', { read: TemplateRef });
 
   readonly model = signal({ email: '', country: '' });
@@ -92,5 +106,9 @@ export class Placeholder {
 
   submitDemo(): void {
     submit(this.demoForm, async () => {});
+  }
+
+  toast(type: 'success' | 'error' | 'info' | 'warning'): void {
+    this.notifications.show(`Demo ${type} toast`, type);
   }
 }

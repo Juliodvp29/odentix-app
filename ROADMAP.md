@@ -357,16 +357,16 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] A signal-based service to trigger toasts (`success`/`error`/
+- [x] A signal-based service to trigger toasts (`success`/`error`/
       `info`/`warning`) from anywhere in the app.
-- [ ] Toast component with auto-dismiss and manual dismiss, animated
+- [x] Toast component with auto-dismiss and manual dismiss, animated
       in/out consistently with the modal's approach (FASE1-04).
-- [ ] Tests: triggering a toast shows it; it auto-dismisses after its
+- [x] Tests: triggering a toast shows it; it auto-dismisses after its
       configured time.
 
 **Acceptance criteria:**
 
-- [ ] Any feature can show a toast via the service without importing a
+- [x] Any feature can show a toast via the service without importing a
       component directly into its template.
 
 ---
