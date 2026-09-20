@@ -85,17 +85,17 @@ CSS-first configuration — no `tailwind.config.js`.
 
 **Tasks:**
 
-- [ ] Install `tailwindcss` and the Angular/PostCSS integration
+- [x] Install `tailwindcss` and the Angular/PostCSS integration
       following Tailwind's current official docs (verify the exact
       steps at install time — this has changed between v3 and v4).
-- [ ] `@import "tailwindcss";` in `src/styles.css`, with `@source`
+- [x] `@import "tailwindcss";` in `src/styles.css`, with `@source`
       directives if needed for anything outside the default scan path.
-- [ ] Verify a Tailwind utility class actually applies in a test
+- [x] Verify a Tailwind utility class actually applies in a test
       element.
 
 **Acceptance criteria:**
 
-- [ ] A component using a Tailwind class (e.g. `class="text-red-500"`)
+- [x] A component using a Tailwind class (e.g. `class="text-red-500"`)
       renders with that style applied.
 
 ---
