@@ -6,6 +6,7 @@ import { IconButton } from '@shared/icon-button/icon-button';
 import { Link } from '@shared/link/link';
 import { ModalService } from '@shared/modal/modal.service';
 import { Select } from '@shared/select/select';
+import { Skeleton } from '@shared/skeleton/skeleton';
 import { TextInput } from '@shared/text-input/text-input';
 import { ToastService } from '@shared/toast/toast.service';
 import { Toasts } from '@shared/toast/toasts';
@@ -14,7 +15,7 @@ import { Toasts } from '@shared/toast/toasts';
 // Removed once the first real feature lands.
 @Component({
   selector: 'app-placeholder',
-  imports: [Button, FormField, IconButton, Link, Select, TextInput, Toasts],
+  imports: [Button, FormField, IconButton, Link, Select, Skeleton, TextInput, Toasts],
   template: `
     <div class="space-y-24 p-24">
       <section class="space-y-16">
@@ -79,6 +80,21 @@ import { Toasts } from '@shared/toast/toasts';
           <app-button variant="secondary" (clicked)="toast('error')">Error</app-button>
           <app-button variant="secondary" (clicked)="toast('info')">Info</app-button>
           <app-button variant="secondary" (clicked)="toast('warning')">Warning</app-button>
+        </div>
+      </section>
+      <section class="space-y-16">
+        <h2 class="text-heading-sm text-ink">Skeletons</h2>
+        <div class="flex items-center gap-16">
+          <app-skeleton variant="circle" />
+          <div class="flex-1 space-y-8">
+            <app-skeleton variant="line" />
+            <div class="w-2/3">
+              <app-skeleton variant="line" />
+            </div>
+          </div>
+        </div>
+        <div class="h-64">
+          <app-skeleton variant="block" />
         </div>
       </section>
     </div>

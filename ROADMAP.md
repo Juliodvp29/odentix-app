@@ -402,7 +402,7 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Reusable skeleton primitives (line, block, avatar/circle) that
+- [x] Reusable skeleton primitives (line, block, avatar/circle) that
       compose into feature-specific skeletons (e.g. a "patient card
       skeleton" built from these pieces).
 
