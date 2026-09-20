@@ -136,15 +136,15 @@ Establish the `core/` / `shared/` / `features/` convention from
 
 **Tasks:**
 
-- [ ] Create the base folders with a short `README.md` inside each
+- [x] Create the base folders with a short `README.md` inside each
       explaining its purpose (mirrors what the backend did for its
       package convention in FASE0-03).
-- [ ] Confirm routing is set up for lazy-loaded feature routes from the
+- [x] Confirm routing is set up for lazy-loaded feature routes from the
       start (even with just a placeholder route).
 
 **Acceptance criteria:**
 
-- [ ] The folder structure and its rationale are documented in the repo,
+- [x] The folder structure and its rationale are documented in the repo,
       not only in this roadmap.
 
 ---
