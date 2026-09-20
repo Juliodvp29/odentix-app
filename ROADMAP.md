@@ -379,17 +379,17 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Generic, reusable table (column definitions passed in, not
+- [x] Generic, reusable table (column definitions passed in, not
       hardcoded per feature) supporting pagination, loading state, and
       empty state.
-- [ ] Loading state is a skeleton matching the table's shape, not a
+- [x] Loading state is a skeleton matching the table's shape, not a
       spinner (per `AGENTS.md` §7).
-- [ ] Tests: renders rows, shows skeleton while loading, shows empty
+- [x] Tests: renders rows, shows skeleton while loading, shows empty
       state with no rows.
 
 **Acceptance criteria:**
 
-- [ ] The patients list (Fase 3) can be built on top of this table
+- [x] The patients list (Fase 3) can be built on top of this table
       without any table-specific logic duplicated in that feature.
 
 ---
@@ -408,7 +408,7 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Acceptance criteria:**
 
-- [ ] At least one real loading state elsewhere in the shared kit
+- [x] At least one real loading state elsewhere in the shared kit
       (e.g. the table in FASE1-06) uses these primitives instead of a
       one-off skeleton.
 
