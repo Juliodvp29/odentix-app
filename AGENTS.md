@@ -42,8 +42,6 @@ Reference documents:
   doesn't cover a case you need, stop and ask instead of inventing a
   generic-looking pattern.
 - `ROADMAP.md` — phases and tickets for this project.
-- `odentix-backend`'s `docs/` folder — architecture and data model of the
-  system this frontend is a client of.
 
 ### Skills available
 
