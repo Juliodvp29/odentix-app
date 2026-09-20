@@ -416,9 +416,9 @@ fluidity — pay particular attention to entry/exit transitions.
 
 ### ✅ Fase 1 exit checklist
 
-- [ ] Every component built here has tests and follows `DESIGN.md`
+- [x] Every component built here has tests and follows `DESIGN.md`
       tokens exclusively (no raw values).
-- [ ] A short Storybook-less "kit preview" route (even a simple internal
+- [x] A short Storybook-less "kit preview" route (even a simple internal
       page listing all shared components) exists so new components can
       be checked visually without hunting through features for one.
 
