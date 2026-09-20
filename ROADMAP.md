@@ -225,8 +225,8 @@ hand-written.
 
 **Tasks:**
 
-- [ ] GitHub Actions workflow: checkout, install, lint, `npm run
-test:ci`, build — triggered on push/PR to `dev` and `main`.
+- [x] GitHub Actions workflow: checkout, install, lint, `npm run
+  test:ci`, build — triggered on push/PR to `dev` and `main`.
 - [ ] Protect `main` (and `dev` if applicable) requiring the pipeline to
       pass before merge.
 
@@ -238,10 +238,10 @@ test:ci`, build — triggered on push/PR to `dev` and `main`.
 
 ### ✅ Fase 0 exit checklist
 
-- [ ] `npm start`, `npm test`, `npm run build`, `npm run lint`, and
+- [x] `npm start`, `npm test`, `npm run build`, `npm run lint`, and
       `npm run generate:api-types` all work.
 - [ ] CI blocks a broken PR.
-- [ ] First commit pushed to GitHub.
+- [x] First commit pushed to GitHub.
 
 ---
 
