@@ -1,9 +1,10 @@
 import { Component, computed, input, output } from '@angular/core';
 import { Button } from '@shared/button/button';
+import { Icon } from '@shared/icon/icon';
 
 @Component({
   selector: 'app-table-pagination',
-  imports: [Button],
+  imports: [Button, Icon],
   template: `
     <nav aria-label="Pagination" class="flex flex-wrap items-center gap-16">
       <p class="text-body text-mid-gray">{{ rangeText() }}</p>
@@ -28,16 +29,11 @@ import { Button } from '@shared/button/button';
               <option [value]="option">{{ option }}</option>
             }
           </select>
-          <svg
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            aria-hidden="true"
-            class="pointer-events-none absolute top-1/2 right-12 h-16 w-16 -translate-y-1/2 text-mid-gray"
+          <span
+            class="pointer-events-none absolute top-1/2 right-12 inline-flex h-16 w-16 -translate-y-1/2 items-center justify-center text-mid-gray"
           >
-            <path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
+            <app-icon name="chevron-down" />
+          </span>
         </span>
       </label>
     </nav>

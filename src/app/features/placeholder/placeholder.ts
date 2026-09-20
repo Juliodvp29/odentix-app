@@ -2,6 +2,7 @@ import { Component, inject, signal, TemplateRef, viewChild } from '@angular/core
 import { email, form, required, submit } from '@angular/forms/signals';
 import { Button } from '@shared/button/button';
 import { FormField } from '@shared/form-field/form-field';
+import { Icon } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
 import { Link } from '@shared/link/link';
 import { ModalService } from '@shared/modal/modal.service';
@@ -16,7 +17,18 @@ import { TableDemo } from './table-demo';
 // Removed once the first real feature lands.
 @Component({
   selector: 'app-placeholder',
-  imports: [Button, FormField, IconButton, Link, Select, Skeleton, TableDemo, TextInput, Toasts],
+  imports: [
+    Button,
+    FormField,
+    Icon,
+    IconButton,
+    Link,
+    Select,
+    Skeleton,
+    TableDemo,
+    TextInput,
+    Toasts,
+  ],
   template: `
     <div class="space-y-24 p-24">
       <section class="space-y-16">
@@ -31,15 +43,7 @@ import { TableDemo } from './table-demo';
         </div>
         <div class="flex items-center gap-8">
           <app-icon-button label="Close dialog">
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              aria-hidden="true"
-            >
-              <path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round" />
-            </svg>
+            <app-icon name="x" />
           </app-icon-button>
           <app-link href="/placeholder">Internal link</app-link>
           <app-link href="https://angular.dev" [external]="true">External link</app-link>

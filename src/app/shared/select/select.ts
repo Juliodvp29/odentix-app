@@ -1,12 +1,13 @@
 import { Component, computed, forwardRef, input } from '@angular/core';
 import { Field, FormField } from '@angular/forms/signals';
 import { FormFieldControl } from '@shared/form-field/form-field-control';
+import { Icon } from '@shared/icon/icon';
 
 let nextSelectId = 0;
 
 @Component({
   selector: 'app-select',
-  imports: [FormField],
+  imports: [FormField, Icon],
   providers: [{ provide: FormFieldControl, useExisting: forwardRef(() => Select) }],
   template: `
     <span class="relative block">
@@ -19,16 +20,11 @@ let nextSelectId = 0;
       >
         <ng-content />
       </select>
-      <svg
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        aria-hidden="true"
-        class="pointer-events-none absolute top-1/2 right-12 h-16 w-16 -translate-y-1/2 text-mid-gray"
+      <span
+        class="pointer-events-none absolute top-1/2 right-12 inline-flex h-16 w-16 -translate-y-1/2 items-center justify-center text-mid-gray"
       >
-        <path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
+        <app-icon name="chevron-down" />
+      </span>
     </span>
   `,
 })

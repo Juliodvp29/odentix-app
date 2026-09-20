@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Icon } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
 import { Table } from './table';
 import { TableExportService } from './table-export.service';
@@ -22,7 +23,7 @@ const ALL_MEMBERS: ReadonlyArray<TableRow> = [
 ];
 
 @Component({
-  imports: [IconButton, Table],
+  imports: [Icon, IconButton, Table],
   template: `
     <app-table
       [columns]="columns"
@@ -37,9 +38,7 @@ const ALL_MEMBERS: ReadonlyArray<TableRow> = [
     >
       <ng-template #rowActions let-row>
         <app-icon-button label="Edit member" (clicked)="onEdit(row)">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M11 2l3 3L5 14H2v-3l9-9z" stroke-linejoin="round" />
-          </svg>
+          <app-icon name="pencil" />
         </app-icon-button>
       </ng-template>
     </app-table>

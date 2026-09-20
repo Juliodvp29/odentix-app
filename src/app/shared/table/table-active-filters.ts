@@ -1,4 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
+import { Icon } from '@shared/icon/icon';
 import { FilterValue, TableColumn, describeFilter, isFilterActive } from './table-models';
 
 export interface ActiveChip {
@@ -8,6 +9,7 @@ export interface ActiveChip {
 
 @Component({
   selector: 'app-table-active-filters',
+  imports: [Icon],
   template: `
     <div class="flex flex-wrap gap-8">
       @for (chip of chips(); track chip.key) {
@@ -21,16 +23,7 @@ export interface ActiveChip {
             [attr.aria-label]="'Remove filter ' + chip.label"
             class="inline-flex text-mid-gray hover:text-ink"
           >
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              aria-hidden="true"
-              class="h-12 w-12"
-            >
-              <path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
+            <app-icon name="x" />
           </button>
         </span>
       }

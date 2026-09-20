@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { Icon } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
 import { Table } from '@shared/table/table';
 import {
@@ -14,7 +15,7 @@ import { ToastService } from '@shared/toast/toast.service';
 // Temporary rich table demo. Removed once the first real feature lands.
 @Component({
   selector: 'app-table-demo',
-  imports: [IconButton, Table],
+  imports: [Icon, IconButton, Table],
   template: `
     <section class="space-y-16">
       <h2 class="text-heading-sm text-ink">Table</h2>
@@ -30,30 +31,10 @@ import { ToastService } from '@shared/toast/toast.service';
       >
         <ng-template #rowActions let-row>
           <app-icon-button label="Edit member" (clicked)="edit(row)">
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              aria-hidden="true"
-            >
-              <path d="M11 2l3 3L5 14H2v-3l9-9z" stroke-linejoin="round" />
-            </svg>
+            <app-icon name="pencil" />
           </app-icon-button>
           <app-icon-button label="Delete member" (clicked)="remove(row)">
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              aria-hidden="true"
-            >
-              <path
-                d="M3 4h10M6.5 4V3h3v1M5 4l.8 9h4.4L11 4"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <app-icon name="trash-2" />
           </app-icon-button>
         </ng-template>
       </app-table>
