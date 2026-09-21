@@ -16,7 +16,7 @@ const SEARCH_DEBOUNCE_MS = 300;
           placeholder="Search…"
           [value]="searchValue()"
           (input)="onSearchInput($event)"
-          class="w-full rounded-control border border-transparent bg-surface-alt px-12 py-8 text-body text-ink placeholder:text-faint-gray focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+          class="w-full rounded-control border border-transparent bg-surface-alt px-12 py-8 text-body text-ink placeholder:text-mid-gray focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
         />
       </div>
       <div class="flex flex-wrap items-center gap-8">
