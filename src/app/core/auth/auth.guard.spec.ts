@@ -5,10 +5,10 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { SessionService } from './session.service';
 import { authGuard } from './auth.guard';
 
-@Component({ template: '<p>Protected content</p>' })
+@Component({ selector: 'app-protected-host', template: '<p>Protected content</p>' })
 class ProtectedHost {}
 
-@Component({ template: '<p>Login content</p>' })
+@Component({ selector: 'app-login-host', template: '<p>Login content</p>' })
 class LoginHost {}
 
 describe('authGuard', () => {

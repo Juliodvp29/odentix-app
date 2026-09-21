@@ -6,7 +6,7 @@ import { Router, provideRouter } from '@angular/router';
 import { authInterceptor } from './auth.interceptor';
 import { SessionService } from './session.service';
 
-@Component({ template: '' })
+@Component({ selector: 'app-dummy-login', template: '' })
 class DummyLoginPage {}
 
 describe('authInterceptor', () => {

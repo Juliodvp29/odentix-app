@@ -6,10 +6,10 @@ import { Router, provideRouter } from '@angular/router';
 import { AuthService } from './auth.service';
 import { SessionService } from './session.service';
 
-@Component({ template: '' })
+@Component({ selector: 'app-dummy-login', template: '' })
 class DummyLoginPage {}
 
-@Component({ template: '' })
+@Component({ selector: 'app-dummy-home', template: '' })
 class DummyHomePage {}
 
 describe('AuthService', () => {

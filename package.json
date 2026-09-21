@@ -4,11 +4,14 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prestart": "node scripts/generate-environments.mjs",
     "prebuild": "node scripts/generate-environments.mjs",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "pretest": "node scripts/generate-environments.mjs",
     "test:ci": "ng test --watch=false",
+    "pretest:ci": "node scripts/generate-environments.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "generate:api-types": "openapi-typescript http://localhost:8081/v3/api-docs -o src/app/core/api/schema.ts"
