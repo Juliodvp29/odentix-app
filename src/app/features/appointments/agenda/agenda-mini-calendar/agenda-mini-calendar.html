@@ -1,0 +1,44 @@
+<div class="rounded-card bg-paper p-16 shadow-resting">
+  <div class="flex items-center justify-between">
+    <p class="text-body font-medium text-ink">{{ title() }}</p>
+    <div class="flex gap-4">
+      <button
+        type="button"
+        aria-label="Mes anterior"
+        (click)="previousMonth.emit()"
+        class="rounded-control p-4 text-mid-gray transition-colors duration-fast hover:bg-surface-alt hover:text-ink"
+      >
+        <app-icon name="chevron-left" />
+      </button>
+      <button
+        type="button"
+        aria-label="Mes siguiente"
+        (click)="nextMonth.emit()"
+        class="rounded-control p-4 text-mid-gray transition-colors duration-fast hover:bg-surface-alt hover:text-ink"
+      >
+        <app-icon name="chevron-right" />
+      </button>
+    </div>
+  </div>
+  <div class="mt-8 grid grid-cols-7 gap-4 text-center text-caption font-medium text-mid-gray">
+    <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sá</span
+    ><span>Do</span>
+  </div>
+  <div class="mt-4 grid grid-cols-7 gap-4 text-center">
+    @for (cell of cells(); track cell.isoDate) {
+      <button
+        type="button"
+        (click)="dayPicked.emit(cell.isoDate)"
+        [attr.aria-label]="cell.dayNumber"
+        [attr.aria-pressed]="cell.isoDate === selectedIsoDate()"
+        [class.bg-teal]="cell.isoDate === selectedIsoDate()"
+        [class.text-paper]="cell.isoDate === selectedIsoDate()"
+        [class.text-mid-gray]="!cell.inMonth"
+        [class.text-ink]="cell.inMonth && cell.isoDate !== selectedIsoDate()"
+        class="rounded-control py-4 text-body transition-colors duration-fast hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+      >
+        {{ cell.dayNumber }}
+      </button>
+    }
+  </div>
+</div>

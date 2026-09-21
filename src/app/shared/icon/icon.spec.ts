@@ -3,8 +3,14 @@ import { Icon, IconName } from './icon';
 
 const names: ReadonlyArray<IconName> = [
   'x',
+  'calendar',
   'chevron-down',
+  'chevron-left',
+  'chevron-right',
+  'search',
+  'refresh',
   'pencil',
+  'plus',
   'trash-2',
   'download',
   'check',

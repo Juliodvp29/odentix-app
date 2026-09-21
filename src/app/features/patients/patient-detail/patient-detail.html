@@ -110,15 +110,17 @@
           </div>
         </dl>
       </div>
+    } @else if (activeTab() === 'records') {
+      <div role="tabpanel" id="panel-records" aria-labelledby="tab-records">
+        <app-clinical-records-timeline [patientId]="id()" />
+      </div>
+    } @else if (activeTab() === 'odontogram') {
+      <div role="tabpanel" id="panel-odontogram" aria-labelledby="tab-odontogram">
+        <app-odontogram-view [patientId]="id()" />
+      </div>
     } @else {
-      <div
-        role="tabpanel"
-        [id]="'panel-' + activeTab()"
-        [attr.aria-labelledby]="'tab-' + activeTab()"
-        class="py-32 text-center"
-      >
-        <p class="text-subheading text-ink">{{ placeholderText() }}</p>
-        <p class="mt-4 text-body text-mid-gray">Esta sección aún no está disponible.</p>
+      <div role="tabpanel" id="panel-files" aria-labelledby="tab-files">
+        <app-patient-files [patientId]="id()" />
       </div>
     }
   }

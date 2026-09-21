@@ -56,6 +56,10 @@ export class SessionService {
     this.currentUser.set(user);
   }
 
+  updateTokens(accessToken: string, refreshToken: string): void {
+    this.setSession(accessToken, refreshToken, this.currentUser());
+  }
+
   clearSession(): void {
     this.storage.removeItem(ACCESS_TOKEN_KEY);
     this.storage.removeItem(REFRESH_TOKEN_KEY);

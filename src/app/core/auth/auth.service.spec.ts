@@ -113,4 +113,17 @@ describe('AuthService', () => {
     expect(session.accessToken()).toBeNull();
     expect(completed).toBe(true);
   });
+
+  it('should rotate tokens through the refresh endpoint', () => {
+    session.setSession('old-access', 'old-refresh', { email: 'admin@odentix.co' });
+    let completed = false;
+    service.refresh().subscribe({ next: () => (completed = true) });
+    const request = httpTesting.expectOne((call) => call.url.includes('/api/v1/auth/refresh'));
+    expect(request.request.body).toEqual({ refreshToken: 'old-refresh' });
+    request.flush({ accessToken: 'new-access', refreshToken: 'new-refresh' });
+    expect(completed).toBe(true);
+    expect(session.accessToken()).toBe('new-access');
+    expect(session.refreshToken()).toBe('new-refresh');
+    expect(session.currentUser()?.email).toBe('admin@odentix.co');
+  });
 });

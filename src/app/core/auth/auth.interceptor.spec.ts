@@ -63,23 +63,88 @@ describe('authInterceptor', () => {
     request.flush({});
   });
 
-  it('should clear the session and go to login on 401', () => {
+  it('should refresh and retry the request on 401 without logging out', () => {
     const navigate = vi.spyOn(router, 'navigateByUrl');
-    session.setSession('access-123', 'refresh-123');
+    session.setSession('old-access', 'refresh-123');
+    let body: unknown;
+    http.get('/api/v1/patients').subscribe({ next: (value) => (body = value) });
+    httpTesting
+      .expectOne('/api/v1/patients')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
+    const refresh = httpTesting.expectOne((call) => call.url.includes('/api/v1/auth/refresh'));
+    expect(refresh.request.body).toEqual({ refreshToken: 'refresh-123' });
+    expect(refresh.request.headers.has('Authorization')).toBe(false);
+    refresh.flush({ accessToken: 'new-access', refreshToken: 'new-refresh' });
+    const retry = httpTesting.expectOne('/api/v1/patients');
+    expect(retry.request.headers.get('Authorization')).toBe('Bearer new-access');
+    retry.flush([{ id: 'p1' }]);
+    expect(body).toEqual([{ id: 'p1' }]);
+    expect(session.accessToken()).toBe('new-access');
+    expect(session.refreshToken()).toBe('new-refresh');
+    expect(session.isAuthenticated()).toBe(true);
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('should share a single refresh between concurrent 401s', () => {
+    session.setSession('old-access', 'refresh-123');
+    let first = 0;
+    let second = 0;
+    http.get('/api/v1/patients').subscribe({ next: () => (first += 1) });
+    http.get('/api/v1/patients').subscribe({ next: () => (second += 1) });
+    const pending = httpTesting.match('/api/v1/patients');
+    expect(pending).toHaveLength(2);
+    pending[0].flush({}, { status: 401, statusText: 'Unauthorized' });
+    pending[1].flush({}, { status: 401, statusText: 'Unauthorized' });
+    const refreshes = httpTesting.match((call) => call.url.includes('/api/v1/auth/refresh'));
+    expect(refreshes).toHaveLength(1);
+    refreshes[0].flush({ accessToken: 'new-access', refreshToken: 'new-refresh' });
+    const retries = httpTesting.match('/api/v1/patients');
+    expect(retries).toHaveLength(2);
+    retries.forEach((call) => {
+      expect(call.request.headers.get('Authorization')).toBe('Bearer new-access');
+      call.flush([]);
+    });
+    expect(first).toBe(1);
+    expect(second).toBe(1);
+  });
+
+  it('should clear the session and go to login when the refresh fails', () => {
+    const navigate = vi.spyOn(router, 'navigateByUrl');
+    session.setSession('old-access', 'expired-refresh');
+    let status = 0;
+    http
+      .get('/api/v1/patients')
+      .subscribe({ error: (error: { status?: number }) => (status = error.status ?? 0) });
+    httpTesting
+      .expectOne('/api/v1/patients')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
+    httpTesting
+      .expectOne((call) => call.url.includes('/api/v1/auth/refresh'))
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
+    expect(session.accessToken()).toBeNull();
+    expect(session.isAuthenticated()).toBe(false);
+    expect(navigate).toHaveBeenCalledWith('/login');
+    expect(status).toBe(401);
+  });
+
+  it('should clear the session and go to login on 401 without a refresh token', () => {
+    const navigate = vi.spyOn(router, 'navigateByUrl');
     http.get('/api/v1/patients').subscribe({ error: () => {} });
     httpTesting
       .expectOne('/api/v1/patients')
       .flush({}, { status: 401, statusText: 'Unauthorized' });
+    httpTesting.expectNone((call) => call.url.includes('/api/v1/auth/refresh'));
     expect(session.accessToken()).toBeNull();
     expect(navigate).toHaveBeenCalledWith('/login');
   });
 
-  it('should not redirect for 401 on auth endpoints', () => {
+  it('should not refresh or redirect for 401 on auth endpoints', () => {
     const navigate = vi.spyOn(router, 'navigateByUrl');
     http.post('/api/v1/auth/login', {}).subscribe({ error: () => {} });
     httpTesting
       .expectOne('/api/v1/auth/login')
       .flush({}, { status: 401, statusText: 'Unauthorized' });
+    httpTesting.expectNone((call) => call.url.includes('/api/v1/auth/refresh'));
     expect(navigate).not.toHaveBeenCalled();
   });
 });

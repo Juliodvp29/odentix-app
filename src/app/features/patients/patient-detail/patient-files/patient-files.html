@@ -1,0 +1,131 @@
+<div class="space-y-16">
+  <div class="rounded-card bg-paper p-24 shadow-resting">
+    <label for="patient-file-input" class="text-subheading text-ink">Subir archivo</label>
+    <p class="mt-4 text-caption text-mid-gray">Máximo 15 MB por archivo.</p>
+    <input
+      id="patient-file-input"
+      type="file"
+      (change)="onFileSelected($event)"
+      class="mt-16 block w-full text-body text-mid-gray file:mr-16 file:rounded-control file:border-0 file:bg-surface-alt file:px-16 file:py-8 file:text-body file:font-medium file:text-ink hover:file:bg-hairline"
+    />
+    @if (staged(); as pending) {
+      <div class="mt-16 rounded-control bg-surface-alt p-16">
+        <app-form-field label="Nombre del archivo" [field]="renameForm.name">
+          <app-text-input [field]="renameForm.name">
+            <ng-template #suffix>
+              <span class="text-caption text-mid-gray">{{ pending.extension || '' }}</span>
+            </ng-template>
+          </app-text-input>
+        </app-form-field>
+        <div class="mt-16 flex flex-wrap gap-8">
+          <app-button variant="primary" (clicked)="confirmUpload()">Subir</app-button>
+          <app-button variant="ghost" (clicked)="cancelStaged()">Cancelar</app-button>
+        </div>
+      </div>
+    }
+    @if (uploading(); as current) {
+      <div class="mt-16" role="status" aria-label="Subiendo archivo">
+        <p class="text-body text-ink">
+          {{ current.name }} —
+          @if (current.percent !== null) {
+            {{ current.percent }} %
+          } @else {
+            Subiendo…
+          }
+        </p>
+        <div
+          class="mt-8 h-8 overflow-hidden rounded-pill bg-surface-alt"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          [attr.aria-valuenow]="current.percent"
+        >
+          <div
+            class="h-full rounded-pill bg-teal transition-all duration-fast"
+            [class.animate-pulse]="current.percent === null"
+            [style.width.%]="current.percent ?? 100"
+          ></div>
+        </div>
+      </div>
+    }
+    @if (uploadError(); as message) {
+      <p class="mt-8 text-body text-danger-deep" role="alert">{{ message }}</p>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="space-y-16" aria-busy="true" aria-label="Cargando archivos">
+      <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+        <app-skeleton variant="line" />
+        <div class="w-2/3">
+          <app-skeleton variant="line" />
+        </div>
+      </div>
+      <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+        <app-skeleton variant="line" />
+        <div class="w-1/2">
+          <app-skeleton variant="line" />
+        </div>
+      </div>
+    </div>
+  } @else if (loadError()) {
+    <div class="space-y-16 rounded-card bg-paper p-24 text-center shadow-resting">
+      <p class="text-body text-danger-deep" role="alert">No pudimos cargar los archivos.</p>
+      <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+    </div>
+  } @else if (isEmpty()) {
+    <div class="py-32 text-center">
+      <p class="text-subheading text-ink">Sin archivos</p>
+      <p class="mt-4 text-body text-mid-gray">Aún no hay archivos para este paciente.</p>
+    </div>
+  } @else {
+    <ul class="space-y-16">
+      @for (file of files(); track file.id) {
+        <li
+          class="flex flex-wrap items-center justify-between gap-16 rounded-card bg-paper p-16 shadow-resting"
+        >
+          <div class="min-w-0">
+            <p class="truncate text-body font-medium text-ink">{{ file.fileName || 'Archivo' }}</p>
+            <p class="mt-4 text-caption text-mid-gray">
+              {{ formatSize(file.sizeBytes) }} ·
+              {{ formatDate(file.createdAt) || 'Fecha desconocida' }}
+            </p>
+          </div>
+          <div class="flex shrink-0 gap-8">
+            @if (canPreview(file)) {
+              <app-button variant="ghost" icon="eye" (clicked)="openPreview(file)">
+                Ver
+              </app-button>
+            }
+            <app-button
+              variant="ghost"
+              icon="download"
+              [loading]="downloadingId() === file.id"
+              (clicked)="download(file)"
+            >
+              @if (downloadingId() === file.id) {
+                Preparando…
+              } @else {
+                Descargar
+              }
+            </app-button>
+          </div>
+        </li>
+      }
+    </ul>
+    @if (downloadError(); as message) {
+      <p class="text-body text-danger-deep" role="alert">{{ message }}</p>
+    }
+  }
+</div>
+
+<ng-template #previewTemplate>
+  @if (previewFile(); as selected) {
+    <app-file-preview
+      [patientId]="patientId()"
+      [fileId]="selected.id ?? ''"
+      [fileName]="selected.fileName ?? 'Vista previa'"
+      [contentType]="selected.contentType"
+    />
+  }
+</ng-template>

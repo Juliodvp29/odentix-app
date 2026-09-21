@@ -1,0 +1,28 @@
+@if (loading()) {
+  <div class="space-y-8" aria-busy="true" aria-label="Cargando vista previa">
+    <div class="h-64">
+      <app-skeleton variant="block" />
+    </div>
+  </div>
+} @else if (loadError()) {
+  <div class="space-y-16 text-center">
+    <p class="text-body text-danger-deep" role="alert">No pudimos cargar la vista previa.</p>
+    <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+  </div>
+} @else if (safeUrl(); as trustedUrl) {
+  @if (isImage()) {
+    <img
+      [src]="trustedUrl"
+      [alt]="fileName()"
+      style="max-height: 70vh"
+      class="w-full rounded-control object-contain"
+    />
+  } @else if (isPdf()) {
+    <embed
+      [src]="trustedUrl"
+      type="application/pdf"
+      style="height: 70vh"
+      class="w-full rounded-control"
+    />
+  }
+}

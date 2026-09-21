@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
@@ -20,7 +20,16 @@ export class ApiClient {
     return this.http.post<ResponseBody>(this.url(path), body);
   }
 
+  get<ResponseBody>(path: string, params?: HttpParams): Observable<ResponseBody> {
+    return this.http.get<ResponseBody>(this.url(path), { params });
+  }
+
   patch<RequestBody, ResponseBody>(path: string, body: RequestBody): Observable<ResponseBody> {
     return this.http.patch<ResponseBody>(this.url(path), body);
+  }
+
+  upload<ResponseBody>(path: string, formData: FormData): Observable<HttpEvent<ResponseBody>> {
+    const request = new HttpRequest('POST', this.url(path), formData, { reportProgress: true });
+    return this.http.request<ResponseBody>(request);
   }
 }

@@ -1,0 +1,27 @@
+<ol class="space-y-16">
+  @for (appointment of appointments(); track appointment.id) {
+    <li class="flex flex-wrap items-center gap-16 rounded-card bg-paper p-16 shadow-resting">
+      <p class="w-64 shrink-0 text-body font-medium text-ink">
+        {{ formatTime(appointment.startsAt) }}
+        <span class="block text-caption font-normal text-mid-gray">
+          {{ formatTime(appointment.endsAt) }}
+        </span>
+      </p>
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-body font-medium text-ink">
+          {{ appointment.patientName || 'Paciente sin nombre' }}
+        </p>
+        <p class="mt-4 truncate text-caption text-mid-gray">
+          {{ appointment.professionalName || '' }}
+        </p>
+      </div>
+      <span
+        class="inline-block rounded-pill text-caption font-medium"
+        style="padding: 2px 10px"
+        [class]="statusBadge(appointment.status)"
+      >
+        {{ statusLabel(appointment.status) }}
+      </span>
+    </li>
+  }
+</ol>

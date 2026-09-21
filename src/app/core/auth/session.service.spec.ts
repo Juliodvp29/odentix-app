@@ -67,4 +67,14 @@ describe('SessionService', () => {
     expect(seeded.currentUser()?.email).toBe('admin@odentix.co');
     expect(localStorage.getItem('odentix.currentUser')).toContain('admin@odentix.co');
   });
+
+  it('should rotate tokens while keeping the current user', () => {
+    const service = TestBed.inject(SessionService);
+    service.setSession('old-access', 'old-refresh', { email: 'admin@odentix.co' });
+    service.updateTokens('new-access', 'new-refresh');
+    expect(service.accessToken()).toBe('new-access');
+    expect(service.refreshToken()).toBe('new-refresh');
+    expect(service.currentUser()?.email).toBe('admin@odentix.co');
+    expect(service.isAuthenticated()).toBe(true);
+  });
 });

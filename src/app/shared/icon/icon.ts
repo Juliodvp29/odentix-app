@@ -1,14 +1,20 @@
 import { Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
+  lucideCalendar,
   lucideCheck,
   lucideChevronDown,
+  lucideChevronLeft,
+  lucideChevronRight,
   lucideDownload,
   lucideEye,
   lucideEyeOff,
   lucideLayoutDashboard,
   lucideLogOut,
   lucidePencil,
+  lucidePlus,
+  lucideRefreshCw,
+  lucideSearch,
   lucideTrash2,
   lucideTriangleAlert,
   lucideUsers,
@@ -17,8 +23,14 @@ import {
 
 export type IconName =
   | 'x'
+  | 'calendar'
   | 'chevron-down'
+  | 'chevron-left'
+  | 'chevron-right'
+  | 'search'
+  | 'refresh'
   | 'pencil'
+  | 'plus'
   | 'trash-2'
   | 'download'
   | 'check'
@@ -31,8 +43,14 @@ export type IconName =
 
 const ICON_NAMES: Record<IconName, string> = {
   x: 'lucideX',
+  calendar: 'lucideCalendar',
   'chevron-down': 'lucideChevronDown',
+  'chevron-left': 'lucideChevronLeft',
+  'chevron-right': 'lucideChevronRight',
+  search: 'lucideSearch',
+  refresh: 'lucideRefreshCw',
   pencil: 'lucidePencil',
+  plus: 'lucidePlus',
   'trash-2': 'lucideTrash2',
   download: 'lucideDownload',
   check: 'lucideCheck',
@@ -49,14 +67,20 @@ const ICON_NAMES: Record<IconName, string> = {
   imports: [NgIcon],
   providers: [
     provideIcons({
+      lucideCalendar,
       lucideCheck,
       lucideChevronDown,
+      lucideChevronLeft,
+      lucideChevronRight,
       lucideDownload,
       lucideEye,
       lucideEyeOff,
       lucideLayoutDashboard,
       lucideLogOut,
       lucidePencil,
+      lucidePlus,
+      lucideRefreshCw,
+      lucideSearch,
       lucideTrash2,
       lucideTriangleAlert,
       lucideUsers,

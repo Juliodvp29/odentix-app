@@ -1,0 +1,204 @@
+<div class="space-y-16">
+  <div class="flex flex-wrap items-center justify-between gap-8">
+    <div>
+      <h3 class="text-subheading text-ink">Odontograma interactivo (FDI)</h3>
+      <p class="mt-4 text-caption text-mid-gray">
+        Selecciona una pieza o superficie para ver y registrar el detalle clínico.
+      </p>
+    </div>
+    <app-button variant="ghost" (clicked)="deselected.emit()">Deseleccionar</app-button>
+  </div>
+
+  <div (keydown)="onChartKeydown($event)">
+    <div class="space-y-8">
+      <div class="flex items-center justify-between px-8 text-caption font-medium text-mid-gray">
+        <span>Cuadrante 1 (18 - 11)</span>
+        <span class="text-teal">Maxilar Superior</span>
+        <span>Cuadrante 2 (21 - 28)</span>
+      </div>
+      <div class="overflow-x-auto pb-8">
+        <div
+          class="flex min-w-160 items-center justify-center gap-4 rounded-card border border-hairline bg-surface-alt p-12"
+        >
+          <div class="flex gap-4">
+            @for (view of upperLeft(); track view.toothNumber) {
+              <ng-container
+                *ngTemplateOutlet="toothTpl; context: { $implicit: view }"
+              ></ng-container>
+            }
+          </div>
+          <div
+            aria-hidden="true"
+            class="mx-4 flex h-16 w-px flex-col items-center justify-between bg-hairline py-4"
+          >
+            <span class="text-caption text-mid-gray">SUP</span>
+          </div>
+          <div class="flex gap-4">
+            @for (view of upperRight(); track view.toothNumber) {
+              <ng-container
+                *ngTemplateOutlet="toothTpl; context: { $implicit: view }"
+              ></ng-container>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-8">
+      <div class="overflow-x-auto pb-8">
+        <div
+          class="flex min-w-160 items-center justify-center gap-4 rounded-card border border-hairline bg-surface-alt p-12"
+        >
+          <div class="flex gap-4">
+            @for (view of lowerRight(); track view.toothNumber) {
+              <ng-container
+                *ngTemplateOutlet="toothTpl; context: { $implicit: view }"
+              ></ng-container>
+            }
+          </div>
+          <div
+            aria-hidden="true"
+            class="mx-4 flex h-16 w-px flex-col items-center justify-between bg-hairline py-4"
+          >
+            <span class="text-caption text-mid-gray">INF</span>
+          </div>
+          <div class="flex gap-4">
+            @for (view of lowerLeft(); track view.toothNumber) {
+              <ng-container
+                *ngTemplateOutlet="toothTpl; context: { $implicit: view }"
+              ></ng-container>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between px-8 text-caption font-medium text-mid-gray">
+        <span>Cuadrante 4 (48 - 41)</span>
+        <span class="text-teal">Maxilar Inferior</span>
+        <span>Cuadrante 3 (31 - 38)</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-caption text-mid-gray">
+    Navegación por teclado: usa las flechas para moverte entre piezas. Cinco superficies por pieza.
+  </p>
+</div>
+
+<ng-template #toothTpl let-view>
+  <button
+    #toothButton
+    type="button"
+    (click)="selectTooth(view.toothNumber)"
+    (mouseenter)="onToothEnter($event, view.toothNumber)"
+    (mouseleave)="onToothLeave()"
+    (focus)="onToothFocus($event, view.toothNumber)"
+    (blur)="onToothLeave()"
+    [attr.aria-label]="describe(view)"
+    [attr.aria-pressed]="selectedTooth() === view.toothNumber"
+    [attr.tabindex]="tabIndexFor(view.toothNumber)"
+    class="flex flex-col items-center gap-4 rounded-control p-4 transition-transform duration-fast hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+  >
+    <span
+      class="text-caption font-medium"
+      [class.text-teal]="selectedTooth() === view.toothNumber"
+      [class.text-mid-gray]="selectedTooth() !== view.toothNumber"
+      >{{ view.toothNumber }}</span
+    >
+    @if (view.state.isMissing) {
+      <svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true">
+        <rect
+          width="40"
+          height="40"
+          rx="4"
+          [attr.fill]="neutralFill"
+          [attr.stroke]="selectedTooth() === view.toothNumber ? selectionStroke : neutralStroke"
+          [attr.stroke-width]="selectedTooth() === view.toothNumber ? 2 : 1"
+        />
+        <line
+          x1="8"
+          y1="8"
+          x2="32"
+          y2="32"
+          [attr.stroke]="missingStroke"
+          stroke-width="2.5"
+          stroke-linecap="round"
+        />
+        <line
+          x1="32"
+          y1="8"
+          x2="8"
+          y2="32"
+          [attr.stroke]="missingStroke"
+          stroke-width="2.5"
+          stroke-linecap="round"
+        />
+      </svg>
+    } @else {
+      <svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true">
+        <rect
+          width="40"
+          height="40"
+          rx="4"
+          fill="#ffffff"
+          [attr.stroke]="selectedTooth() === view.toothNumber ? selectionStroke : neutralStroke"
+          [attr.stroke-width]="selectedTooth() === view.toothNumber ? 2 : 1"
+        />
+        <polygon
+          points="0,0 40,0 28,12 12,12"
+          [attr.fill]="fillFor(view, 'vestibular')"
+          [attr.stroke]="neutralStroke"
+          stroke-width="0.8"
+          class="cursor-pointer transition-all duration-fast hover:brightness-90"
+          (click)="selectSurface(view.toothNumber, 'vestibular', $event)"
+        />
+        <polygon
+          points="40,0 40,40 28,28 28,12"
+          [attr.fill]="fillFor(view, 'distal')"
+          [attr.stroke]="neutralStroke"
+          stroke-width="0.8"
+          class="cursor-pointer transition-all duration-fast hover:brightness-90"
+          (click)="selectSurface(view.toothNumber, 'distal', $event)"
+        />
+        <polygon
+          points="0,40 40,40 28,28 12,28"
+          [attr.fill]="fillFor(view, 'lingual')"
+          [attr.stroke]="neutralStroke"
+          stroke-width="0.8"
+          class="cursor-pointer transition-all duration-fast hover:brightness-90"
+          (click)="selectSurface(view.toothNumber, 'lingual', $event)"
+        />
+        <polygon
+          points="0,0 0,40 12,28 12,12"
+          [attr.fill]="fillFor(view, 'mesial')"
+          [attr.stroke]="neutralStroke"
+          stroke-width="0.8"
+          class="cursor-pointer transition-all duration-fast hover:brightness-90"
+          (click)="selectSurface(view.toothNumber, 'mesial', $event)"
+        />
+        <rect
+          x="12"
+          y="12"
+          width="16"
+          height="16"
+          [attr.fill]="fillFor(view, 'oclusal')"
+          [attr.stroke]="neutralStroke"
+          stroke-width="0.8"
+          class="cursor-pointer transition-all duration-fast hover:brightness-90"
+          (click)="selectSurface(view.toothNumber, 'oclusal', $event)"
+        />
+      </svg>
+    }
+  </button>
+</ng-template>
+
+@if (tooltip(); as tip) {
+  <div
+    role="tooltip"
+    class="fixed z-50 max-w-64 rounded-sm bg-ink px-8 py-4 text-caption text-paper shadow-raised"
+    [style.left.px]="tip.left - 80"
+    [style.top.px]="tip.top - 48"
+  >
+    <p class="font-medium">{{ tooltipTitle(tip.tooth) }}</p>
+    <p class="text-paper">{{ tooltipStatus(tip.tooth) }}</p>
+  </div>
+}

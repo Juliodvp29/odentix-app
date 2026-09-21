@@ -226,7 +226,7 @@ hand-written.
 **Tasks:**
 
 - [x] GitHub Actions workflow: checkout, install, lint, `npm run
-  test:ci`, build — triggered on push/PR to `dev` and `main`.
+test:ci`, build — triggered on push/PR to `dev` and `main`.
 - [x] Protect `main` (and `dev` if applicable) requiring the pipeline to
       pass before merge.
 
@@ -627,14 +627,14 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Timeline/list of clinical record entries.
-- [ ] Odontogram data view (visual representation can start simple —
+- [x] Timeline/list of clinical record entries.
+- [x] Odontogram data view (visual representation can start simple —
       this is explicitly one of the harder design problems, coordinate
       with `DESIGN.md` before investing in a polished version).
 
 **Acceptance criteria:**
 
-- [ ] Clinical entries and odontogram entries are readable and clearly
+- [x] Clinical entries and odontogram entries are readable and clearly
       separated by type (current state vs. diagnosis vs. plan vs.
       completed treatment — matching the backend's model).
 
@@ -648,14 +648,46 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] File upload UI with progress feedback, and a list of existing
+- [x] File upload UI with progress feedback, and a list of existing
       files with download links.
 
 **Acceptance criteria:**
 
-- [ ] Uploading a file shows progress and updates the list without a
+- [x] Uploading a file shows progress and updates the list without a
       manual refresh; the loading/uploading state never leaves the UI
       in an ambiguous "did it work?" state.
+
+---
+
+### 🎫 FASE3-06 — Visual interactive odontogram
+
+**Type:** feature
+**Estimate:** L (5–6h — SVG chart + detail panel + entry modal)
+**Depends on:** FASE3-04, `DESIGN.md` odontogram pattern
+
+**Description:**
+FASE3-04 shipped the odontogram as a data view. This ticket replaces
+it with the visual clinical chart from the approved mockup: 32 FDI
+teeth in 4 quadrants, 5 clickable surfaces each, clinical color
+convention, side detail panel, and entry creation in a modal.
+
+**Tasks:**
+
+- [x] SVG chart with per-surface colors, missing-tooth cross, tooltip,
+      arrow-key navigation, arch-shaped skeleton, error with retry.
+- [x] Detail panel per tooth (status pill, mini surface map, entries,
+      add-entry entry point, empty state).
+- [x] Entry modal (type, surfaces or whole tooth, condition with
+      presets, notes) saving one backend entry per surface.
+- [x] No delete buttons in v1 (the backend is append-only — deletion
+      needs a backend endpoint first).
+
+**Acceptance criteria:**
+
+- [x] Selecting a tooth shows its entries; saving from the modal
+      recolors the tooth without a manual refresh.
+- [x] A tooth with several entries shows its highest-priority type
+      (diagnosis > proposed > completed > current).
 
 ---
 
@@ -673,13 +705,13 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Day/week view of appointments per professional.
-- [ ] Loading and empty states designed deliberately, not an
+- [x] Day/week view of appointments per professional.
+- [x] Loading and empty states designed deliberately, not an
       afterthought, given how central this screen is.
 
 **Acceptance criteria:**
 
-- [ ] Switching between days/weeks feels immediate — prefetch adjacent
+- [x] Switching between days/weeks feels immediate — prefetch adjacent
       ranges if needed to avoid a visible loading state on every click.
 
 ---
@@ -692,14 +724,18 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Modal form to create/edit an appointment, surfacing the backend's
+- [x] Modal form to create/edit an appointment, surfacing the backend's
       overlap-conflict error (`409`) as a clear, specific message —
       not a generic "something went wrong."
 
 **Acceptance criteria:**
 
-- [ ] Attempting to double-book a professional shows a message
+- [x] Attempting to double-book a professional shows a message
       explaining the conflict, not a raw error.
+
+**Note:** only creation shipped — the backend exposes no appointment
+update endpoint, so editing details is blocked backend-side (see the
+backend adjustments summary).
 
 ---
 

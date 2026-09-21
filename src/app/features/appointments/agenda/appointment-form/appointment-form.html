@@ -1,0 +1,100 @@
+<div class="space-y-16">
+  <app-form-field label="Paciente" [field]="appointmentForm.patientId">
+    @if (selectedPatient(); as patient) {
+      <div
+        class="flex items-center justify-between gap-8 rounded-control bg-surface-alt px-12 py-8"
+      >
+        <span class="truncate text-body font-medium text-ink">{{ patientName(patient) }}</span>
+        <app-button variant="ghost" (clicked)="clearPatient()">Quitar</app-button>
+      </div>
+    } @else {
+      <input
+        type="text"
+        aria-label="Buscar paciente"
+        placeholder="Escribe para buscar…"
+        [value]="patientSearch()"
+        (input)="onPatientSearch($event)"
+        class="block w-full rounded-control border border-hairline bg-surface-alt px-12 py-8 text-body text-ink placeholder:text-mid-gray focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+      />
+      @if (patientResults.value(); as results) {
+        @if (results.length > 0) {
+          <ul role="listbox" aria-label="Pacientes encontrados" class="mt-8 space-y-4">
+            @for (result of results; track result.id) {
+              <li>
+                <button
+                  type="button"
+                  role="option"
+                  [attr.aria-selected]="false"
+                  (click)="pickPatient(result)"
+                  class="block w-full truncate rounded-control border border-hairline bg-paper px-12 py-8 text-left text-body text-ink transition-colors duration-fast hover:bg-surface-alt"
+                >
+                  {{ patientName(result) }}
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      }
+    }
+  </app-form-field>
+
+  <div class="grid gap-16 sm:grid-cols-2">
+    <app-form-field label="Profesional (opcional)" [field]="appointmentForm.professionalId">
+      <app-select
+        [field]="appointmentForm.professionalId"
+        [options]="professionalSelectOptions()"
+        placeholder="Sin asignar"
+      />
+    </app-form-field>
+    <app-form-field label="Consultorio (opcional)" [field]="appointmentForm.roomId">
+      <app-select
+        [field]="appointmentForm.roomId"
+        [options]="roomSelectOptions()"
+        placeholder="Sin asignar"
+      />
+    </app-form-field>
+  </div>
+
+  <div class="grid gap-16 sm:grid-cols-2">
+    <app-form-field label="Inicio" [field]="appointmentForm.startsAt">
+      <app-text-input [field]="appointmentForm.startsAt" type="datetime-local" />
+    </app-form-field>
+    <app-form-field label="Fin" [field]="appointmentForm.endsAt">
+      <app-text-input [field]="appointmentForm.endsAt" type="datetime-local" />
+    </app-form-field>
+  </div>
+  @if (rangeError(); as message) {
+    <p class="text-body text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="grid gap-16 sm:grid-cols-2">
+    <app-form-field label="Riesgo (opcional)" [field]="appointmentForm.riskLevel">
+      <app-select
+        [field]="appointmentForm.riskLevel"
+        [options]="riskSelectOptions"
+        placeholder="Sin especificar"
+      />
+    </app-form-field>
+    <app-form-field
+      label="Valor estimado COP (opcional)"
+      [field]="appointmentForm.estimatedValueCop"
+    >
+      <app-text-input [field]="appointmentForm.estimatedValueCop" type="number" placeholder="0" />
+    </app-form-field>
+  </div>
+
+  <app-form-field label="Notas (opcional)" [field]="appointmentForm.notes">
+    <app-text-input [field]="appointmentForm.notes" placeholder="Motivo, indicaciones…" />
+  </app-form-field>
+
+  @if (serverError(); as message) {
+    <p class="text-body text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex items-center justify-end gap-8 border-t border-hairline pt-16">
+    <app-button variant="ghost" (clicked)="cancelled.emit()">Cancelar</app-button>
+    <app-button variant="primary" icon="check" [loading]="saving()" (clicked)="submitAppointment()">
+      Agendar cita
+    </app-button>
+  </div>
+</div>

@@ -1,0 +1,237 @@
+<!-- Top bar: title + view tabs + action -->
+<div class="flex flex-wrap items-center justify-between gap-8 border-b border-hairline pb-12">
+  <h1 class="text-subheading font-semibold text-ink">Agenda</h1>
+  <!-- View tabs + New appointment — same width via grid two equal columns -->
+  <div class="grid grid-cols-2 items-center gap-8">
+    <div
+      role="group"
+      aria-label="Vista de agenda"
+      class="flex w-full rounded-control border border-hairline bg-surface-alt p-4"
+    >
+      @for (tab of viewTabs; track tab.value) {
+        <button
+          type="button"
+          [attr.aria-pressed]="view() === tab.value"
+          (click)="setView(tab.value)"
+          [class.bg-paper]="view() === tab.value"
+          [class.shadow-resting]="view() === tab.value"
+          [class.text-ink]="view() === tab.value"
+          [class.text-mid-gray]="view() !== tab.value"
+          class="flex-1 rounded-control px-12 py-8 text-body font-medium transition-all duration-fast"
+        >
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+    <app-button variant="primary" icon="plus" [fullWidth]="true" (clicked)="openCreateForm()"> Nueva cita </app-button>
+  </div>
+</div>
+
+<!-- Navigation bar: chevrons + date label -->
+<div class="flex items-center gap-8 pt-4">
+  <button
+    type="button"
+    aria-label="Período anterior"
+    (click)="goToPrevious()"
+    class="rounded-control p-8 text-mid-gray transition-colors duration-fast hover:bg-surface-alt hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+  >
+    <app-icon name="chevron-left" />
+  </button>
+  <button
+    type="button"
+    aria-label="Hoy"
+    (click)="goToToday()"
+    class="rounded-control border border-hairline px-12 py-6 text-body font-medium text-ink transition-colors duration-fast hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+  >
+    Hoy
+  </button>
+  <button
+    type="button"
+    aria-label="Período siguiente"
+    (click)="goToNext()"
+    class="rounded-control p-8 text-mid-gray transition-colors duration-fast hover:bg-surface-alt hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+  >
+    <app-icon name="chevron-right" />
+  </button>
+  <p class="ml-4 flex-1 text-subheading font-semibold text-ink" aria-live="polite">
+    {{ rangeLabel() }}
+  </p>
+</div>
+
+<!-- Filters row -->
+<div class="flex flex-wrap items-end gap-16">
+  <div class="w-full sm:w-80">
+    <app-form-field label="Profesional" [field]="filterForm.professionalId">
+      <app-select
+        inputId="agenda-professional"
+        [field]="filterForm.professionalId"
+        [options]="professionalSelectOptions()"
+        placeholder="Todos"
+        (change)="onFilterChange()"
+      />
+    </app-form-field>
+  </div>
+  <div class="w-full sm:w-80">
+    <app-form-field label="Consultorio" [field]="filterForm.roomId">
+      <app-select
+        inputId="agenda-room"
+        [field]="filterForm.roomId"
+        [options]="roomSelectOptions()"
+        placeholder="Todos"
+        (change)="onFilterChange()"
+      />
+    </app-form-field>
+  </div>
+</div>
+
+<!-- Status counts strip -->
+@if (!isLoading() && !loadFailed()) {
+  <div class="flex flex-wrap items-center gap-x-16 gap-y-8 text-caption mb-8" aria-live="polite">
+    <span class="font-medium text-ink">{{ appointments().length }} citas</span>
+    @for (entry of statusLegend; track entry.status) {
+      <span class="inline-flex items-center gap-4 text-mid-gray">
+        <span class="h-8 w-8 rounded-pill" [class]="entry.dot"></span>
+        {{ entry.label }}: {{ statusCounts()[entry.status] ?? 0 }}
+      </span>
+    }
+    @if (view() === 'day') {
+      <!-- Day search + refresh inline with counts -->
+      <div class="ml-auto flex items-center gap-8">
+        <div class="relative">
+          <span
+            class="pointer-events-none absolute inset-y-0 left-8 flex items-center text-mid-gray"
+          >
+            <app-icon name="search" />
+          </span>
+          <input
+            type="text"
+            aria-label="Buscar paciente en el día"
+            placeholder="Buscar paciente en el día…"
+            [value]="daySearch()"
+            (input)="onDaySearch($event)"
+            class="block rounded-control border border-hairline bg-surface-alt py-4 pl-32 pr-12 text-body text-ink placeholder:text-mid-gray focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+          />
+        </div>
+        <button
+          type="button"
+          aria-label="Actualizar agenda"
+          (click)="reloadRanges()"
+          class="rounded-control p-8 text-mid-gray transition-colors duration-fast hover:bg-surface-alt hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+        >
+          <app-icon name="refresh" />
+        </button>
+      </div>
+    }
+  </div>
+}
+
+<!-- Loading skeleton -->
+@if (isLoading()) {
+  <div class="space-y-16" aria-busy="true" aria-label="Cargando agenda">
+    <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+      <app-skeleton variant="line" />
+      <div class="w-2/3">
+        <app-skeleton variant="line" />
+      </div>
+    </div>
+    <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+      <app-skeleton variant="line" />
+      <div class="w-1/2">
+        <app-skeleton variant="line" />
+      </div>
+    </div>
+  </div>
+} @else if (loadFailed()) {
+  <div class="space-y-16 rounded-card bg-paper p-24 text-center shadow-resting">
+    <p class="text-body text-danger-deep" role="alert">No pudimos cargar la agenda.</p>
+    <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+  </div>
+} @else if (isEmpty() && view() !== 'day') {
+  <div class="py-32 text-center">
+    <p class="text-subheading text-ink">Sin citas programadas</p>
+    <p class="mt-4 text-body text-mid-gray">
+      @if (view() === 'week') {
+        No hay citas para esta semana.
+      } @else {
+        No hay citas para este mes.
+      }
+    </p>
+  </div>
+} @else if (view() === 'day') {
+  <div class="grid items-start gap-16 xl:grid-cols-3">
+    <div class="space-y-16 xl:col-span-2">
+      @if (isEmpty()) {
+        <p class="text-body text-mid-gray">
+          No hay citas para este día — elige un espacio libre para agendar.
+        </p>
+      }
+      <app-agenda-time-grid
+        [columns]="timeGridColumns()"
+        [showNowLine]="true"
+        (appointmentPicked)="pickAppointment($event)"
+        (freeSlotPicked)="openCreateForm()"
+      />
+    </div>
+    <div class="space-y-16">
+      <app-agenda-mini-calendar
+        [anchorIsoDate]="anchor()"
+        [selectedIsoDate]="anchor()"
+        (previousMonth)="goToMonth(-1)"
+        (nextMonth)="goToMonth(1)"
+        (dayPicked)="pickDay($event)"
+      />
+      <app-agenda-detail-panel [appointment]="selectedAppointment()" (closed)="closeDetail()" />
+      <!-- Status legend -->
+      <div class="rounded-card bg-paper p-16 shadow-resting">
+        <p class="text-caption font-medium text-mid-gray">CONVENCIÓN DE ESTADOS</p>
+        <ul class="mt-8 grid grid-cols-2 gap-8">
+          @for (entry of statusLegend; track entry.status) {
+            <li
+              class="flex items-center gap-8 rounded-control px-8 py-4 text-caption font-medium"
+              [class]="entry.badge"
+            >
+              <span class="h-8 w-8 rounded-pill" [class]="entry.dot"></span>
+              {{ entry.label }}
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+} @else if (view() === 'month') {
+  <div class="grid items-start gap-16 xl:grid-cols-3">
+    <div class="xl:col-span-2">
+      <app-agenda-month-view [days]="monthDays()" (dayPicked)="pickDay($event)" />
+    </div>
+    <div class="space-y-16">
+      <app-agenda-mini-calendar
+        [anchorIsoDate]="anchor()"
+        [selectedIsoDate]="anchor()"
+        (previousMonth)="goToMonth(-1)"
+        (nextMonth)="goToMonth(1)"
+        (dayPicked)="pickDay($event)"
+      />
+      <app-agenda-detail-panel [appointment]="selectedAppointment()" (closed)="closeDetail()" />
+      <div class="rounded-card bg-paper p-16 shadow-resting">
+        <p class="text-caption font-medium text-mid-gray">CONVENCIÓN DE ESTADOS</p>
+        <ul class="mt-8 grid grid-cols-2 gap-8">
+          @for (entry of statusLegend; track entry.status) {
+            <li
+              class="flex items-center gap-8 rounded-control px-8 py-4 text-caption font-medium"
+              [class]="entry.badge"
+            >
+              <span class="h-8 w-8 rounded-pill" [class]="entry.dot"></span>
+              {{ entry.label }}
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+} @else {
+  <app-agenda-week-view [columns]="weekColumns()" />
+}
+
+<ng-template #createTemplate>
+  <app-appointment-form (saved)="onAppointmentSaved()" (cancelled)="onCreateCancelled()" />
+</ng-template>

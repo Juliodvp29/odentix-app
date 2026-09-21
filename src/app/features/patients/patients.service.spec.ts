@@ -1,5 +1,5 @@
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpEventType, provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { PatientsService, toPatientParams } from './patients.service';
@@ -127,5 +127,155 @@ describe('PatientsService', () => {
       .flush({ firstName: 'Luis' });
     await flushEffects();
     expect(detail.value()?.firstName).toBe('Luis');
+  });
+
+  it('should fetch clinical records for a patient', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    const records = TestBed.runInInjectionContext(() =>
+      service.clinicalRecords(signal('patient-1')),
+    );
+    await flushEffects();
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-1/clinical-records'))
+      .flush([{ id: 'record-1', chiefComplaint: 'Dolor molar' }]);
+    await flushEffects();
+    expect(records.value()?.length).toBe(1);
+    expect(records.value()?.[0]?.chiefComplaint).toBe('Dolor molar');
+  });
+
+  it('should fetch the odontogram for a patient', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    const odontogram = TestBed.runInInjectionContext(() => service.odontogram(signal('patient-1')));
+    await flushEffects();
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-1/odontogram'))
+      .flush({ patientId: 'patient-1', teeth: [{ toothNumber: 16, entries: {} }] });
+    await flushEffects();
+    expect(odontogram.value()?.teeth?.length).toBe(1);
+    expect(odontogram.value()?.teeth?.[0]?.toothNumber).toBe(16);
+  });
+
+  it('should fetch files for a patient', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    const files = TestBed.runInInjectionContext(() => service.files(signal('patient-1')));
+    await flushEffects();
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-1/files'))
+      .flush([{ id: 'file-1', fileName: 'scan.pdf' }]);
+    await flushEffects();
+    expect(files.value()?.length).toBe(1);
+    expect(files.value()?.[0]?.fileName).toBe('scan.pdf');
+  });
+
+  it('should emit upload progress and completion with the created file', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    const events: Array<string | number | null> = [];
+    let completedName: string | undefined;
+    service
+      .uploadFile('patient-1', new File(['data'], 'scan.pdf', { type: 'application/pdf' }))
+      .subscribe((event) => {
+        if (event.kind === 'progress') {
+          events.push(event.percent);
+        } else {
+          events.push('complete');
+          completedName = event.file.fileName ?? undefined;
+        }
+      });
+    await flushEffects();
+    const request = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/patients/patient-1/files'),
+    );
+    expect(request.request.method).toBe('POST');
+    const sent = request.request.body as FormData;
+    expect(sent.get('file')).toBeInstanceOf(File);
+    request.event({ type: HttpEventType.UploadProgress, loaded: 25, total: 100 });
+    request.flush({ id: 'file-1', fileName: 'scan.pdf' });
+    await flushEffects();
+    expect(events).toEqual([25, 'complete']);
+    expect(completedName).toBe('scan.pdf');
+  });
+
+  it('should send a custom filename when provided', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    service
+      .uploadFile(
+        'patient-1',
+        new File(['data'], 'scan.pdf', { type: 'application/pdf' }),
+        'rx-final.pdf',
+      )
+      .subscribe();
+    await flushEffects();
+    const request = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/patients/patient-1/files'),
+    );
+    const sent = request.request.body as FormData;
+    expect((sent.get('file') as File).name).toBe('rx-final.pdf');
+    request.flush({ id: 'file-1', fileName: 'rx-final.pdf' });
+    await flushEffects();
+  });
+
+  it('should fetch a file download url', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    let downloadUrl: string | undefined;
+    service
+      .fileDownloadUrl('patient-1', 'file-1')
+      .subscribe((response) => (downloadUrl = response.downloadUrl ?? undefined));
+    await flushEffects();
+    httpTesting
+      .expectOne((call) =>
+        call.url.endsWith('/api/v1/patients/patient-1/files/file-1/download-url'),
+      )
+      .flush({ downloadUrl: 'https://files.example/scan.pdf' });
+    await flushEffects();
+    expect(downloadUrl).toBe('https://files.example/scan.pdf');
+  });
+
+  it('should search patients by query', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    let names: Array<string | undefined> = [];
+    service.searchPatients('ada').subscribe((patients) => {
+      names = patients.map((patient) => patient.firstName);
+    });
+    await flushEffects();
+    const request = httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients'));
+    expect(request.request.params.get('query')).toBe('ada');
+    request.flush({ content: [{ firstName: 'Ada' }] });
+    await flushEffects();
+    expect(names).toEqual(['Ada']);
+  });
+
+  it('should post an odontogram entry', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    let entryId: string | undefined;
+    service
+      .addOdontogramEntry('patient-1', {
+        toothNumber: 16,
+        surface: 'oclusal',
+        entryType: 'diagnostico',
+        condition: 'Caries oclusal',
+      })
+      .subscribe((entry) => (entryId = entry.id ?? undefined));
+    await flushEffects();
+    const request = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/patients/patient-1/odontogram'),
+    );
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({
+      toothNumber: 16,
+      surface: 'oclusal',
+      entryType: 'diagnostico',
+      condition: 'Caries oclusal',
+    });
+    request.flush({ id: 'entry-1' });
+    await flushEffects();
+    expect(entryId).toBe('entry-1');
   });
 });

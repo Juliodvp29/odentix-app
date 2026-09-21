@@ -21,6 +21,21 @@ Access and refresh tokens live in `localStorage` (`odentix.accessToken` /
 `authInterceptor` attaches `Authorization: Bearer <access>` to every
 request except `/api/v1/auth/*` (login, refresh, and logout manage their
 own credentials — an expired token must never poison a refresh, and a
-failed login keeps its own error). On 401 from any other endpoint it
-clears the session and navigates to `/login` without a page reload
-(skipped when already there).
+failed login keeps its own error).
+
+## Silent renewal
+
+When any other endpoint answers `401`, the interceptor tries one silent
+refresh before giving up:
+
+- `TokenRefreshService.refresh()` posts the stored refresh token to
+  `/api/v1/auth/refresh` and stores the rotated pair, keeping the
+  current user. It calls the backend through `HttpBackend` directly so
+  the refresh itself bypasses the interceptor and can never recurse.
+- Concurrent `401`s share a single in-flight refresh instead of firing
+  one per request.
+- The failed request is retried once with the new access token. Only
+  when the refresh fails with `401`/`403` (or there is no refresh token
+  at all) is the session cleared and the user sent to `/login`.
+  Transient refresh failures keep the session so the next request can
+  try again.
