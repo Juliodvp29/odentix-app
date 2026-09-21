@@ -82,9 +82,9 @@ export class PatientsService {
     }));
   }
 
-  uploadFile(patientId: string, file: File): Observable<FileUploadEvent> {
+  uploadFile(patientId: string, file: File, filename?: string): Observable<FileUploadEvent> {
     const formData = new FormData();
-    formData.append('file', file, file.name);
+    formData.append('file', file, filename ?? file.name);
     return this.api
       .upload<PatientFileResponse>(`/api/v1/patients/${patientId}/files`, formData)
       .pipe(

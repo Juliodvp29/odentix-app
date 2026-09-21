@@ -8,6 +8,21 @@
       (change)="onFileSelected($event)"
       class="mt-16 block w-full text-body text-mid-gray file:mr-16 file:rounded-control file:border-0 file:bg-surface-alt file:px-16 file:py-8 file:text-body file:font-medium file:text-ink hover:file:bg-hairline"
     />
+    @if (staged(); as pending) {
+      <div class="mt-16 rounded-control bg-surface-alt p-16">
+        <app-form-field label="Nombre del archivo" [field]="renameForm.name">
+          <app-text-input [field]="renameForm.name">
+            <ng-template #suffix>
+              <span class="text-caption text-mid-gray">{{ pending.extension || '' }}</span>
+            </ng-template>
+          </app-text-input>
+        </app-form-field>
+        <div class="mt-16 flex flex-wrap gap-8">
+          <app-button variant="primary" (clicked)="confirmUpload()">Subir</app-button>
+          <app-button variant="ghost" (clicked)="cancelStaged()">Cancelar</app-button>
+        </div>
+      </div>
+    }
     @if (uploading(); as current) {
       <div class="mt-16" role="status" aria-label="Subiendo archivo">
         <p class="text-body text-ink">
@@ -76,18 +91,25 @@
               {{ formatDate(file.createdAt) || 'Fecha desconocida' }}
             </p>
           </div>
-          <app-button
-            variant="ghost"
-            icon="download"
-            [loading]="downloadingId() === file.id"
-            (clicked)="download(file)"
-          >
-            @if (downloadingId() === file.id) {
-              Preparando…
-            } @else {
-              Descargar
+          <div class="flex shrink-0 gap-8">
+            @if (canPreview(file)) {
+              <app-button variant="ghost" icon="eye" (clicked)="openPreview(file)">
+                Ver
+              </app-button>
             }
-          </app-button>
+            <app-button
+              variant="ghost"
+              icon="download"
+              [loading]="downloadingId() === file.id"
+              (clicked)="download(file)"
+            >
+              @if (downloadingId() === file.id) {
+                Preparando…
+              } @else {
+                Descargar
+              }
+            </app-button>
+          </div>
         </li>
       }
     </ul>
@@ -96,3 +118,14 @@
     }
   }
 </div>
+
+<ng-template #previewTemplate>
+  @if (previewFile(); as selected) {
+    <app-file-preview
+      [patientId]="patientId()"
+      [fileId]="selected.id ?? ''"
+      [fileName]="selected.fileName ?? 'Vista previa'"
+      [contentType]="selected.contentType"
+    />
+  }
+</ng-template>

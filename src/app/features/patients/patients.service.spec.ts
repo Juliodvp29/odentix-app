@@ -199,6 +199,26 @@ describe('PatientsService', () => {
     expect(completedName).toBe('scan.pdf');
   });
 
+  it('should send a custom filename when provided', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    service
+      .uploadFile(
+        'patient-1',
+        new File(['data'], 'scan.pdf', { type: 'application/pdf' }),
+        'rx-final.pdf',
+      )
+      .subscribe();
+    await flushEffects();
+    const request = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/patients/patient-1/files'),
+    );
+    const sent = request.request.body as FormData;
+    expect((sent.get('file') as File).name).toBe('rx-final.pdf');
+    request.flush({ id: 'file-1', fileName: 'rx-final.pdf' });
+    await flushEffects();
+  });
+
   it('should fetch a file download url', async () => {
     await flushEffects();
     httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
