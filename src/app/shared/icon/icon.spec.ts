@@ -8,6 +8,11 @@ const names: ReadonlyArray<IconName> = [
   'trash-2',
   'download',
   'check',
+  'eye',
+  'eye-off',
+  'triangle-alert',
+  'layout-dashboard',
+  'log-out',
 ];
 
 describe('Icon', () => {

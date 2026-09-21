@@ -14,7 +14,7 @@ const targets = [
   },
   {
     file: join(dir, 'environment.ts'),
-    apiUrl: process.env['ODENTIX_API_URL_DEV'] ?? 'http://localhost:8081/api/v1',
+    apiUrl: process.env['ODENTIX_API_URL_DEV'] ?? 'http://localhost:8081',
   },
 ];
 
@@ -36,7 +36,7 @@ for (const target of targets) {
   mkdirSync(dirname(target.file), { recursive: true });
   writeFileSync(
     target.file,
-    `// Generated at build time - do not edit by hand. See environment.example.ts.\nexport const environment = {\n  apiUrl: '${target.apiUrl}',\n};\n`,
+    `import { Environment } from './environment.example';\n\n// Generated at build time - do not edit by hand. See environment.example.ts.\nexport const environment: Environment = {\n  apiUrl: '${target.apiUrl}',\n};\n`,
   );
   console.log(`environments: generated ${target.file}.`);
 }

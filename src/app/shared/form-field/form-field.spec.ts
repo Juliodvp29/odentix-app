@@ -46,6 +46,11 @@ describe('FormField', () => {
     expect(label.textContent?.trim()).toBe('Full name');
   });
 
+  it('should render as a block-level host for stacked layouts', () => {
+    const field = fixture.nativeElement.querySelector('app-form-field') as HTMLElement;
+    expect(field.className).toContain('block');
+  });
+
   it('should hide the error until the field is touched', () => {
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
   });

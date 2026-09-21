@@ -10,7 +10,7 @@ const variantClasses: Record<SkeletonVariant, string> = {
 
 @Component({
   selector: 'app-skeleton',
-  host: { 'aria-hidden': 'true' },
+  host: { 'aria-hidden': 'true', class: 'block' },
   template: `<span [class]="classes()"></span>`,
 })
 export class Skeleton {

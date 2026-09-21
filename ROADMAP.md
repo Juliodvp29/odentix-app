@@ -416,9 +416,9 @@ fluidity — pay particular attention to entry/exit transitions.
 
 ### ✅ Fase 1 exit checklist
 
-- [ ] Every component built here has tests and follows `DESIGN.md`
+- [x] Every component built here has tests and follows `DESIGN.md`
       tokens exclusively (no raw values).
-- [ ] A short Storybook-less "kit preview" route (even a simple internal
+- [x] A short Storybook-less "kit preview" route (even a simple internal
       page listing all shared components) exists so new components can
       be checked visually without hunting through features for one.
 
@@ -438,13 +438,13 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Base API client/service using `httpResource()` or `HttpClient`
+- [x] Base API client/service using `httpResource()` or `HttpClient`
       typed against `core/api/schema.ts`.
-- [ ] Central place for the API base URL (from `environment.ts`).
+- [x] Central place for the API base URL (from `environment.ts`).
 
 **Acceptance criteria:**
 
-- [ ] A call to any backend endpoint is fully typed end to end, with no
+- [x] A call to any backend endpoint is fully typed end to end, with no
       manually-written response interfaces duplicating `schema.ts`.
 
 ---
@@ -457,17 +457,17 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] HTTP interceptor attaching the JWT (from the backend's login) to
+- [x] HTTP interceptor attaching the JWT (from the backend's login) to
       outgoing requests.
-- [ ] Decide and document where the token lives (memory vs. storage) —
+- [x] Decide and document where the token lives (memory vs. storage) —
       this is a security-relevant decision, flag it explicitly in the
       plan step before implementing.
-- [ ] Handle `401` responses by redirecting to login and clearing the
+- [x] Handle `401` responses by redirecting to login and clearing the
       stored session.
 
 **Acceptance criteria:**
 
-- [ ] An authenticated request includes the token; a `401` response
+- [x] An authenticated request includes the token; a `401` response
       redirects to `/login` without a manual page reload.
 
 ---
@@ -480,14 +480,14 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Login form using Signal Forms and the shared input/button
+- [x] Login form using Signal Forms and the shared input/button
       components.
-- [ ] Error state for invalid credentials, loading state while the
+- [x] Error state for invalid credentials, loading state while the
       request is in flight.
 
 **Acceptance criteria:**
 
-- [ ] A successful login stores the session and navigates to the app
+- [x] A successful login stores the session and navigates to the app
       shell; a failed one shows a clear error without a page reload.
 
 ---
@@ -500,12 +500,12 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Functional route guard (Angular 22 style, not class-based)
+- [x] Functional route guard (Angular 22 style, not class-based)
       redirecting unauthenticated users to `/login`.
 
 **Acceptance criteria:**
 
-- [ ] Navigating directly to a protected URL while logged out redirects
+- [x] Navigating directly to a protected URL while logged out redirects
       to login instead of rendering the protected page.
 
 ---
@@ -522,16 +522,16 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Layout component with navigation reflecting the user's role
+- [x] Layout component with navigation reflecting the user's role
       (`propietario`/`odontologo`/`recepcion`/etc. from the backend).
-- [ ] Route transition handling — this is one of the places Julio
+- [x] Route transition handling — this is one of the places Julio
       explicitly wants to feel fluid, not an instant swap; use view
       transitions if `DESIGN.md`/Angular's support make that
       straightforward, otherwise a deliberate, consistent fade/slide.
 
 **Acceptance criteria:**
 
-- [ ] Navigating between two feature routes doesn't show a blank flash
+- [x] Navigating between two feature routes doesn't show a blank flash
       or unstyled flicker.
 
 ---
@@ -544,12 +544,12 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Route definitions (even as placeholders) for every feature module
+- [x] Route definitions (even as placeholders) for every feature module
       planned in Fases 3–12, all lazy-loaded.
 
 **Acceptance criteria:**
 
-- [ ] The initial bundle does not include code for any feature module —
+- [x] The initial bundle does not include code for any feature module —
       verify with a bundle analysis, not just by assumption.
 
 ---

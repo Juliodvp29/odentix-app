@@ -4,6 +4,7 @@ import { FormFieldControl } from '@shared/form-field/form-field-control';
 
 @Component({
   selector: 'app-form-field',
+  host: { class: 'block' },
   template: `
     <label [attr.for]="labelFor()" class="mb-8 block text-body font-medium text-ink">
       {{ label() }}
