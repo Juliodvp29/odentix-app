@@ -13,6 +13,12 @@ class LoginHost {}
 
 describe('authGuard', () => {
   beforeEach(() => {
+    vi.stubGlobal('localStorage', {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+      clear: () => {},
+    });
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
@@ -23,6 +29,10 @@ describe('authGuard', () => {
     });
   });
 
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('should allow navigation with an active session', () => {
     TestBed.inject(SessionService).setSession('access-123', 'refresh-123');
     const result = TestBed.runInInjectionContext(() => authGuard({} as never, {} as never));
@@ -30,11 +40,13 @@ describe('authGuard', () => {
   });
 
   it('should redirect to login without a session', () => {
+    TestBed.inject(SessionService).clearSession();
     const result = TestBed.runInInjectionContext(() => authGuard({} as never, {} as never));
     expect(result.toString()).toBe('/login');
   });
 
   it('should land on login when navigating directly to a protected URL', async () => {
+    TestBed.inject(SessionService).clearSession();
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/placeholder');
     expect(harness.routeNativeElement?.textContent).toContain('Login content');
