@@ -1,6 +1,7 @@
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { PatientsService, toPatientParams } from './patients.service';
 import { createInitialQuery } from '@shared/table/table-models';
 
@@ -106,5 +107,25 @@ describe('PatientsService', () => {
     await flushEffects();
     httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
     await flushEffects();
+  });
+
+  it('should fetch one patient by id and refetch when it changes', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    const id = signal('patient-1');
+    const detail = TestBed.runInInjectionContext(() => service.detail(id));
+    await flushEffects();
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-1'))
+      .flush({ firstName: 'Ada' });
+    await flushEffects();
+    expect(detail.value()?.firstName).toBe('Ada');
+    id.set('patient-2');
+    await flushEffects();
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-2'))
+      .flush({ firstName: 'Luis' });
+    await flushEffects();
+    expect(detail.value()?.firstName).toBe('Luis');
   });
 });

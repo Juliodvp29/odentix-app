@@ -1,5 +1,5 @@
-import { httpResource } from '@angular/common/http';
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpResourceRef, httpResource } from '@angular/common/http';
+import { Injectable, Signal, computed, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
 import { components } from '@core/api/schema';
@@ -48,6 +48,12 @@ export class PatientsService {
 
   updateQuery(query: TableQuery): void {
     this.query.set(query);
+  }
+
+  detail(id: Signal<string>): HttpResourceRef<PatientResponse | undefined> {
+    return httpResource<PatientResponse>(() => ({
+      url: this.api.url(`/api/v1/patients/${id()}`),
+    }));
   }
 
   create(patient: CreatePatientRequest): Observable<PatientResponse> {

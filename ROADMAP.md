@@ -607,13 +607,13 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Detail route showing the patient's core data, with tabs/sections
+- [x] Detail route showing the patient's core data, with tabs/sections
       for clinical records, odontogram, and files (each can start as a
       placeholder if its backend endpoint isn't the focus yet).
 
 **Acceptance criteria:**
 
-- [ ] Navigating from the list to a patient's detail feels like a
+- [x] Navigating from the list to a patient's detail feels like a
       continuation, not a jarring context switch (transition + no
       layout shift while data loads).
 

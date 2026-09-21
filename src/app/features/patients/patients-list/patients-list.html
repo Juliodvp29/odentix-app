@@ -18,6 +18,9 @@
         <app-icon name="pencil" />
       </app-icon-button>
     </ng-template>
+    <ng-template appCell="name" let-row>
+      <app-link [route]="'/patients/' + row['id']">{{ displayName(row) }}</app-link>
+    </ng-template>
   </app-table>
   <ng-template #patientDialog>
     <app-patient-form

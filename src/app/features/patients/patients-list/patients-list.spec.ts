@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { ToastService } from '@shared/toast/toast.service';
 import { PatientsListPage } from './patients-list';
 
@@ -41,7 +42,7 @@ describe('PatientsListPage', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [PatientsListPage],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
     fixture = TestBed.createComponent(PatientsListPage);
     httpTesting = TestBed.inject(HttpTestingController);

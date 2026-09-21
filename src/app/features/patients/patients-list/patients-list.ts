@@ -2,8 +2,10 @@ import { Component, TemplateRef, inject, signal, viewChild } from '@angular/core
 import { ModalHandle, ModalService } from '@shared/modal/modal.service';
 import { PatientResponse, PatientsService } from '@features/patients/patients.service';
 import { Button } from '@shared/button/button';
+import { CellDef } from '@shared/table/cell-def';
 import { Icon } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
+import { Link } from '@shared/link/link';
 import { Table } from '@shared/table/table';
 import { TableColumn, TableQuery, TableRow } from '@shared/table/table-models';
 import { ToastService } from '@shared/toast/toast.service';
@@ -11,7 +13,7 @@ import { PatientForm } from '@features/patients/patient-form/patient-form';
 
 @Component({
   selector: 'app-patients-list',
-  imports: [Button, Icon, IconButton, PatientForm, Table],
+  imports: [Button, CellDef, Icon, IconButton, Link, PatientForm, Table],
   templateUrl: './patients-list.html',
 })
 export class PatientsListPage {
@@ -26,8 +28,7 @@ export class PatientsListPage {
       key: 'name',
       header: 'Nombre',
       sortable: true,
-      accessor: (row) =>
-        `${String(row['firstName'] ?? '')} ${String(row['lastName'] ?? '')}`.trim(),
+      accessor: (row) => this.displayName(row),
     },
     {
       key: 'document',
@@ -54,6 +55,10 @@ export class PatientsListPage {
 
   onQueryChange(query: TableQuery): void {
     this.patients.updateQuery(query);
+  }
+
+  displayName(row: TableRow): string {
+    return `${String(row['firstName'] ?? '')} ${String(row['lastName'] ?? '')}`.trim();
   }
 
   openCreate(): void {
