@@ -500,12 +500,12 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Functional route guard (Angular 22 style, not class-based)
+- [x] Functional route guard (Angular 22 style, not class-based)
       redirecting unauthenticated users to `/login`.
 
 **Acceptance criteria:**
 
-- [ ] Navigating directly to a protected URL while logged out redirects
+- [x] Navigating directly to a protected URL while logged out redirects
       to login instead of rendering the protected page.
 
 ---
