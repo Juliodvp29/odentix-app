@@ -544,12 +544,12 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Route definitions (even as placeholders) for every feature module
+- [x] Route definitions (even as placeholders) for every feature module
       planned in Fases 3–12, all lazy-loaded.
 
 **Acceptance criteria:**
 
-- [ ] The initial bundle does not include code for any feature module —
+- [x] The initial bundle does not include code for any feature module —
       verify with a bundle analysis, not just by assumption.
 
 ---
