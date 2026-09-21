@@ -19,4 +19,8 @@ export class ApiClient {
   post<RequestBody, ResponseBody>(path: string, body: RequestBody): Observable<ResponseBody> {
     return this.http.post<ResponseBody>(this.url(path), body);
   }
+
+  patch<RequestBody, ResponseBody>(path: string, body: RequestBody): Observable<ResponseBody> {
+    return this.http.patch<ResponseBody>(this.url(path), body);
+  }
 }

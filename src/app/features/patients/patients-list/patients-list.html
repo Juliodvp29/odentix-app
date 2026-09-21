@@ -1,5 +1,8 @@
 <div class="space-y-16">
-  <h1 class="text-heading text-ink">Pacientes</h1>
+  <div class="flex flex-wrap items-center justify-between gap-16">
+    <h1 class="text-heading text-ink">Pacientes</h1>
+    <app-button (clicked)="openCreate()">Nuevo paciente</app-button>
+  </div>
   <app-table
     [columns]="columns"
     [rows]="rows()"
@@ -7,6 +10,20 @@
     [loading]="loading()"
     [query]="query()"
     (queryChange)="onQueryChange($event)"
+    [rowActions]="rowActions"
     emptyMessage="No hay pacientes para mostrar"
-  />
+  >
+    <ng-template #rowActions let-row>
+      <app-icon-button label="Editar paciente" (clicked)="openEdit(row)">
+        <app-icon name="pencil" />
+      </app-icon-button>
+    </ng-template>
+  </app-table>
+  <ng-template #patientDialog>
+    <app-patient-form
+      [patient]="editingPatient()"
+      (saved)="onSaved()"
+      (cancelled)="onCancelled()"
+    />
+  </ng-template>
 </div>

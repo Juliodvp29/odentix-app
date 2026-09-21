@@ -1,15 +1,25 @@
-import { Component, inject } from '@angular/core';
-import { PatientsService } from '@features/patients/patients.service';
+import { Component, TemplateRef, inject, signal, viewChild } from '@angular/core';
+import { ModalHandle, ModalService } from '@shared/modal/modal.service';
+import { PatientResponse, PatientsService } from '@features/patients/patients.service';
+import { Button } from '@shared/button/button';
+import { Icon } from '@shared/icon/icon';
+import { IconButton } from '@shared/icon-button/icon-button';
 import { Table } from '@shared/table/table';
-import { TableColumn, TableQuery } from '@shared/table/table-models';
+import { TableColumn, TableQuery, TableRow } from '@shared/table/table-models';
+import { ToastService } from '@shared/toast/toast.service';
+import { PatientForm } from '@features/patients/patient-form/patient-form';
 
 @Component({
   selector: 'app-patients-list',
-  imports: [Table],
+  imports: [Button, Icon, IconButton, PatientForm, Table],
   templateUrl: './patients-list.html',
 })
 export class PatientsListPage {
   private readonly patients = inject(PatientsService);
+  private readonly modals = inject(ModalService);
+  private readonly notifications = inject(ToastService);
+  private readonly dialogTemplate = viewChild('patientDialog', { read: TemplateRef });
+  private dialogHandle: ModalHandle | null = null;
 
   readonly columns: ReadonlyArray<TableColumn> = [
     {
@@ -40,8 +50,39 @@ export class PatientsListPage {
   readonly rows = this.patients.rows;
   readonly total = this.patients.total;
   readonly loading = this.patients.loading;
+  readonly editingPatient = signal<PatientResponse | null>(null);
 
   onQueryChange(query: TableQuery): void {
     this.patients.updateQuery(query);
+  }
+
+  openCreate(): void {
+    this.editingPatient.set(null);
+    this.openDialog('Nuevo paciente');
+  }
+
+  openEdit(row: TableRow): void {
+    this.editingPatient.set(row as PatientResponse);
+    this.openDialog('Editar paciente');
+  }
+
+  private openDialog(title: string): void {
+    const template = this.dialogTemplate();
+    if (template) {
+      this.dialogHandle = this.modals.open(template, { title });
+    }
+  }
+
+  onSaved(): void {
+    const editing = this.editingPatient() !== null;
+    this.dialogHandle?.close();
+    this.dialogHandle = null;
+    this.patients.reload();
+    this.notifications.success(editing ? 'Paciente actualizado' : 'Paciente creado');
+  }
+
+  onCancelled(): void {
+    this.dialogHandle?.close();
+    this.dialogHandle = null;
   }
 }

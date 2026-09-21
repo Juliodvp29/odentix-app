@@ -589,12 +589,12 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Modal (FASE1-04) containing a Signal Form for creating/editing a
+- [x] Modal (FASE1-04) containing a Signal Form for creating/editing a
       patient, validated against the backend's required fields.
 
 **Acceptance criteria:**
 
-- [ ] Submitting invalid data shows field-level errors without closing
+- [x] Submitting invalid data shows field-level errors without closing
       the modal; a successful submit closes it and refreshes the list.
 
 ---
@@ -1036,6 +1036,9 @@ that every feature route renders inside.
 
 - [ ] List/board of open opportunities, sorted by priority, grouped by
       type.
+- [ ] Make this view the post-login landing: redirect `/` here and list
+      it first in the shell nav (replacing the temporary `/patients`
+      landing).
 
 **Acceptance criteria:**
 

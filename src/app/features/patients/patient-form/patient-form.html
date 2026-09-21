@@ -1,0 +1,70 @@
+<form (submit)="submitPatient(); $event.preventDefault()" class="grid gap-16 sm:grid-cols-2">
+  <app-form-field label="Nombres" [field]="patientForm.firstName">
+    <app-text-input [field]="patientForm.firstName" placeholder="María" autocomplete="given-name" />
+  </app-form-field>
+  <app-form-field label="Apellidos" [field]="patientForm.lastName">
+    <app-text-input
+      [field]="patientForm.lastName"
+      placeholder="García"
+      autocomplete="family-name"
+    />
+  </app-form-field>
+  <app-form-field label="Tipo de documento" [field]="patientForm.documentType">
+    <app-select
+      [field]="patientForm.documentType"
+      placeholder="Seleccionar"
+      [options]="documentTypes"
+    />
+  </app-form-field>
+  <app-form-field label="Número de documento" [field]="patientForm.documentNumber">
+    <app-text-input [field]="patientForm.documentNumber" placeholder="1012345678" />
+  </app-form-field>
+  <app-form-field label="Fecha de nacimiento" [field]="patientForm.birthDate">
+    <app-text-input [field]="patientForm.birthDate" type="date" autocomplete="bday" />
+  </app-form-field>
+  <app-form-field label="Teléfono" [field]="patientForm.phone">
+    <app-text-input
+      [field]="patientForm.phone"
+      type="tel"
+      autocomplete="tel"
+      placeholder="3104567890"
+    />
+  </app-form-field>
+  <app-form-field label="Correo electrónico" [field]="patientForm.email">
+    <app-text-input
+      [field]="patientForm.email"
+      type="email"
+      autocomplete="email"
+      placeholder="tucorreo@ejemplo.com"
+    />
+  </app-form-field>
+  <app-form-field label="Dirección" [field]="patientForm.address" class="sm:col-span-2">
+    <app-text-input
+      [field]="patientForm.address"
+      placeholder="Calle 123 #45-67"
+      autocomplete="street-address"
+    />
+  </app-form-field>
+  <app-form-field label="Contacto de emergencia" [field]="patientForm.emergencyContactName">
+    <app-text-input [field]="patientForm.emergencyContactName" placeholder="Nombre del contacto" />
+  </app-form-field>
+  <app-form-field label="Teléfono de emergencia" [field]="patientForm.emergencyContactPhone">
+    <app-text-input
+      [field]="patientForm.emergencyContactPhone"
+      type="tel"
+      placeholder="3104567890"
+    />
+  </app-form-field>
+  @if (serverError(); as message) {
+    <p
+      role="alert"
+      class="rounded-control bg-danger-soft px-12 py-8 text-body text-danger-deep sm:col-span-2"
+    >
+      {{ message }}
+    </p>
+  }
+  <div class="flex justify-end gap-8 sm:col-span-2">
+    <app-button variant="ghost" type="button" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" [loading]="saving()">Guardar</app-button>
+  </div>
+</form>

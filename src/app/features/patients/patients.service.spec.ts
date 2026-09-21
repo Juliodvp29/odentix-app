@@ -67,4 +67,44 @@ describe('PatientsService', () => {
     await flushEffects();
     expect(service.total()).toBe(0);
   });
+
+  it('should create a patient', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    let createdId: string | undefined;
+    service
+      .create({ firstName: 'Ada', lastName: 'Luz' })
+      .subscribe((patient) => (createdId = patient.id));
+    const request = httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients'));
+    expect(request.request.method).toBe('POST');
+    request.flush({ id: 'patient-1' });
+    await flushEffects();
+    expect(createdId).toBe('patient-1');
+  });
+
+  it('should update a patient', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    let updatedName: string | undefined;
+    service
+      .update('patient-1', { firstName: 'Ada' })
+      .subscribe((patient) => (updatedName = patient.firstName));
+    const request = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/patients/patient-1'),
+    );
+    expect(request.request.method).toBe('PATCH');
+    request.flush({ firstName: 'Ada' });
+    await flushEffects();
+    expect(updatedName).toBe('Ada');
+  });
+
+  it('should reload the list', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    await flushEffects();
+    service.reload();
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    await flushEffects();
+  });
 });

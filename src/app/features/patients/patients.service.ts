@@ -1,11 +1,14 @@
 import { httpResource } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
 import { components } from '@core/api/schema';
 import { TableQuery, createInitialQuery } from '@shared/table/table-models';
 
 export type PatientResponse = components['schemas']['PatientResponse'];
 type PagePatientResponse = components['schemas']['PagePatientResponse'];
+export type CreatePatientRequest = components['schemas']['CreatePatientRequest'];
+export type UpdatePatientRequest = components['schemas']['UpdatePatientRequest'];
 
 const SORT_FIELDS: Record<string, string> = {
   name: 'firstName',
@@ -45,5 +48,17 @@ export class PatientsService {
 
   updateQuery(query: TableQuery): void {
     this.query.set(query);
+  }
+
+  create(patient: CreatePatientRequest): Observable<PatientResponse> {
+    return this.api.post<CreatePatientRequest, PatientResponse>('/api/v1/patients', patient);
+  }
+
+  update(id: string, patient: UpdatePatientRequest): Observable<PatientResponse> {
+    return this.api.patch<UpdatePatientRequest, PatientResponse>(`/api/v1/patients/${id}`, patient);
+  }
+
+  reload(): void {
+    this.page.reload();
   }
 }
