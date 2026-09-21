@@ -303,6 +303,9 @@ either.)_
 - Fase 3 reminder: the shared table deferred configurable columns
   (show/hide) and density options — add them when the patients list
   defines the real need.
+- UI language: **Spanish** for user-facing strings (code stays in
+  English). The temporary placeholder demo is still in English and dies
+  with it in Fase 2.
 - `DESIGN.md`: exists at the repo root (full token system + component
   specs). All UI work must follow it; Fase 1 can start in earnest.
 

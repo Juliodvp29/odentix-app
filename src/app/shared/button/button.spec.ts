@@ -85,4 +85,16 @@ describe('Button', () => {
     fixture.detectChanges();
     expect(buttonElement().querySelector('app-icon')).toBeNull();
   });
+
+  it('should stretch to full width when requested', () => {
+    fixture.componentRef.setInput('fullWidth', true);
+    fixture.detectChanges();
+    expect(buttonElement().className).toContain('w-full');
+    expect(fixture.nativeElement.className).toContain('w-full');
+  });
+
+  it('should render as a block-level host for stacked layouts', () => {
+    fixture.detectChanges();
+    expect(fixture.nativeElement.className).toContain('block');
+  });
 });

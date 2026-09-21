@@ -480,14 +480,14 @@ fluidity — pay particular attention to entry/exit transitions.
 
 **Tasks:**
 
-- [ ] Login form using Signal Forms and the shared input/button
+- [x] Login form using Signal Forms and the shared input/button
       components.
-- [ ] Error state for invalid credentials, loading state while the
+- [x] Error state for invalid credentials, loading state while the
       request is in flight.
 
 **Acceptance criteria:**
 
-- [ ] A successful login stores the session and navigates to the app
+- [x] A successful login stores the session and navigates to the app
       shell; a failed one shows a clear error without a page reload.
 
 ---

@@ -1,0 +1,82 @@
+<div class="flex min-h-screen flex-col bg-canvas antialiased">
+  <header
+    class="pointer-events-none flex w-full items-center justify-between px-32 py-24 opacity-0 sm:opacity-100"
+  >
+    <p class="flex items-center gap-8 text-caption font-medium tracking-caption text-mid-gray">
+      <span class="inline-block h-8 w-8 rounded-pill bg-teal/60"></span>
+      Sistema Clínico Odontológico
+    </p>
+    <p class="text-caption text-faint-gray">Acceso seguro SSL</p>
+  </header>
+  <main class="flex w-full flex-1 items-center justify-center p-16">
+    <div
+      style="max-width: 440px"
+      class="w-full rounded-card border border-hairline bg-paper p-24 shadow-resting sm:p-40"
+    >
+      <div class="mb-32 flex flex-col items-start">
+        <div
+          class="mb-16 inline-flex h-40 w-40 items-center justify-center rounded-control border border-teal/20 bg-teal/10 text-teal"
+        >
+          <svg
+            class="h-24 w-24"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.8"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 2C8.5 2 6 4 6 7.5C6 9.8 7 11.5 8 13.5C9 15.5 8.5 19 9.5 21C10.5 23 11 22 12 18C13 22 13.5 23 14.5 21C15.5 19 15 15.5 16 13.5C17 11.5 18 9.8 18 7.5C18 4 15.5 2 12 2Z"
+            ></path>
+            <path d="M9.5 8.5C10.5 7.5 13.5 7.5 14.5 8.5" opacity="0.6"></path>
+          </svg>
+        </div>
+        <h1 class="text-heading text-ink">Odentix</h1>
+        <p class="mt-4 text-body text-mid-gray">Inicia sesión para continuar</p>
+      </div>
+      <form (submit)="submitLogin(); $event.preventDefault()" class="space-y-16">
+        <app-form-field label="Correo electrónico" [field]="loginForm.email">
+          <app-text-input
+            [field]="loginForm.email"
+            type="email"
+            autocomplete="email"
+            placeholder="tucorreo@clinica.com"
+          />
+        </app-form-field>
+        <app-form-field label="Contraseña" [field]="loginForm.password">
+          <app-text-input
+            [field]="loginForm.password"
+            [type]="showPassword() ? 'text' : 'password'"
+            autocomplete="current-password"
+            placeholder="Tu contraseña"
+          >
+            <ng-template #suffix>
+              <app-icon-button
+                [label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                (clicked)="showPassword.update((visible) => !visible)"
+              >
+                @if (showPassword()) {
+                  <app-icon name="eye-off" />
+                } @else {
+                  <app-icon name="eye" />
+                }
+              </app-icon-button>
+            </ng-template>
+          </app-text-input>
+        </app-form-field>
+        @if (serverError(); as message) {
+          <p
+            role="alert"
+            class="flex items-start gap-8 rounded-control border border-danger/20 bg-danger-soft px-12 py-8 text-caption font-medium text-danger-deep"
+          >
+            <app-icon name="triangle-alert" />
+            <span>{{ message }}</span>
+          </p>
+        }
+        <app-button type="submit" [loading]="submitting()" [fullWidth]="true">Ingresar</app-button>
+      </form>
+    </div>
+  </main>
+</div>

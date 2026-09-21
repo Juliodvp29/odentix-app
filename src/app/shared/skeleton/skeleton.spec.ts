@@ -31,4 +31,9 @@ describe('Skeleton', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.getAttribute('aria-hidden')).toBe('true');
   });
+
+  it('should render as a block-level host for stacked layouts', () => {
+    fixture.detectChanges();
+    expect(fixture.nativeElement.className).toContain('block');
+  });
 });

@@ -4,12 +4,24 @@ import {
   lucideCheck,
   lucideChevronDown,
   lucideDownload,
+  lucideEye,
+  lucideEyeOff,
   lucidePencil,
   lucideTrash2,
+  lucideTriangleAlert,
   lucideX,
 } from '@ng-icons/lucide';
 
-export type IconName = 'x' | 'chevron-down' | 'pencil' | 'trash-2' | 'download' | 'check';
+export type IconName =
+  | 'x'
+  | 'chevron-down'
+  | 'pencil'
+  | 'trash-2'
+  | 'download'
+  | 'check'
+  | 'eye'
+  | 'eye-off'
+  | 'triangle-alert';
 
 const ICON_NAMES: Record<IconName, string> = {
   x: 'lucideX',
@@ -18,6 +30,9 @@ const ICON_NAMES: Record<IconName, string> = {
   'trash-2': 'lucideTrash2',
   download: 'lucideDownload',
   check: 'lucideCheck',
+  eye: 'lucideEye',
+  'eye-off': 'lucideEyeOff',
+  'triangle-alert': 'lucideTriangleAlert',
 };
 
 @Component({
@@ -28,8 +43,11 @@ const ICON_NAMES: Record<IconName, string> = {
       lucideCheck,
       lucideChevronDown,
       lucideDownload,
+      lucideEye,
+      lucideEyeOff,
       lucidePencil,
       lucideTrash2,
+      lucideTriangleAlert,
       lucideX,
     }),
   ],

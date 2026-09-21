@@ -26,16 +26,16 @@ contained type weights, and motion that is deliberate and never instant
 
 ### Neutrals
 
-| Name        | Value     | Token                 | Role                                                              |
-| ----------- | --------- | --------------------- | ----------------------------------------------------------------- |
-| Canvas      | `#faf9f7` | `--color-canvas`      | Page background — warm off-white, never stark clinical white      |
-| Paper       | `#ffffff` | `--color-paper`       | Card surfaces, modal surfaces, popovers                           |
-| Surface Alt | `#f5f3f0` | `--color-surface-alt` | Sidebar background, input resting fill, secondary buttons         |
-| Hairline    | `#e7e4e0` | `--color-hairline`    | Borders, dividers, card edges — the primary depth cue, not shadow |
-| Ink         | `#1c1b19` | `--color-ink`         | Primary text, headings — warm near-black, never pure `#000`       |
-| Ink Soft    | `#33312e` | `--color-ink-soft`    | Filled button backgrounds, secondary headings                     |
-| Mid Gray    | `#8a8782` | `--color-mid-gray`    | Muted body text, helper text, breadcrumb separators               |
-| Faint Gray  | `#b4b1ac` | `--color-faint-gray`  | Placeholder text, disabled labels, tertiary metadata              |
+| Name        | Value     | Token                 | Role                                                                  |
+| ----------- | --------- | --------------------- | --------------------------------------------------------------------- |
+| Canvas      | `#faf9f7` | `--color-canvas`      | Page background — warm off-white, never stark clinical white          |
+| Paper       | `#ffffff` | `--color-paper`       | Card surfaces, modal surfaces, popovers                               |
+| Surface Alt | `#f5f3f0` | `--color-surface-alt` | Sidebar background, input resting fill, secondary buttons             |
+| Hairline    | `#e7e4e0` | `--color-hairline`    | Borders, dividers, card edges — the primary depth cue, not shadow     |
+| Ink         | `#1c1b19` | `--color-ink`         | Primary text, headings — warm near-black, never pure `#000`           |
+| Ink Soft    | `#33312e` | `--color-ink-soft`    | Filled button backgrounds, secondary headings                         |
+| Mid Gray    | `#8a8782` | `--color-mid-gray`    | Muted body text, helper text, breadcrumb separators, placeholder text |
+| Faint Gray  | `#b4b1ac` | `--color-faint-gray`  | Disabled labels, tertiary metadata                                    |
 
 ### Accent
 
@@ -240,8 +240,9 @@ ordinary negative actions like "close" or "dismiss."
 
 **Role:** all Signal Forms text entry and selection
 
-Background `--color-surface-alt` at rest, `--color-paper` with a 1px
-`--color-teal` ring on focus. Radius `--radius-control`, padding
+Background `--color-surface-alt` at rest with a 1px `--color-hairline` border,
+`--color-paper` with a 1px `--color-teal` border and ring on focus.
+Placeholder text uses `--color-mid-gray`. Radius `--radius-control`, padding
 `8px 12px`, font `--text-body`. Error state: 1px `--color-danger`
 border plus a `--text-caption` message below in `--color-danger-deep`
 — never color alone, always paired with text (accessibility).

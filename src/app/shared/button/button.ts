@@ -15,6 +15,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 @Component({
   selector: 'app-button',
   imports: [Icon],
+  host: { class: 'block', '[class.w-full]': 'fullWidth()' },
   template: `
     <button
       [type]="type()"
@@ -49,6 +50,7 @@ export class Button {
   readonly loading = input(false);
   readonly icon = input<IconName | null>(null);
   readonly iconPosition = input<ButtonIconPosition>('start');
+  readonly fullWidth = input(false);
   readonly clicked = output<void>();
 
   readonly isDisabled = computed(() => this.disabled() || this.loading());
@@ -66,6 +68,7 @@ export class Button {
       'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal ' +
       'disabled:cursor-not-allowed disabled:opacity-50 ' +
       (this.icon() ? 'gap-8 ' : '') +
+      (this.fullWidth() ? 'w-full ' : '') +
       variantClasses[this.variant()],
   );
 

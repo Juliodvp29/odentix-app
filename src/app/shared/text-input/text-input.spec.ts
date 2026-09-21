@@ -20,6 +20,21 @@ class EmailHost {
   });
 }
 
+@Component({
+  imports: [TextInput],
+  template: `
+    <app-text-input [field]="form.email">
+      <ng-template #suffix>
+        <span data-testid="suffix">S</span>
+      </ng-template>
+    </app-text-input>
+  `,
+})
+class SuffixHost {
+  readonly model = signal({ email: '' });
+  readonly form = form(this.model);
+}
+
 describe('TextInput inside FormField', () => {
   let fixture: ComponentFixture<EmailHost>;
 
@@ -45,6 +60,9 @@ describe('TextInput inside FormField', () => {
   it('should render the input with its type and placeholder', () => {
     expect(inputElement().getAttribute('type')).toBe('email');
     expect(inputElement().getAttribute('placeholder')).toBe('you@example.com');
+    expect(inputElement().getAttribute('autocomplete')).toBeNull();
+    expect(inputElement().className).toContain('border-hairline');
+    expect(inputElement().className).toContain('placeholder:text-mid-gray');
   });
 
   it('should be keyboard-focusable', () => {
@@ -67,5 +85,24 @@ describe('TextInput inside FormField', () => {
     expect(label.getAttribute('for')).toBe(input.id);
     expect(input.getAttribute('aria-invalid')).toBe('true');
     expect(input.getAttribute('aria-describedby')).toBe(error.id);
+  });
+});
+
+describe('TextInput suffix', () => {
+  let fixture: ComponentFixture<SuffixHost>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SuffixHost],
+    }).compileComponents();
+    fixture = TestBed.createComponent(SuffixHost);
+    fixture.detectChanges();
+  });
+
+  it('should project suffix content and reserve its space', () => {
+    const suffix = fixture.nativeElement.querySelector('[data-testid="suffix"]') as HTMLElement;
+    expect(suffix?.textContent).toBe('S');
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    expect(input.className).toContain('pr-40');
   });
 });
