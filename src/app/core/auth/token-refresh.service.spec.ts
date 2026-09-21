@@ -76,7 +76,9 @@ describe('TokenRefreshService', () => {
   it('should clear the session when the backend rejects the refresh token', () => {
     session.setSession('old-access', 'expired-refresh');
     let status = 0;
-    service.refresh().subscribe({ error: (error: { status?: number }) => (status = error.status ?? 0) });
+    service
+      .refresh()
+      .subscribe({ error: (error: { status?: number }) => (status = error.status ?? 0) });
     httpTesting
       .expectOne((call) => call.url.includes('/api/v1/auth/refresh'))
       .flush({}, { status: 401, statusText: 'Unauthorized' });

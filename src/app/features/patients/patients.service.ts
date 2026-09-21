@@ -1,4 +1,4 @@
-import { HttpEventType, HttpResourceRef, httpResource } from '@angular/common/http';
+import { HttpEventType, HttpParams, HttpResourceRef, httpResource } from '@angular/common/http';
 import { Injectable, Signal, computed, inject, signal } from '@angular/core';
 import { Observable, filter, map } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
@@ -125,6 +125,13 @@ export class PatientsService {
 
   create(patient: CreatePatientRequest): Observable<PatientResponse> {
     return this.api.post<CreatePatientRequest, PatientResponse>('/api/v1/patients', patient);
+  }
+
+  searchPatients(query: string): Observable<PatientResponse[]> {
+    const params = new HttpParams({ fromObject: { query, page: '0', size: '10' } });
+    return this.api
+      .get<PagePatientResponse>('/api/v1/patients', params)
+      .pipe(map((page) => page.content ?? []));
   }
 
   update(id: string, patient: UpdatePatientRequest): Observable<PatientResponse> {

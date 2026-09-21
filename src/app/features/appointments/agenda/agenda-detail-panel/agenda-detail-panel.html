@@ -1,0 +1,84 @@
+<div class="rounded-card bg-paper p-16 shadow-resting">
+  @if (appointment(); as selected) {
+    <!-- Header: avatar + patient name + status badge + close -->
+    <div class="flex items-start gap-12">
+      <span
+        class="inline-flex h-40 w-40 shrink-0 items-center justify-center rounded-pill bg-surface-alt text-subheading font-semibold text-teal"
+        aria-hidden="true"
+      >
+        {{ initials(selected.patientName) }}
+      </span>
+      <div class="min-w-0 flex-1">
+        <div class="flex items-start justify-between gap-8">
+          <h3 class="truncate text-subheading font-semibold text-ink">
+            {{ selected.patientName || 'Paciente sin nombre' }}
+          </h3>
+          <button
+            type="button"
+            aria-label="Cerrar detalle"
+            (click)="closed.emit()"
+            class="shrink-0 rounded-control p-4 text-mid-gray transition-colors duration-fast hover:bg-surface-alt hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+          >
+            ×
+          </button>
+        </div>
+        <span
+          class="mt-4 inline-block rounded-pill text-caption font-medium"
+          style="padding: 2px 10px"
+          [class]="statusBadge()"
+        >
+          {{ statusLabel() }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Detail fields -->
+    <dl class="mt-16 space-y-8 text-body">
+      <div class="flex justify-between gap-8">
+        <dt class="text-mid-gray">Horario</dt>
+        <dd class="text-right font-medium text-ink">
+          {{ formatTime(selected.startsAt) }} – {{ formatTime(selected.endsAt) }}
+        </dd>
+      </div>
+      @if (selected.professionalName) {
+        <div class="flex justify-between gap-8">
+          <dt class="text-mid-gray">Profesional</dt>
+          <dd class="text-right text-ink">{{ selected.professionalName }}</dd>
+        </div>
+      }
+      @if (selected.roomName) {
+        <div class="flex justify-between gap-8">
+          <dt class="text-mid-gray">Consultorio</dt>
+          <dd class="text-right text-ink">{{ selected.roomName }}</dd>
+        </div>
+      }
+      @if (selected.riskLevel) {
+        <div class="flex justify-between gap-8">
+          <dt class="text-mid-gray">Riesgo</dt>
+          <dd class="text-right text-ink capitalize">{{ selected.riskLevel }}</dd>
+        </div>
+      }
+      @if (selected.estimatedValueCop !== null && selected.estimatedValueCop !== undefined) {
+        <div class="flex justify-between gap-8">
+          <dt class="text-mid-gray">Valor estimado</dt>
+          <dd class="text-right font-medium text-ink">
+            {{ formatCop(selected.estimatedValueCop) }}
+          </dd>
+        </div>
+      }
+      @if (selected.notes) {
+        <div class="space-y-4">
+          <dt class="text-mid-gray">Notas</dt>
+          <dd class="text-ink">{{ selected.notes }}</dd>
+        </div>
+      }
+    </dl>
+
+    <!-- Patient record link -->
+    @if (patientRoute(); as route) {
+      <app-link [route]="route" class="mt-16 block"> Ficha clínica → </app-link>
+    }
+  } @else {
+    <p class="text-body text-mid-gray">Selecciona una cita para ver su detalle.</p>
+  }
+</div>

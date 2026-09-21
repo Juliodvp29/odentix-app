@@ -4,6 +4,8 @@ import {
   lucideCalendar,
   lucideCheck,
   lucideChevronDown,
+  lucideChevronLeft,
+  lucideChevronRight,
   lucideDownload,
   lucideEye,
   lucideEyeOff,
@@ -11,6 +13,8 @@ import {
   lucideLogOut,
   lucidePencil,
   lucidePlus,
+  lucideRefreshCw,
+  lucideSearch,
   lucideTrash2,
   lucideTriangleAlert,
   lucideUsers,
@@ -21,6 +25,10 @@ export type IconName =
   | 'x'
   | 'calendar'
   | 'chevron-down'
+  | 'chevron-left'
+  | 'chevron-right'
+  | 'search'
+  | 'refresh'
   | 'pencil'
   | 'plus'
   | 'trash-2'
@@ -37,6 +45,10 @@ const ICON_NAMES: Record<IconName, string> = {
   x: 'lucideX',
   calendar: 'lucideCalendar',
   'chevron-down': 'lucideChevronDown',
+  'chevron-left': 'lucideChevronLeft',
+  'chevron-right': 'lucideChevronRight',
+  search: 'lucideSearch',
+  refresh: 'lucideRefreshCw',
   pencil: 'lucidePencil',
   plus: 'lucidePlus',
   'trash-2': 'lucideTrash2',
@@ -58,6 +70,8 @@ const ICON_NAMES: Record<IconName, string> = {
       lucideCalendar,
       lucideCheck,
       lucideChevronDown,
+      lucideChevronLeft,
+      lucideChevronRight,
       lucideDownload,
       lucideEye,
       lucideEyeOff,
@@ -65,6 +79,8 @@ const ICON_NAMES: Record<IconName, string> = {
       lucideLogOut,
       lucidePencil,
       lucidePlus,
+      lucideRefreshCw,
+      lucideSearch,
       lucideTrash2,
       lucideTriangleAlert,
       lucideUsers,

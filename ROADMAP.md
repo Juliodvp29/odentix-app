@@ -226,7 +226,7 @@ hand-written.
 **Tasks:**
 
 - [x] GitHub Actions workflow: checkout, install, lint, `npm run
-  test:ci`, build — triggered on push/PR to `dev` and `main`.
+test:ci`, build — triggered on push/PR to `dev` and `main`.
 - [x] Protect `main` (and `dev` if applicable) requiring the pipeline to
       pass before merge.
 
@@ -724,14 +724,18 @@ convention, side detail panel, and entry creation in a modal.
 
 **Tasks:**
 
-- [ ] Modal form to create/edit an appointment, surfacing the backend's
+- [x] Modal form to create/edit an appointment, surfacing the backend's
       overlap-conflict error (`409`) as a clear, specific message —
       not a generic "something went wrong."
 
 **Acceptance criteria:**
 
-- [ ] Attempting to double-book a professional shows a message
+- [x] Attempting to double-book a professional shows a message
       explaining the conflict, not a raw error.
+
+**Note:** only creation shipped — the backend exposes no appointment
+update endpoint, so editing details is blocked backend-side (see the
+backend adjustments summary).
 
 ---
 

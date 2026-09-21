@@ -68,7 +68,9 @@ describe('authInterceptor', () => {
     session.setSession('old-access', 'refresh-123');
     let body: unknown;
     http.get('/api/v1/patients').subscribe({ next: (value) => (body = value) });
-    httpTesting.expectOne('/api/v1/patients').flush({}, { status: 401, statusText: 'Unauthorized' });
+    httpTesting
+      .expectOne('/api/v1/patients')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
     const refresh = httpTesting.expectOne((call) => call.url.includes('/api/v1/auth/refresh'));
     expect(refresh.request.body).toEqual({ refreshToken: 'refresh-123' });
     expect(refresh.request.headers.has('Authorization')).toBe(false);
@@ -110,8 +112,12 @@ describe('authInterceptor', () => {
     const navigate = vi.spyOn(router, 'navigateByUrl');
     session.setSession('old-access', 'expired-refresh');
     let status = 0;
-    http.get('/api/v1/patients').subscribe({ error: (error: { status?: number }) => (status = error.status ?? 0) });
-    httpTesting.expectOne('/api/v1/patients').flush({}, { status: 401, statusText: 'Unauthorized' });
+    http
+      .get('/api/v1/patients')
+      .subscribe({ error: (error: { status?: number }) => (status = error.status ?? 0) });
+    httpTesting
+      .expectOne('/api/v1/patients')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
     httpTesting
       .expectOne((call) => call.url.includes('/api/v1/auth/refresh'))
       .flush({}, { status: 401, statusText: 'Unauthorized' });
@@ -124,7 +130,9 @@ describe('authInterceptor', () => {
   it('should clear the session and go to login on 401 without a refresh token', () => {
     const navigate = vi.spyOn(router, 'navigateByUrl');
     http.get('/api/v1/patients').subscribe({ error: () => {} });
-    httpTesting.expectOne('/api/v1/patients').flush({}, { status: 401, statusText: 'Unauthorized' });
+    httpTesting
+      .expectOne('/api/v1/patients')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
     httpTesting.expectNone((call) => call.url.includes('/api/v1/auth/refresh'));
     expect(session.accessToken()).toBeNull();
     expect(navigate).toHaveBeenCalledWith('/login');

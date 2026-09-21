@@ -236,6 +236,21 @@ describe('PatientsService', () => {
     expect(downloadUrl).toBe('https://files.example/scan.pdf');
   });
 
+  it('should search patients by query', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    let names: Array<string | undefined> = [];
+    service.searchPatients('ada').subscribe((patients) => {
+      names = patients.map((patient) => patient.firstName);
+    });
+    await flushEffects();
+    const request = httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients'));
+    expect(request.request.params.get('query')).toBe('ada');
+    request.flush({ content: [{ firstName: 'Ada' }] });
+    await flushEffects();
+    expect(names).toEqual(['Ada']);
+  });
+
   it('should post an odontogram entry', async () => {
     await flushEffects();
     httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });

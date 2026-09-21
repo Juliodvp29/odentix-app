@@ -97,4 +97,39 @@ describe('AppointmentsService', () => {
     expect(service.rangeFailed(RANGE, null)).toBe(false);
     expect(service.appointments(RANGE, null)).toEqual(APPOINTMENTS);
   });
+
+  it('should derive room options from cached data', async () => {
+    service.ensureRange(RANGE, null);
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/appointments'))
+      .flush([{ id: 'appointment-1', roomId: 'room-1', roomName: 'Box 1' }]);
+    await flushEffects();
+    expect(service.roomOptions()).toEqual([{ id: 'room-1', name: 'Box 1' }]);
+  });
+
+  it('should create an appointment', async () => {
+    let createdId: string | undefined;
+    service
+      .createAppointment({
+        patientId: 'patient-1',
+        startsAt: '2026-09-22T09:00:00-05:00',
+        endsAt: '2026-09-22T09:30:00-05:00',
+      })
+      .subscribe((appointment) => (createdId = appointment.id ?? undefined));
+    const request = httpTesting.expectOne((call) => call.url.endsWith('/api/v1/appointments'));
+    expect(request.request.method).toBe('POST');
+    request.flush({ id: 'appointment-9' });
+    await flushEffects();
+    expect(createdId).toBe('appointment-9');
+  });
+
+  it('should clear cached ranges on invalidateAll', async () => {
+    service.ensureRange(RANGE, null);
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/appointments')).flush(APPOINTMENTS);
+    await flushEffects();
+    expect(service.hasData(RANGE, null)).toBe(true);
+    service.invalidateAll();
+    expect(service.hasData(RANGE, null)).toBe(false);
+    expect(service.appointments(RANGE, null)).toEqual([]);
+  });
 });

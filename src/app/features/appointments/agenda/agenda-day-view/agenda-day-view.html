@@ -1,7 +1,7 @@
 <ol class="space-y-16">
   @for (appointment of appointments(); track appointment.id) {
     <li class="flex flex-wrap items-center gap-16 rounded-card bg-paper p-16 shadow-resting">
-      <p class="w-32 shrink-0 text-body font-medium text-ink">
+      <p class="w-64 shrink-0 text-body font-medium text-ink">
         {{ formatTime(appointment.startsAt) }}
         <span class="block text-caption font-normal text-mid-gray">
           {{ formatTime(appointment.endsAt) }}

@@ -3,11 +3,18 @@ import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
 import { components } from '@core/api/schema';
-import { AgendaView, DateRange, addDays, rangeForView, weekStart } from './agenda-dates';
+import { AgendaView, DateRange, addDays, addMonths, rangeForView, weekStart } from './agenda-dates';
 
 export type AppointmentResponse = components['schemas']['AppointmentResponse'];
+export type CreateAppointmentRequest = components['schemas']['CreateAppointmentRequest'];
+export type PagePatientResponse = components['schemas']['PagePatientResponse'];
 
 export interface ProfessionalOption {
+  readonly id: string;
+  readonly name: string;
+}
+
+export interface RoomOption {
   readonly id: string;
   readonly name: string;
 }
@@ -57,6 +64,31 @@ export class AppointmentsService {
       .sort((left, right) => left.name.localeCompare(right.name, 'es'));
   }
 
+  roomOptions(): RoomOption[] {
+    const seen = new Map<string, string>();
+    for (const state of this.ranges().values()) {
+      for (const appointment of state.appointments) {
+        if (appointment.roomId && appointment.roomName) {
+          seen.set(appointment.roomId, appointment.roomName);
+        }
+      }
+    }
+    return [...seen.entries()]
+      .map(([id, name]) => ({ id, name }))
+      .sort((left, right) => left.name.localeCompare(right.name, 'es'));
+  }
+
+  createAppointment(body: CreateAppointmentRequest) {
+    return this.api.post<CreateAppointmentRequest, AppointmentResponse>(
+      '/api/v1/appointments',
+      body,
+    );
+  }
+
+  invalidateAll(): void {
+    this.ranges.set(new Map());
+  }
+
   ensureRange(range: DateRange, professionalId: string | null, force = false): void {
     const key = rangeKey(range, professionalId);
     if (this.inFlight.has(key)) {
@@ -84,6 +116,12 @@ export class AppointmentsService {
     anchorIsoDate: string,
     professionalId: string | null,
   ): void {
+    if (view === 'month') {
+      this.ensureRange(rangeForView(view, anchorIsoDate), professionalId);
+      this.ensureRange(rangeForView(view, addMonths(anchorIsoDate, -1)), professionalId);
+      this.ensureRange(rangeForView(view, addMonths(anchorIsoDate, 1)), professionalId);
+      return;
+    }
     const visible = rangeForView(view, anchorIsoDate);
     const spanDays = view === 'day' ? 1 : 7;
     const base = view === 'day' ? anchorIsoDate : weekStart(anchorIsoDate);
