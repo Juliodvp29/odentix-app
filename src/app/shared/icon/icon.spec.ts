@@ -13,6 +13,7 @@ const names: ReadonlyArray<IconName> = [
   'triangle-alert',
   'layout-dashboard',
   'log-out',
+  'users',
 ];
 
 describe('Icon', () => {

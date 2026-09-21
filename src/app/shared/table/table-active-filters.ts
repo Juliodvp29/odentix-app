@@ -10,6 +10,7 @@ export interface ActiveChip {
 @Component({
   selector: 'app-table-active-filters',
   imports: [Icon],
+  host: { class: 'block' },
   template: `
     <div class="flex flex-wrap gap-8">
       @for (chip of chips(); track chip.key) {

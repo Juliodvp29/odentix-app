@@ -247,6 +247,17 @@ describe('Table', () => {
     expect(fixture.componentInstance.lastQuery?.filters['role']).toBeUndefined();
   });
 
+  it('should not render chips without active filters', () => {
+    expect(fixture.nativeElement.querySelector('[aria-label^="Remove filter"]')).toBeNull();
+  });
+
+  it('should render layout components as blocks for stacked layouts', () => {
+    for (const selector of ['app-table-bar', 'app-table-grid', 'app-table-pagination']) {
+      const element = fixture.nativeElement.querySelector(selector) as HTMLElement;
+      expect(element.className).toContain('block');
+    }
+  });
+
   it('should filter by multiple statuses from the panel', () => {
     openFilters();
     const boxes = Array.from(

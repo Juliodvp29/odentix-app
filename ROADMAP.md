@@ -568,14 +568,14 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Paginated list using the shared table (FASE1-06), backed by the
+- [x] Paginated list using the shared table (FASE1-06), backed by the
       backend's patients endpoint.
-- [ ] Search by name/document, debounced (this is a good first real use
+- [x] Search by name/document, debounced (this is a good first real use
       of a signal-based `debounced()` pattern per Angular 22 §2).
 
 **Acceptance criteria:**
 
-- [ ] Typing in the search field updates results without a full page
+- [x] Typing in the search field updates results without a full page
       reload or visible flicker; loading state is the skeleton table,
       not a spinner.
 

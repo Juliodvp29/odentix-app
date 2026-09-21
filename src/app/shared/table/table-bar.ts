@@ -6,6 +6,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-table-bar',
   imports: [Button],
+  host: { class: 'block' },
   template: `
     <div class="flex flex-wrap items-center justify-between gap-8">
       <div class="relative min-w-0 flex-1">

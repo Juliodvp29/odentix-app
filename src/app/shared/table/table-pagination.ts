@@ -5,6 +5,7 @@ import { Icon } from '@shared/icon/icon';
 @Component({
   selector: 'app-table-pagination',
   imports: [Button, Icon],
+  host: { class: 'block' },
   template: `
     <nav aria-label="Pagination" class="flex flex-wrap items-center gap-16">
       <p class="text-body text-mid-gray">{{ rangeText() }}</p>

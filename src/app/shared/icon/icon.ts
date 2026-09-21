@@ -11,6 +11,7 @@ import {
   lucidePencil,
   lucideTrash2,
   lucideTriangleAlert,
+  lucideUsers,
   lucideX,
 } from '@ng-icons/lucide';
 
@@ -25,7 +26,8 @@ export type IconName =
   | 'eye-off'
   | 'triangle-alert'
   | 'layout-dashboard'
-  | 'log-out';
+  | 'log-out'
+  | 'users';
 
 const ICON_NAMES: Record<IconName, string> = {
   x: 'lucideX',
@@ -39,6 +41,7 @@ const ICON_NAMES: Record<IconName, string> = {
   'triangle-alert': 'lucideTriangleAlert',
   'layout-dashboard': 'lucideLayoutDashboard',
   'log-out': 'lucideLogOut',
+  users: 'lucideUsers',
 };
 
 @Component({
@@ -56,6 +59,7 @@ const ICON_NAMES: Record<IconName, string> = {
       lucidePencil,
       lucideTrash2,
       lucideTriangleAlert,
+      lucideUsers,
       lucideX,
     }),
   ],

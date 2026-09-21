@@ -144,6 +144,10 @@ src/app/
 - `@defer` for anything heavy or below the fold — this is one of the
   main tools for the performance requirement in section 7, use it
   deliberately, not only when convenient.
+- Component hosts default to `display: inline`, where vertical margins
+  from `space-y` layouts silently do nothing. Any component rendered as
+  a direct child of a stacked layout needs `host: { class: 'block' }` —
+  keep `Icon`/`Link` inline (they live in text and flex flows).
 - **No component file over ~200 lines.** If a component is approaching
   that, it's telling you to extract a child component, move logic into a
   service, or split a template into smaller pieces. This is a hard

@@ -28,9 +28,10 @@ import { TablePagination } from './table-pagination';
 
 @Component({
   selector: 'app-table',
+  host: { class: 'block' },
   imports: [TableActiveFilters, TableBar, TableFilterPanel, TableGrid, TablePagination],
   template: `
-    <div class="space-y-16">
+    <div class="space-y-24">
       <app-table-bar
         [search]="query().search ?? ''"
         [activeFilterCount]="activeFilterCount()"
@@ -49,11 +50,13 @@ import { TablePagination } from './table-pagination';
           (clearRequested)="onClear()"
         />
       }
-      <app-table-active-filters
-        [columns]="columns()"
-        [filters]="query().filters"
-        (remove)="onFilter($event, '')"
-      />
+      @if (activeFilterCount() > 0) {
+        <app-table-active-filters
+          [columns]="columns()"
+          [filters]="query().filters"
+          (remove)="onFilter($event, '')"
+        />
+      }
       <app-table-grid
         [columns]="columns()"
         [rows]="rows()"
