@@ -10,6 +10,7 @@ import {
   lucideLayoutDashboard,
   lucideLogOut,
   lucidePencil,
+  lucidePlus,
   lucideTrash2,
   lucideTriangleAlert,
   lucideUsers,
@@ -21,6 +22,7 @@ export type IconName =
   | 'calendar'
   | 'chevron-down'
   | 'pencil'
+  | 'plus'
   | 'trash-2'
   | 'download'
   | 'check'
@@ -36,6 +38,7 @@ const ICON_NAMES: Record<IconName, string> = {
   calendar: 'lucideCalendar',
   'chevron-down': 'lucideChevronDown',
   pencil: 'lucidePencil',
+  plus: 'lucidePlus',
   'trash-2': 'lucideTrash2',
   download: 'lucideDownload',
   check: 'lucideCheck',
@@ -61,6 +64,7 @@ const ICON_NAMES: Record<IconName, string> = {
       lucideLayoutDashboard,
       lucideLogOut,
       lucidePencil,
+      lucidePlus,
       lucideTrash2,
       lucideTriangleAlert,
       lucideUsers,

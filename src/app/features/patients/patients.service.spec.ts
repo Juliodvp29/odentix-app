@@ -235,4 +235,32 @@ describe('PatientsService', () => {
     await flushEffects();
     expect(downloadUrl).toBe('https://files.example/scan.pdf');
   });
+
+  it('should post an odontogram entry', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    let entryId: string | undefined;
+    service
+      .addOdontogramEntry('patient-1', {
+        toothNumber: 16,
+        surface: 'oclusal',
+        entryType: 'diagnostico',
+        condition: 'Caries oclusal',
+      })
+      .subscribe((entry) => (entryId = entry.id ?? undefined));
+    await flushEffects();
+    const request = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/patients/patient-1/odontogram'),
+    );
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({
+      toothNumber: 16,
+      surface: 'oclusal',
+      entryType: 'diagnostico',
+      condition: 'Caries oclusal',
+    });
+    request.flush({ id: 'entry-1' });
+    await flushEffects();
+    expect(entryId).toBe('entry-1');
+  });
 });

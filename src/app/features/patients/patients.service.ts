@@ -10,6 +10,8 @@ export type ClinicalRecordResponse = components['schemas']['ClinicalRecordRespon
 export type OdontogramResponse = components['schemas']['OdontogramResponse'];
 export type PatientFileResponse = components['schemas']['PatientFileResponse'];
 export type PatientFileDownloadResponse = components['schemas']['PatientFileDownloadResponse'];
+export type CreateOdontogramEntryRequest = components['schemas']['CreateOdontogramEntryRequest'];
+export type OdontogramEntryResponse = components['schemas']['OdontogramEntryResponse'];
 
 export type FileUploadEvent =
   | { readonly kind: 'progress'; readonly percent: number | null }
@@ -108,6 +110,16 @@ export class PatientsService {
   fileDownloadUrl(patientId: string, fileId: string): Observable<PatientFileDownloadResponse> {
     return this.api.get<PatientFileDownloadResponse>(
       `/api/v1/patients/${patientId}/files/${fileId}/download-url`,
+    );
+  }
+
+  addOdontogramEntry(
+    patientId: string,
+    entry: CreateOdontogramEntryRequest,
+  ): Observable<OdontogramEntryResponse> {
+    return this.api.post<CreateOdontogramEntryRequest, OdontogramEntryResponse>(
+      `/api/v1/patients/${patientId}/odontogram`,
+      entry,
     );
   }
 

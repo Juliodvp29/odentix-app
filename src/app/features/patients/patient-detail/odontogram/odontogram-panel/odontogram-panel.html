@@ -1,0 +1,109 @@
+<div class="space-y-16 rounded-card bg-paper p-24 shadow-resting">
+  <div class="flex flex-wrap items-center justify-between gap-16">
+    <div class="flex items-center gap-12">
+      <span
+        class="inline-flex h-48 w-48 shrink-0 flex-col items-center justify-center rounded-card bg-teal-soft text-teal-deep"
+      >
+        <span class="text-subheading font-medium">{{ toothNumber() }}</span>
+        <span class="text-caption">FDI</span>
+      </span>
+      <div>
+        <div class="flex flex-wrap items-center gap-8">
+          <h3 class="text-subheading text-ink">Pieza {{ toothNumber() }}</h3>
+          <span
+            class="inline-block rounded-pill text-caption font-medium"
+            style="padding: 2px 10px"
+            [class]="status().badge"
+          >
+            {{ status().label }}
+          </span>
+        </div>
+        <p class="mt-4 text-caption text-mid-gray">{{ toothName() }}</p>
+      </div>
+    </div>
+    <app-button variant="primary" icon="plus" (clicked)="addEntry.emit()">
+      Agregar entrada
+    </app-button>
+  </div>
+
+  <div class="flex items-center justify-between gap-16 rounded-control bg-surface-alt p-16">
+    <div>
+      <p class="text-body font-medium text-ink">Superficies afectadas</p>
+      <p class="mt-4 text-caption text-mid-gray">{{ affectedSurfaces() }}</p>
+    </div>
+    <svg width="48" height="48" viewBox="0 0 40 40" aria-hidden="true" class="shrink-0">
+      <polygon
+        points="0,0 40,0 28,12 12,12"
+        [attr.fill]="fillFor('vestibular')"
+        [attr.stroke]="neutralStroke"
+      />
+      <polygon
+        points="40,0 40,40 28,28 28,12"
+        [attr.fill]="fillFor('distal')"
+        [attr.stroke]="neutralStroke"
+      />
+      <polygon
+        points="0,40 40,40 28,28 12,28"
+        [attr.fill]="fillFor('lingual')"
+        [attr.stroke]="neutralStroke"
+      />
+      <polygon
+        points="0,0 0,40 12,28 12,12"
+        [attr.fill]="fillFor('mesial')"
+        [attr.stroke]="neutralStroke"
+      />
+      <rect
+        x="12"
+        y="12"
+        width="16"
+        height="16"
+        [attr.fill]="fillFor('oclusal')"
+        [attr.stroke]="neutralStroke"
+      />
+    </svg>
+  </div>
+
+  <div class="space-y-12">
+    <div class="flex items-center justify-between">
+      <h4 class="text-caption font-medium text-mid-gray">HISTORIAL DE REGISTROS</h4>
+      <span class="text-caption text-mid-gray">{{ entryCount() }}</span>
+    </div>
+    @if (entries().length === 0) {
+      <div
+        class="space-y-8 rounded-card border border-dashed border-hairline bg-surface-alt p-24 text-center"
+      >
+        <p class="text-body font-medium text-ink">Sin entradas registradas</p>
+        <p class="text-caption text-mid-gray">
+          Esta pieza está limpia y libre de hallazgos registrados.
+        </p>
+        <app-button variant="secondary" (clicked)="addEntry.emit()">
+          Registrar primer hallazgo
+        </app-button>
+      </div>
+    } @else {
+      <ul class="max-h-96 space-y-12 overflow-y-auto">
+        @for (entry of entries(); track entry.id) {
+          <li class="space-y-8 rounded-control border border-hairline bg-surface-alt p-16">
+            <div class="flex items-center justify-between gap-8">
+              <span
+                class="inline-block rounded-pill text-caption font-medium"
+                style="padding: 2px 10px"
+                [class]="entryBadge(entry.entryType)"
+              >
+                {{ entryLabel(entry.entryType) }}
+              </span>
+              <time class="text-caption text-mid-gray">{{ formatDate(entry.recordedAt) }}</time>
+            </div>
+            <p class="text-body font-medium text-ink">{{ entry.condition || 'Sin descripción' }}</p>
+            <p class="text-caption text-mid-gray">Superficie: {{ formatSurface(entry.surface) }}</p>
+            @if (entry.notes) {
+              <p class="rounded-sm border border-hairline bg-paper p-8 text-body text-mid-gray">
+                {{ entry.notes }}
+              </p>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

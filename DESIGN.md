@@ -329,6 +329,23 @@ with a 2px `--color-teal` bottom border, inactive tabs
 `--color-mid-gray`. Transition on switch: `--duration-base`
 `--ease-standard`.
 
+### Odontogram chart
+
+**Role:** visual dental chart in the patient detail (32 FDI teeth, 5
+surfaces each, grouped in 4 quadrants).
+
+The chart follows the clinical convention, not the app's status
+semantics: `--color-danger` = diagnosis pending, `--color-info` =
+proposed plan, `--color-success` = completed treatment,
+`--color-mid-gray` = current state, neutral `--color-surface-alt`
+fill with `--color-hairline` stroke = no data, gray cross = missing
+tooth. When a tooth holds several entries, the highest-priority type
+wins (diagnosis > proposed > completed > current). The side panel
+keeps the standard soft-badge pattern for coherence.
+
+Selected tooth: 2px `--color-teal` border. Keyboard: roving tabindex
+with arrow navigation; tooltip per the Tooltip spec.
+
 ### Tooltip
 
 **Role:** supplementary context on hover/focus

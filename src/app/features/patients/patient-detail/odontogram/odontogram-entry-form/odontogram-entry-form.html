@@ -1,0 +1,118 @@
+<div class="space-y-16">
+  <fieldset>
+    <legend class="text-caption font-medium text-ink">Tipo de entrada</legend>
+    <div class="mt-8 grid gap-8 sm:grid-cols-2">
+      @for (type of entryTypes; track type) {
+        <label
+          class="flex cursor-pointer items-center gap-8 rounded-control border border-hairline bg-surface-alt p-12 text-body text-ink"
+        >
+          <input
+            type="radio"
+            name="entry-type"
+            [value]="type"
+            [checked]="entryType() === type"
+            (change)="onEntryTypeChange($event)"
+          />
+          {{ entryLabels[type] }}
+        </label>
+      }
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="text-caption font-medium text-ink">Superficie afectada</legend>
+    <div
+      class="mt-8 flex items-center gap-16 rounded-control border border-hairline bg-surface-alt p-16"
+    >
+      <svg width="70" height="70" viewBox="0 0 40 40" aria-hidden="true" class="shrink-0">
+        <polygon
+          points="0,0 40,0 28,12 12,12"
+          [attr.fill]="surfaces().has('vestibular') ? selectedFill : neutralFill"
+          [attr.stroke]="neutralStroke"
+        />
+        <polygon
+          points="40,0 40,40 28,28 28,12"
+          [attr.fill]="surfaces().has('distal') ? selectedFill : neutralFill"
+          [attr.stroke]="neutralStroke"
+        />
+        <polygon
+          points="0,40 40,40 28,28 12,28"
+          [attr.fill]="surfaces().has('lingual') ? selectedFill : neutralFill"
+          [attr.stroke]="neutralStroke"
+        />
+        <polygon
+          points="0,0 0,40 12,28 12,12"
+          [attr.fill]="surfaces().has('mesial') ? selectedFill : neutralFill"
+          [attr.stroke]="neutralStroke"
+        />
+        <rect
+          x="12"
+          y="12"
+          width="16"
+          height="16"
+          [attr.fill]="surfaces().has('oclusal') ? selectedFill : neutralFill"
+          [attr.stroke]="neutralStroke"
+        />
+      </svg>
+      <div class="grid flex-1 gap-8 sm:grid-cols-2">
+        @for (surface of surfaceOptions; track surface) {
+          <label class="flex cursor-pointer items-center gap-8 text-body text-ink">
+            <input
+              type="checkbox"
+              [value]="surface"
+              [checked]="surfaces().has(surface)"
+              (change)="onSurfaceChange(surface, $event)"
+            />
+            {{ surfaceLabels[surface] }}
+          </label>
+        }
+        <label
+          class="flex cursor-pointer items-center gap-8 border-t border-hairline pt-8 text-body font-medium text-ink sm:col-span-2"
+        >
+          <input type="checkbox" [checked]="wholeTooth()" (change)="onWholeToothChange($event)" />
+          Pieza completa / Ausente
+        </label>
+      </div>
+    </div>
+    @if (surfaceError(); as message) {
+      <p class="mt-8 text-body text-danger-deep" role="alert">{{ message }}</p>
+    }
+  </fieldset>
+
+  <app-form-field label="Condición / Procedimiento" [field]="entryForm.condition">
+    <app-text-input
+      [field]="entryForm.condition"
+      placeholder="Ej: Caries oclusal profunda, Obturación resina…"
+    />
+  </app-form-field>
+  <div class="flex flex-wrap items-center gap-8 text-caption">
+    <span class="font-medium text-mid-gray">Sugerencias:</span>
+    @for (preset of presets; track preset) {
+      <button
+        type="button"
+        (click)="applyPreset(preset)"
+        class="rounded-pill border border-hairline bg-surface-alt px-8 py-4 text-ink transition-colors duration-fast hover:bg-hairline"
+      >
+        {{ preset }}
+      </button>
+    }
+  </div>
+
+  <app-form-field label="Notas u observaciones (Opcional)" [field]="entryForm.notes">
+    <app-text-input
+      [field]="entryForm.notes"
+      placeholder="Detalles de profundidad, sintomatología, recomendaciones…"
+    />
+  </app-form-field>
+
+  @if (serverError(); as message) {
+    <p class="text-body text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex items-center justify-end gap-8 border-t border-hairline pt-16">
+    <app-button variant="ghost" (clicked)="cancelled.emit()">Cancelar</app-button>
+    <app-button variant="primary" icon="check" [loading]="saving()" (clicked)="submitEntry()">
+      Guardar entrada
+    </app-button>
+  </div>
+</div>

@@ -93,9 +93,17 @@ describe('PatientDetailPage', () => {
       });
     await new Promise((resolve) => setTimeout(resolve, 0));
     fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Odontograma interactivo');
+    expect(tabs[2].getAttribute('aria-selected')).toBe('true');
+    const tooth = Array.from(
+      fixture.nativeElement.querySelectorAll('button[aria-label^="Pieza"]'),
+    ).find((element) =>
+      (element as HTMLButtonElement).getAttribute('aria-label')?.startsWith('Pieza 16,'),
+    ) as HTMLButtonElement;
+    tooth.click();
+    fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Pieza 16');
     expect(fixture.nativeElement.textContent).toContain('Diagnóstico');
-    expect(tabs[2].getAttribute('aria-selected')).toBe('true');
   });
 
   it('should render patient files in their tab', async () => {

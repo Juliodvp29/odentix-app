@@ -659,6 +659,38 @@ that every feature route renders inside.
 
 ---
 
+### 🎫 FASE3-06 — Visual interactive odontogram
+
+**Type:** feature
+**Estimate:** L (5–6h — SVG chart + detail panel + entry modal)
+**Depends on:** FASE3-04, `DESIGN.md` odontogram pattern
+
+**Description:**
+FASE3-04 shipped the odontogram as a data view. This ticket replaces
+it with the visual clinical chart from the approved mockup: 32 FDI
+teeth in 4 quadrants, 5 clickable surfaces each, clinical color
+convention, side detail panel, and entry creation in a modal.
+
+**Tasks:**
+
+- [x] SVG chart with per-surface colors, missing-tooth cross, tooltip,
+      arrow-key navigation, arch-shaped skeleton, error with retry.
+- [x] Detail panel per tooth (status pill, mini surface map, entries,
+      add-entry entry point, empty state).
+- [x] Entry modal (type, surfaces or whole tooth, condition with
+      presets, notes) saving one backend entry per surface.
+- [x] No delete buttons in v1 (the backend is append-only — deletion
+      needs a backend endpoint first).
+
+**Acceptance criteria:**
+
+- [x] Selecting a tooth shows its entries; saving from the modal
+      recolors the tooth without a manual refresh.
+- [x] A tooth with several entries shows its highest-priority type
+      (diagnosis > proposed > completed > current).
+
+---
+
 # FASE 4 — Agenda & appointments module
 
 **Suggested labels:** `frontend`, `fase-4`, `appointments`

@@ -1,46 +1,17 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { components } from '@core/api/schema';
-import { PatientsService } from '@features/patients/patients.service';
+import { Component, TemplateRef, computed, inject, input, signal, viewChild } from '@angular/core';
 import { Button } from '@shared/button/button';
+import { ModalHandle, ModalService } from '@shared/modal/modal.service';
 import { Skeleton } from '@shared/skeleton/skeleton';
-import { formatDateEs } from '@shared/table/table-models';
+import { PatientsService } from '@features/patients/patients.service';
+import { OdontogramChart, ToothSelection } from '../odontogram/odontogram-chart/odontogram-chart';
+import { OdontogramEntryForm } from '../odontogram/odontogram-entry-form/odontogram-entry-form';
+import { OdontogramPanel } from '../odontogram/odontogram-panel/odontogram-panel';
+import { OdontogramEntry, TOOTH_NAMES, isKnownType } from '../odontogram/odontogram-model';
 
-type OdontogramEntry = components['schemas']['OdontogramEntryResponse'];
-type EntryType = 'estado_actual' | 'diagnostico' | 'plan_propuesto' | 'tratamiento_realizado';
-
-interface EntryGroup {
-  type: EntryType;
-  label: string;
-  badge: string;
-  entries: OdontogramEntry[];
-}
-
-interface ToothView {
-  toothNumber: number;
-  groups: EntryGroup[];
-}
-
-const ENTRY_TYPE_ORDER: EntryType[] = [
-  'estado_actual',
-  'diagnostico',
-  'plan_propuesto',
-  'tratamiento_realizado',
-];
-
-const ENTRY_TYPE_META: Record<EntryType, { label: string; badge: string }> = {
-  estado_actual: { label: 'Estado actual', badge: 'bg-info-soft text-info-deep' },
-  diagnostico: { label: 'Diagnóstico', badge: 'bg-warning-soft text-warning-deep' },
-  plan_propuesto: { label: 'Plan propuesto', badge: 'bg-teal-soft text-teal-deep' },
-  tratamiento_realizado: {
-    label: 'Tratamiento realizado',
-    badge: 'bg-success-soft text-success-deep',
-  },
-};
-
-// Odontogram data grouped by tooth, with entries separated by type.
+// Interactive odontogram: clinical chart, detail panel, and entry creation.
 @Component({
   selector: 'app-odontogram-view',
-  imports: [Button, Skeleton],
+  imports: [Button, OdontogramChart, OdontogramEntryForm, OdontogramPanel, Skeleton],
   templateUrl: './odontogram-view.html',
   host: { class: 'block' },
 })
@@ -48,31 +19,69 @@ export class OdontogramView {
   readonly patientId = input.required<string>();
 
   private readonly patients = inject(PatientsService);
+  private readonly modal = inject(ModalService);
   private readonly odontogram = this.patients.odontogram(this.patientId);
+  private readonly entryTemplate = viewChild.required<TemplateRef<unknown>>('entryTemplate');
+  private entryDialog: ModalHandle | null = null;
 
-  readonly teeth = computed<ToothView[]>(() => {
-    const groups = this.odontogram.value()?.teeth ?? [];
-    return groups
-      .map((group) => ({
-        toothNumber: group.toothNumber ?? 0,
-        groups: ENTRY_TYPE_ORDER.map((type) => ({
-          type,
-          label: ENTRY_TYPE_META[type].label,
-          badge: ENTRY_TYPE_META[type].badge,
-          entries: group.entries?.[type] ?? [],
-        })).filter((grouped) => grouped.entries.length > 0),
-      }))
-      .filter((tooth) => tooth.groups.length > 0)
-      .sort((left, right) => left.toothNumber - right.toothNumber);
+  readonly entriesByTooth = computed<ReadonlyMap<number, ReadonlyArray<OdontogramEntry>>>(() => {
+    const lookup = new Map<number, OdontogramEntry[]>();
+    for (const group of this.odontogram.value()?.teeth ?? []) {
+      // The backend groups entries under their type key; an entry may not
+      // repeat it, so the key acts as fallback for the entry type.
+      const flat: OdontogramEntry[] = [];
+      for (const [type, list] of Object.entries(group.entries ?? {})) {
+        for (const entry of list ?? []) {
+          const resolved = isKnownType(entry.entryType) ? entry.entryType : undefined;
+          const fallback = isKnownType(type) ? type : undefined;
+          flat.push({ ...entry, entryType: resolved ?? fallback });
+        }
+      }
+      if (group.toothNumber !== undefined && flat.length > 0) {
+        lookup.set(group.toothNumber, flat);
+      }
+    }
+    return lookup;
   });
   readonly loading = computed(() => this.odontogram.isLoading());
   readonly loadError = computed(() => this.odontogram.error() !== undefined);
-  readonly isEmpty = computed(
-    () => !this.loading() && !this.loadError() && this.teeth().length === 0,
-  );
 
-  formatDate(value: string | undefined): string {
-    return value ? formatDateEs(value) : '';
+  readonly selection = signal<ToothSelection | null>(null);
+  readonly selectedEntries = computed<ReadonlyArray<OdontogramEntry>>(() => {
+    const selected = this.selection();
+    return selected ? (this.entriesByTooth().get(selected.tooth) ?? []) : [];
+  });
+
+  readonly skeletonTeeth = Array.from({ length: 16 });
+
+  onToothSelected(selection: ToothSelection): void {
+    this.selection.set(selection);
+  }
+
+  onDeselected(): void {
+    this.selection.set(null);
+  }
+
+  openEntryForm(): void {
+    const selected = this.selection();
+    if (!selected) {
+      return;
+    }
+    const name = TOOTH_NAMES[selected.tooth] ?? 'Pieza dental';
+    this.entryDialog = this.modal.open(this.entryTemplate(), {
+      title: `Agregar entrada — Pieza ${selected.tooth} (${name})`,
+    });
+  }
+
+  onEntrySaved(): void {
+    this.entryDialog?.close();
+    this.entryDialog = null;
+    this.odontogram.reload();
+  }
+
+  onEntryCancelled(): void {
+    this.entryDialog?.close();
+    this.entryDialog = null;
   }
 
   retry(): void {

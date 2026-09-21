@@ -6,6 +6,7 @@ const names: ReadonlyArray<IconName> = [
   'calendar',
   'chevron-down',
   'pencil',
+  'plus',
   'trash-2',
   'download',
   'check',

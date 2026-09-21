@@ -1,63 +1,98 @@
-@if (loading()) {
-  <div class="space-y-16" aria-busy="true" aria-label="Cargando odontograma">
-    <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
-      <app-skeleton variant="line" />
-      <div class="w-2/3">
-        <app-skeleton variant="line" />
+<div class="space-y-16">
+  <div
+    class="flex flex-col gap-12 rounded-card border border-hairline bg-paper p-16 shadow-resting md:flex-row md:items-center md:justify-between"
+  >
+    <div class="flex items-start gap-12">
+      <span
+        class="inline-flex h-32 w-32 shrink-0 items-center justify-center rounded-control bg-teal-soft text-caption font-medium text-teal"
+      >
+        i
+      </span>
+      <div>
+        <h3 class="text-caption font-medium text-teal-deep">CONVENCIÓN CLÍNICA ADOPTADA</h3>
+        <p class="mt-4 text-caption text-ink">
+          El gráfico usa la convención odontológica: rojo = diagnóstico pendiente, azul = plan
+          propuesto, verde = tratamiento realizado, gris = ausente.
+        </p>
       </div>
     </div>
-    <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
-      <app-skeleton variant="line" />
-      <div class="w-1/2">
-        <app-skeleton variant="line" />
-      </div>
-    </div>
+    <ul class="flex flex-wrap gap-8 text-caption font-medium text-ink">
+      <li
+        class="inline-flex items-center gap-8 rounded-pill border border-hairline bg-surface-alt px-8 py-4"
+      >
+        <span class="h-8 w-8 rounded-pill" style="background: var(--color-danger)"></span>
+        Rojo: Diagnóstico
+      </li>
+      <li
+        class="inline-flex items-center gap-8 rounded-pill border border-hairline bg-surface-alt px-8 py-4"
+      >
+        <span class="h-8 w-8 rounded-pill" style="background: var(--color-info)"></span>
+        Azul: Propuesto
+      </li>
+      <li
+        class="inline-flex items-center gap-8 rounded-pill border border-hairline bg-surface-alt px-8 py-4"
+      >
+        <span class="h-8 w-8 rounded-pill" style="background: var(--color-success)"></span>
+        Verde: Realizado
+      </li>
+    </ul>
   </div>
-} @else if (loadError()) {
-  <div class="space-y-16 rounded-card bg-paper p-24 text-center shadow-resting">
-    <p class="text-body text-danger-deep" role="alert">No pudimos cargar el odontograma.</p>
-    <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
-  </div>
-} @else if (isEmpty()) {
-  <div class="py-32 text-center">
-    <p class="text-subheading text-ink">Sin entradas en el odontograma</p>
-    <p class="mt-4 text-body text-mid-gray">Aún no hay piezas registradas para este paciente.</p>
-  </div>
-} @else {
-  <ol class="space-y-16">
-    @for (tooth of teeth(); track tooth.toothNumber) {
-      <li class="rounded-card bg-paper p-24 shadow-resting">
-        <h3 class="text-subheading text-ink">Pieza {{ tooth.toothNumber }}</h3>
-        <div class="mt-16 space-y-16">
-          @for (group of tooth.groups; track group.type) {
-            <section [attr.aria-label]="group.label + ' de la pieza ' + tooth.toothNumber">
-              <span
-                class="inline-block rounded-pill text-caption font-medium"
-                style="padding: 2px 10px"
-                [class]="group.badge"
-              >
-                {{ group.label }}
-              </span>
-              <ul class="mt-8 space-y-8">
-                @for (entry of group.entries; track entry.id) {
-                  <li class="text-body text-ink">
-                    {{ entry.condition || 'Sin descripción' }}
-                    @if (entry.surface) {
-                      <span class="text-mid-gray">· {{ entry.surface }}</span>
-                    }
-                    @if (entry.notes) {
-                      <p class="text-body text-mid-gray">{{ entry.notes }}</p>
-                    }
-                    @if (formatDate(entry.recordedAt)) {
-                      <p class="text-caption text-mid-gray">{{ formatDate(entry.recordedAt) }}</p>
-                    }
-                  </li>
-                }
-              </ul>
-            </section>
+
+  @if (loading()) {
+    <div class="space-y-16" aria-busy="true" aria-label="Cargando odontograma">
+      @for (arch of [0, 1]; track arch) {
+        <div class="grid grid-cols-8 gap-8 rounded-card bg-paper p-24 shadow-resting">
+          @for (tooth of skeletonTeeth; track $index) {
+            <div class="h-16">
+              <app-skeleton variant="block" />
+            </div>
           }
         </div>
-      </li>
-    }
-  </ol>
-}
+      }
+    </div>
+  } @else if (loadError()) {
+    <div class="space-y-16 rounded-card bg-paper p-24 text-center shadow-resting">
+      <p class="text-body text-danger-deep" role="alert">No pudimos cargar el odontograma.</p>
+      <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+    </div>
+  } @else {
+    <div class="grid items-start gap-16 lg:grid-cols-5">
+      <div class="rounded-card bg-paper p-24 shadow-resting lg:col-span-3">
+        <app-odontogram-chart
+          [entriesByTooth]="entriesByTooth()"
+          [selectedTooth]="selection()?.tooth ?? null"
+          (toothSelected)="onToothSelected($event)"
+          (deselected)="onDeselected()"
+        />
+      </div>
+      <div class="lg:col-span-2">
+        @if (selection(); as selected) {
+          <app-odontogram-panel
+            [toothNumber]="selected.tooth"
+            [entries]="selectedEntries()"
+            (addEntry)="openEntryForm()"
+          />
+        } @else {
+          <div class="rounded-card bg-paper p-24 text-center shadow-resting">
+            <p class="text-subheading text-ink">Selecciona una pieza</p>
+            <p class="mt-4 text-body text-mid-gray">
+              Elige una pieza del gráfico para ver su detalle clínico.
+            </p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<ng-template #entryTemplate>
+  @if (selection(); as selected) {
+    <app-odontogram-entry-form
+      [patientId]="patientId()"
+      [toothNumber]="selected.tooth"
+      [preselectedSurface]="selected.surface"
+      (saved)="onEntrySaved()"
+      (cancelled)="onEntryCancelled()"
+    />
+  }
+</ng-template>
