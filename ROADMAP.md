@@ -673,13 +673,13 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Day/week view of appointments per professional.
-- [ ] Loading and empty states designed deliberately, not an
+- [x] Day/week view of appointments per professional.
+- [x] Loading and empty states designed deliberately, not an
       afterthought, given how central this screen is.
 
 **Acceptance criteria:**
 
-- [ ] Switching between days/weeks feels immediate — prefetch adjacent
+- [x] Switching between days/weeks feels immediate — prefetch adjacent
       ranges if needed to avoid a visible loading state on every click.
 
 ---

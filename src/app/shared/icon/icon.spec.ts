@@ -3,6 +3,7 @@ import { Icon, IconName } from './icon';
 
 const names: ReadonlyArray<IconName> = [
   'x',
+  'calendar',
   'chevron-down',
   'pencil',
   'trash-2',

@@ -26,6 +26,7 @@ let nextSelectId = 0;
   selector: 'app-select',
   imports: [FormField, Icon, SelectPanel],
   providers: [{ provide: FormFieldControl, useExisting: forwardRef(() => Select) }],
+  host: { class: 'block' },
   template: `
     <div class="relative" (keydown)="onKeydown($event)">
       <select

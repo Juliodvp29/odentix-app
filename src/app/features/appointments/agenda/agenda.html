@@ -1,0 +1,81 @@
+<div class="space-y-16">
+  <div class="flex flex-wrap items-center justify-between gap-16">
+    <h1 class="text-heading text-ink">Agenda</h1>
+    <div role="group" aria-label="Vista de agenda" class="flex gap-8">
+      <button
+        type="button"
+        [attr.aria-pressed]="view() === 'day'"
+        (click)="setView('day')"
+        [class.bg-surface-alt]="view() === 'day'"
+        class="rounded-control px-16 py-8 text-body font-medium text-ink transition-colors duration-fast"
+      >
+        Día
+      </button>
+      <button
+        type="button"
+        [attr.aria-pressed]="view() === 'week'"
+        (click)="setView('week')"
+        [class.bg-surface-alt]="view() === 'week'"
+        class="rounded-control px-16 py-8 text-body font-medium text-ink transition-colors duration-fast"
+      >
+        Semana
+      </button>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-16">
+    <app-button variant="ghost" (clicked)="goToPrevious()">Anterior</app-button>
+    <app-button variant="secondary" (clicked)="goToToday()">Hoy</app-button>
+    <app-button variant="ghost" (clicked)="goToNext()">Siguiente</app-button>
+    <p class="text-subheading text-ink" aria-live="polite">{{ rangeLabel() }}</p>
+  </div>
+
+  <div class="w-full sm:w-52">
+    <app-form-field label="Profesional" [field]="filterForm.professionalId">
+      <app-select
+        inputId="agenda-professional"
+        [field]="filterForm.professionalId"
+        [options]="professionalSelectOptions()"
+        placeholder="Todos"
+        (change)="onProfessionalChange()"
+      />
+    </app-form-field>
+  </div>
+
+  @if (isLoading()) {
+    <div class="space-y-16" aria-busy="true" aria-label="Cargando agenda">
+      <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+        <app-skeleton variant="line" />
+        <div class="w-2/3">
+          <app-skeleton variant="line" />
+        </div>
+      </div>
+      <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+        <app-skeleton variant="line" />
+        <div class="w-1/2">
+          <app-skeleton variant="line" />
+        </div>
+      </div>
+    </div>
+  } @else if (loadFailed()) {
+    <div class="space-y-16 rounded-card bg-paper p-24 text-center shadow-resting">
+      <p class="text-body text-danger-deep" role="alert">No pudimos cargar la agenda.</p>
+      <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+    </div>
+  } @else if (isEmpty()) {
+    <div class="py-32 text-center">
+      <p class="text-subheading text-ink">Sin citas programadas</p>
+      <p class="mt-4 text-body text-mid-gray">
+        @if (view() === 'day') {
+          No hay citas para este día.
+        } @else {
+          No hay citas para esta semana.
+        }
+      </p>
+    </div>
+  } @else if (view() === 'day') {
+    <app-agenda-day-view [appointments]="appointments()" />
+  } @else {
+    <app-agenda-week-view [columns]="weekColumns()" />
+  }
+</div>

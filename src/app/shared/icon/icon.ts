@@ -1,6 +1,7 @@
 import { Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
+  lucideCalendar,
   lucideCheck,
   lucideChevronDown,
   lucideDownload,
@@ -17,6 +18,7 @@ import {
 
 export type IconName =
   | 'x'
+  | 'calendar'
   | 'chevron-down'
   | 'pencil'
   | 'trash-2'
@@ -31,6 +33,7 @@ export type IconName =
 
 const ICON_NAMES: Record<IconName, string> = {
   x: 'lucideX',
+  calendar: 'lucideCalendar',
   'chevron-down': 'lucideChevronDown',
   pencil: 'lucidePencil',
   'trash-2': 'lucideTrash2',
@@ -49,6 +52,7 @@ const ICON_NAMES: Record<IconName, string> = {
   imports: [NgIcon],
   providers: [
     provideIcons({
+      lucideCalendar,
       lucideCheck,
       lucideChevronDown,
       lucideDownload,

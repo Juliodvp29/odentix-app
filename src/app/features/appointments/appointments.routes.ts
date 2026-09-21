@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 
-// Temporary placeholder route. Replaced by the real agenda routes in Fase 4.
+// Appointments feature routes.
 const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('../placeholder/coming-soon').then((m) => m.ComingSoon),
+    loadComponent: () => import('./agenda/agenda').then((m) => m.AgendaPage),
     data: { title: 'Agenda' },
   },
 ];
