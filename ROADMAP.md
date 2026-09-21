@@ -568,14 +568,14 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Paginated list using the shared table (FASE1-06), backed by the
+- [x] Paginated list using the shared table (FASE1-06), backed by the
       backend's patients endpoint.
-- [ ] Search by name/document, debounced (this is a good first real use
+- [x] Search by name/document, debounced (this is a good first real use
       of a signal-based `debounced()` pattern per Angular 22 §2).
 
 **Acceptance criteria:**
 
-- [ ] Typing in the search field updates results without a full page
+- [x] Typing in the search field updates results without a full page
       reload or visible flicker; loading state is the skeleton table,
       not a spinner.
 
@@ -589,12 +589,12 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Modal (FASE1-04) containing a Signal Form for creating/editing a
+- [x] Modal (FASE1-04) containing a Signal Form for creating/editing a
       patient, validated against the backend's required fields.
 
 **Acceptance criteria:**
 
-- [ ] Submitting invalid data shows field-level errors without closing
+- [x] Submitting invalid data shows field-level errors without closing
       the modal; a successful submit closes it and refreshes the list.
 
 ---
@@ -607,13 +607,13 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Detail route showing the patient's core data, with tabs/sections
+- [x] Detail route showing the patient's core data, with tabs/sections
       for clinical records, odontogram, and files (each can start as a
       placeholder if its backend endpoint isn't the focus yet).
 
 **Acceptance criteria:**
 
-- [ ] Navigating from the list to a patient's detail feels like a
+- [x] Navigating from the list to a patient's detail feels like a
       continuation, not a jarring context switch (transition + no
       layout shift while data loads).
 
@@ -1036,6 +1036,9 @@ that every feature route renders inside.
 
 - [ ] List/board of open opportunities, sorted by priority, grouped by
       type.
+- [ ] Make this view the post-login landing: redirect `/` here and list
+      it first in the shell nav (replacing the temporary `/patients`
+      landing).
 
 **Acceptance criteria:**
 

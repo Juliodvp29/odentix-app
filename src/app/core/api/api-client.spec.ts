@@ -45,4 +45,18 @@ describe('ApiClient', () => {
     request.flush({ accessToken: 'jwt-token' } satisfies LoginResponse);
     expect(accessToken).toBe('jwt-token');
   });
+
+  it('should send a typed PATCH request', () => {
+    let echoed: unknown;
+    client
+      .patch<{ firstName: string }, { firstName?: string }>('/api/v1/patients/1', {
+        firstName: 'Ada',
+      })
+      .subscribe((response) => (echoed = response.firstName));
+    const request = httpTesting.expectOne(`${environment.apiUrl}/api/v1/patients/1`);
+    expect(request.request.method).toBe('PATCH');
+    expect(request.request.body).toEqual({ firstName: 'Ada' });
+    request.flush({ firstName: 'Ada' });
+    expect(echoed).toBe('Ada');
+  });
 });

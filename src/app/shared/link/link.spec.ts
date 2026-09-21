@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { Link } from '@shared/link/link';
 
 describe('Link', () => {
@@ -10,6 +11,7 @@ describe('Link', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Link],
+      providers: [provideRouter([])],
     }).compileComponents();
     fixture = TestBed.createComponent(Link);
     fixture.componentRef.setInput('href', '/patients');
@@ -26,5 +28,13 @@ describe('Link', () => {
     fixture.detectChanges();
     expect(anchorElement().getAttribute('target')).toBe('_blank');
     expect(anchorElement().getAttribute('rel')).toBe('noreferrer');
+  });
+
+  it('should navigate inside the app without reloading for routes', () => {
+    fixture.componentRef.setInput('href', null);
+    fixture.componentRef.setInput('route', '/patients/1');
+    fixture.detectChanges();
+    expect(anchorElement().getAttribute('href')).toBe('/patients/1');
+    expect(anchorElement().getAttribute('target')).toBeNull();
   });
 });

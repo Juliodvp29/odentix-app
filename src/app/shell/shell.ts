@@ -6,6 +6,7 @@ import { components } from '@core/api/schema';
 import { BrandMark } from '@shared/brand-mark/brand-mark';
 import { Icon, IconName } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
+import { Toasts } from '@shared/toast/toasts';
 import { initialsOf } from '@shared/table/table-models';
 
 export type UserRole = NonNullable<components['schemas']['UserSummaryDto']['role']>;
@@ -25,6 +26,12 @@ export const NAV_ITEMS: ReadonlyArray<NavItem> = [
     icon: 'layout-dashboard',
     exact: true,
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar', 'especialista_externo'],
+  },
+  {
+    path: '/patients',
+    label: 'Pacientes',
+    icon: 'users',
+    roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
   },
 ];
 
@@ -48,7 +55,7 @@ export function visibleNavItems(
 
 @Component({
   selector: 'app-shell',
-  imports: [BrandMark, Icon, IconButton, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [BrandMark, Icon, IconButton, RouterLink, RouterLinkActive, RouterOutlet, Toasts],
   templateUrl: './shell.html',
 })
 export class Shell {

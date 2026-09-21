@@ -1,20 +1,31 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-link',
+  imports: [NgTemplateOutlet, RouterLink],
   template: `
-    <a
-      [href]="href()"
-      [attr.target]="external() ? '_blank' : null"
-      [attr.rel]="external() ? 'noreferrer' : null"
-      [class]="classes()"
-    >
-      <ng-content />
-    </a>
+    <ng-template #content><ng-content /></ng-template>
+    @if (route(); as internalRoute) {
+      <a [routerLink]="internalRoute" [class]="classes()">
+        <ng-container *ngTemplateOutlet="content" />
+      </a>
+    } @else {
+      <a
+        [href]="href() ?? ''"
+        [attr.target]="external() ? '_blank' : null"
+        [attr.rel]="external() ? 'noreferrer' : null"
+        [class]="classes()"
+      >
+        <ng-container *ngTemplateOutlet="content" />
+      </a>
+    }
   `,
 })
 export class Link {
-  readonly href = input.required<string>();
+  readonly href = input<string | null>(null);
+  readonly route = input<string | readonly string[] | null>(null);
   readonly external = input(false);
 
   readonly classes = computed(

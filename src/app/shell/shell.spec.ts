@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '@core/auth/auth.service';
 import { SessionService } from '@core/auth/session.service';
+import { ToastService } from '@shared/toast/toast.service';
 import { NavItem, Shell, UserRole, visibleNavItems } from './shell';
 
 const ITEMS: ReadonlyArray<NavItem> = [
@@ -58,5 +59,11 @@ describe('Shell', () => {
     ) as HTMLButtonElement;
     button.click();
     expect(logout).toHaveBeenCalled();
+  });
+
+  it('should display toasts triggered from anywhere', () => {
+    TestBed.inject(ToastService).success('Paciente creado');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Paciente creado');
   });
 });

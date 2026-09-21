@@ -144,6 +144,10 @@ src/app/
 - `@defer` for anything heavy or below the fold — this is one of the
   main tools for the performance requirement in section 7, use it
   deliberately, not only when convenient.
+- Component hosts default to `display: inline`, where vertical margins
+  from `space-y` layouts silently do nothing. Any component rendered as
+  a direct child of a stacked layout needs `host: { class: 'block' }` —
+  keep `Icon`/`Link` inline (they live in text and flex flows).
 - **No component file over ~200 lines.** If a component is approaching
   that, it's telling you to extract a child component, move logic into a
   service, or split a template into smaller pieces. This is a hard
@@ -304,8 +308,8 @@ either.)_
   (show/hide) and density options — add them when the patients list
   defines the real need.
 - UI language: **Spanish** for user-facing strings (code stays in
-  English). The temporary placeholder demo is still in English and dies
-  with it in Fase 2.
+  English). The temporary placeholder demo is still in English; its fate
+  (formal kit-preview route vs. deletion) is decided at the Fase 1 exit.
 - App shell: `src/app/shell/` (layout frame with role-aware nav). It is
   neither a lazy business feature nor a singleton service, so it lives
   outside `core/`/`shared/`/`features/` by design.

@@ -1,0 +1,125 @@
+<div class="space-y-24">
+  <app-link route="/patients">Volver a pacientes</app-link>
+
+  @if (loading()) {
+    <div class="space-y-16" aria-busy="true" aria-label="Cargando paciente">
+      <div class="flex items-center gap-16">
+        <app-skeleton variant="circle" />
+        <div class="flex-1 space-y-8">
+          <app-skeleton variant="line" />
+          <div class="w-2/3">
+            <app-skeleton variant="line" />
+          </div>
+        </div>
+      </div>
+      <div class="h-64">
+        <app-skeleton variant="block" />
+      </div>
+    </div>
+  } @else if (loadError()) {
+    <div class="space-y-16 rounded-card bg-paper p-24 text-center shadow-resting">
+      <p class="text-body text-danger-deep" role="alert">No pudimos cargar el paciente.</p>
+      <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+    </div>
+  } @else if (patient(); as current) {
+    <div class="flex flex-wrap items-center gap-16">
+      <span
+        class="inline-flex h-48 w-48 shrink-0 items-center justify-center rounded-pill bg-teal-soft text-body font-medium text-teal-deep"
+      >
+        {{ initials() }}
+      </span>
+      <div class="min-w-0">
+        <h1 class="text-heading text-ink">{{ fullName() }}</h1>
+        <p class="mt-4 flex flex-wrap items-center gap-8 text-body text-mid-gray">
+          <span>{{ documentLine() }}</span>
+          @if (isActive()) {
+            <span
+              class="inline-block rounded-pill bg-success-soft text-caption font-medium text-success-deep"
+              style="padding: 2px 10px"
+              >Activo</span
+            >
+          } @else {
+            <span
+              class="inline-block rounded-pill bg-danger-soft text-caption font-medium text-danger-deep"
+              style="padding: 2px 10px"
+              >Inactivo</span
+            >
+          }
+        </p>
+      </div>
+    </div>
+
+    <div
+      role="tablist"
+      aria-label="Secciones del paciente"
+      (keydown)="onTabKeydown($event)"
+      class="flex gap-16 border-b border-hairline"
+    >
+      @for (tab of tabs; track tab.id) {
+        <button
+          #tabButton
+          role="tab"
+          type="button"
+          [id]="'tab-' + tab.id"
+          [attr.aria-selected]="activeTab() === tab.id"
+          [attr.aria-controls]="'panel-' + tab.id"
+          [attr.tabindex]="activeTab() === tab.id ? 0 : -1"
+          (click)="selectTab(tab.id)"
+          [class.text-ink]="activeTab() === tab.id"
+          [class.text-mid-gray]="activeTab() !== tab.id"
+          [class.border-b-2]="activeTab() === tab.id"
+          [class.border-teal]="activeTab() === tab.id"
+          [class.border-transparent]="activeTab() !== tab.id"
+          class="-mb-px bg-transparent pb-8 text-body font-medium transition-colors duration-base"
+        >
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    @if (activeTab() === 'info') {
+      <div role="tabpanel" id="panel-info" aria-labelledby="tab-info">
+        <dl class="grid gap-16 sm:grid-cols-2">
+          <div>
+            <dt class="text-caption font-medium text-mid-gray">Documento</dt>
+            <dd class="mt-4 text-body text-ink">{{ documentLine() || '—' }}</dd>
+          </div>
+          <div>
+            <dt class="text-caption font-medium text-mid-gray">Fecha de nacimiento</dt>
+            <dd class="mt-4 text-body text-ink">{{ birthDate() || '—' }}</dd>
+          </div>
+          <div>
+            <dt class="text-caption font-medium text-mid-gray">Teléfono</dt>
+            <dd class="mt-4 text-body text-ink">{{ current.phone || '—' }}</dd>
+          </div>
+          <div>
+            <dt class="text-caption font-medium text-mid-gray">Correo</dt>
+            <dd class="mt-4 text-body text-ink">{{ current.email || '—' }}</dd>
+          </div>
+          <div class="sm:col-span-2">
+            <dt class="text-caption font-medium text-mid-gray">Dirección</dt>
+            <dd class="mt-4 text-body text-ink">{{ current.address || '—' }}</dd>
+          </div>
+          <div>
+            <dt class="text-caption font-medium text-mid-gray">Contacto de emergencia</dt>
+            <dd class="mt-4 text-body text-ink">{{ current.emergencyContactName || '—' }}</dd>
+          </div>
+          <div>
+            <dt class="text-caption font-medium text-mid-gray">Teléfono de emergencia</dt>
+            <dd class="mt-4 text-body text-ink">{{ current.emergencyContactPhone || '—' }}</dd>
+          </div>
+        </dl>
+      </div>
+    } @else {
+      <div
+        role="tabpanel"
+        [id]="'panel-' + activeTab()"
+        [attr.aria-labelledby]="'tab-' + activeTab()"
+        class="py-32 text-center"
+      >
+        <p class="text-subheading text-ink">{{ placeholderText() }}</p>
+        <p class="mt-4 text-body text-mid-gray">Esta sección aún no está disponible.</p>
+      </div>
+    }
+  }
+</div>

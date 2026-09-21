@@ -8,6 +8,7 @@ import { TableHeader } from './table-header';
 @Component({
   selector: 'app-table-grid',
   imports: [NgTemplateOutlet, Skeleton, TableCell, TableHeader],
+  host: { class: 'block' },
   template: `
     <div class="overflow-x-auto rounded-card bg-paper shadow-resting">
       <table class="w-full border-collapse text-left" [attr.aria-busy]="loading()">

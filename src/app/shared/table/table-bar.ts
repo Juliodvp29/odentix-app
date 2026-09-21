@@ -6,6 +6,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-table-bar',
   imports: [Button],
+  host: { class: 'block' },
   template: `
     <div class="flex flex-wrap items-center justify-between gap-8">
       <div class="relative min-w-0 flex-1">
@@ -15,24 +16,26 @@ const SEARCH_DEBOUNCE_MS = 300;
           placeholder="Search…"
           [value]="searchValue()"
           (input)="onSearchInput($event)"
-          class="w-full rounded-control border border-transparent bg-surface-alt px-12 py-8 text-body text-ink placeholder:text-faint-gray focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+          class="w-full rounded-control border border-transparent bg-surface-alt px-12 py-8 text-body text-ink placeholder:text-mid-gray focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
         />
       </div>
       <div class="flex flex-wrap items-center gap-8">
-        <app-button
-          variant="secondary"
-          (clicked)="filtersToggle.emit()"
-          [attr.aria-expanded]="filtersOpen()"
-        >
-          Filters
-          @if (activeFilterCount() > 0) {
-            <span
-              class="ml-4 rounded-pill bg-teal-soft px-8 py-4 text-caption font-medium text-teal-deep"
-            >
-              {{ activeFilterCount() }}
-            </span>
-          }
-        </app-button>
+        @if (hasFilters()) {
+          <app-button
+            variant="secondary"
+            (clicked)="filtersToggle.emit()"
+            [attr.aria-expanded]="filtersOpen()"
+          >
+            Filters
+            @if (activeFilterCount() > 0) {
+              <span
+                class="ml-4 rounded-pill bg-teal-soft px-8 py-4 text-caption font-medium text-teal-deep"
+              >
+                {{ activeFilterCount() }}
+              </span>
+            }
+          </app-button>
+        }
         @if (canExport()) {
           <app-button
             variant="secondary"
@@ -52,6 +55,7 @@ export class TableBar implements OnDestroy {
   readonly search = input('');
   readonly activeFilterCount = input(0);
   readonly filtersOpen = input(false);
+  readonly hasFilters = input(false);
   readonly canExport = input(false);
   readonly exporting = input(false);
   readonly searchChange = output<string>();

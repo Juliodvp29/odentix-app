@@ -14,6 +14,7 @@ const controlClasses =
 @Component({
   selector: 'app-table-filter-panel',
   imports: [Button],
+  host: { class: 'block' },
   template: `
     <div class="space-y-16 rounded-card bg-paper p-16 shadow-raised">
       <div class="flex items-center justify-between">

@@ -28,13 +28,15 @@ import { TablePagination } from './table-pagination';
 
 @Component({
   selector: 'app-table',
+  host: { class: 'block' },
   imports: [TableActiveFilters, TableBar, TableFilterPanel, TableGrid, TablePagination],
   template: `
-    <div class="space-y-16">
+    <div class="space-y-24">
       <app-table-bar
         [search]="query().search ?? ''"
         [activeFilterCount]="activeFilterCount()"
         [filtersOpen]="showFilters()"
+        [hasFilters]="hasFilterableColumns()"
         [canExport]="exportData() !== undefined"
         [exporting]="exporting()"
         (searchChange)="onSearch($event)"
@@ -49,11 +51,13 @@ import { TablePagination } from './table-pagination';
           (clearRequested)="onClear()"
         />
       }
-      <app-table-active-filters
-        [columns]="columns()"
-        [filters]="query().filters"
-        (remove)="onFilter($event, '')"
-      />
+      @if (activeFilterCount() > 0) {
+        <app-table-active-filters
+          [columns]="columns()"
+          [filters]="query().filters"
+          (remove)="onFilter($event, '')"
+        />
+      }
       <app-table-grid
         [columns]="columns()"
         [rows]="rows()"
@@ -98,6 +102,7 @@ export class Table {
     () => new Map(this.cellDefs().map((def) => [def.key(), def.template])),
   );
   readonly activeFilterCount = computed(() => countActiveFilters(this.query().filters));
+  readonly hasFilterableColumns = computed(() => this.columns().some((column) => !!column.filter));
 
   onSortRequested(key: string): void {
     const query = this.query();
