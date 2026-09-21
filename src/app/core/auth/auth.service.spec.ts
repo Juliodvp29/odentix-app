@@ -1,9 +1,16 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { AuthService } from './auth.service';
 import { SessionService } from './session.service';
+
+@Component({ template: '' })
+class DummyLoginPage {}
+
+@Component({ template: '' })
+class DummyHomePage {}
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -19,7 +26,14 @@ describe('AuthService', () => {
       clear: () => {},
     });
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([
+          { path: 'login', component: DummyLoginPage },
+          { path: '', component: DummyHomePage },
+        ]),
+      ],
     });
     service = TestBed.inject(AuthService);
     httpTesting = TestBed.inject(HttpTestingController);
@@ -40,9 +54,14 @@ describe('AuthService', () => {
     });
     httpTesting
       .expectOne((request) => request.url.endsWith('/api/v1/auth/login'))
-      .flush({ accessToken: 'access-123', refreshToken: 'refresh-123' });
+      .flush({
+        accessToken: 'access-123',
+        refreshToken: 'refresh-123',
+        user: { email: 'admin@odentix.co' },
+      });
     expect(session.accessToken()).toBe('access-123');
     expect(session.refreshToken()).toBe('refresh-123');
+    expect(session.currentUser()?.email).toBe('admin@odentix.co');
     expect(navigate).toHaveBeenCalledWith('/');
     expect(completed).toBe(true);
   });
@@ -69,5 +88,29 @@ describe('AuthService', () => {
       .flush({ error: 'Credenciales inválidas' }, { status: 401, statusText: 'Unauthorized' });
     expect(status).toBe(401);
     expect(session.accessToken()).toBeNull();
+  });
+
+  it('should revoke the session server-side and clear it locally on logout', () => {
+    const navigate = vi.spyOn(router, 'navigateByUrl');
+    session.setSession('access-123', 'refresh-123');
+    let completed = false;
+    service.logout().subscribe({ next: () => (completed = true) });
+    const request = httpTesting.expectOne((call) => call.url.endsWith('/api/v1/auth/logout'));
+    expect(request.request.body).toEqual({ refreshToken: 'refresh-123' });
+    request.flush(null);
+    expect(session.accessToken()).toBeNull();
+    expect(navigate).toHaveBeenCalledWith('/login');
+    expect(completed).toBe(true);
+  });
+
+  it('should still clear the session when logout fails', () => {
+    session.setSession('access-123', 'refresh-123');
+    let completed = false;
+    service.logout().subscribe({ next: () => (completed = true) });
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/auth/logout'))
+      .flush({}, { status: 500, statusText: 'Error' });
+    expect(session.accessToken()).toBeNull();
+    expect(completed).toBe(true);
   });
 });

@@ -306,6 +306,9 @@ either.)_
 - UI language: **Spanish** for user-facing strings (code stays in
   English). The temporary placeholder demo is still in English and dies
   with it in Fase 2.
+- App shell: `src/app/shell/` (layout frame with role-aware nav). It is
+  neither a lazy business feature nor a singleton service, so it lives
+  outside `core/`/`shared/`/`features/` by design.
 - `DESIGN.md`: exists at the repo root (full token system + component
   specs). All UI work must follow it; Fase 1 can start in earnest.
 

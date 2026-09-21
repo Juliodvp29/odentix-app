@@ -4,6 +4,7 @@ import { email, form, required, submit } from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '@core/auth/auth.service';
 import { Button } from '@shared/button/button';
+import { BrandMark } from '@shared/brand-mark/brand-mark';
 import { FormField } from '@shared/form-field/form-field';
 import { Icon } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
@@ -11,7 +12,7 @@ import { TextInput } from '@shared/text-input/text-input';
 
 @Component({
   selector: 'app-login-page',
-  imports: [Button, FormField, Icon, IconButton, TextInput],
+  imports: [BrandMark, Button, FormField, Icon, IconButton, TextInput],
   templateUrl: './login-page.html',
 })
 export class LoginPage {

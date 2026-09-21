@@ -522,16 +522,16 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Layout component with navigation reflecting the user's role
+- [x] Layout component with navigation reflecting the user's role
       (`propietario`/`odontologo`/`recepcion`/etc. from the backend).
-- [ ] Route transition handling — this is one of the places Julio
+- [x] Route transition handling — this is one of the places Julio
       explicitly wants to feel fluid, not an instant swap; use view
       transitions if `DESIGN.md`/Angular's support make that
       straightforward, otherwise a deliberate, consistent fade/slide.
 
 **Acceptance criteria:**
 
-- [ ] Navigating between two feature routes doesn't show a blank flash
+- [x] Navigating between two feature routes doesn't show a blank flash
       or unstyled flicker.
 
 ---

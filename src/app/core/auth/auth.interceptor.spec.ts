@@ -1,9 +1,13 @@
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { authInterceptor } from './auth.interceptor';
 import { SessionService } from './session.service';
+
+@Component({ template: '' })
+class DummyLoginPage {}
 
 describe('authInterceptor', () => {
   let http: HttpClient;
@@ -22,7 +26,7 @@ describe('authInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
-        provideRouter([]),
+        provideRouter([{ path: 'login', component: DummyLoginPage }]),
       ],
     });
     http = TestBed.inject(HttpClient);

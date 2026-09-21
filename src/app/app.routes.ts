@@ -2,11 +2,18 @@ import { Routes } from '@angular/router';
 import { authGuard } from '@core/auth/auth.guard';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'placeholder' },
   {
-    path: 'placeholder',
+    path: '',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/placeholder/placeholder').then((m) => m.Placeholder),
+    loadComponent: () => import('./shell/shell').then((m) => m.Shell),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'placeholder' },
+      {
+        path: 'placeholder',
+        loadComponent: () =>
+          import('./features/placeholder/placeholder').then((m) => m.Placeholder),
+      },
+    ],
   },
   {
     path: 'login',

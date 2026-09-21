@@ -6,6 +6,8 @@ import {
   lucideDownload,
   lucideEye,
   lucideEyeOff,
+  lucideLayoutDashboard,
+  lucideLogOut,
   lucidePencil,
   lucideTrash2,
   lucideTriangleAlert,
@@ -21,7 +23,9 @@ export type IconName =
   | 'check'
   | 'eye'
   | 'eye-off'
-  | 'triangle-alert';
+  | 'triangle-alert'
+  | 'layout-dashboard'
+  | 'log-out';
 
 const ICON_NAMES: Record<IconName, string> = {
   x: 'lucideX',
@@ -33,6 +37,8 @@ const ICON_NAMES: Record<IconName, string> = {
   eye: 'lucideEye',
   'eye-off': 'lucideEyeOff',
   'triangle-alert': 'lucideTriangleAlert',
+  'layout-dashboard': 'lucideLayoutDashboard',
+  'log-out': 'lucideLogOut',
 };
 
 @Component({
@@ -45,6 +51,8 @@ const ICON_NAMES: Record<IconName, string> = {
       lucideDownload,
       lucideEye,
       lucideEyeOff,
+      lucideLayoutDashboard,
+      lucideLogOut,
       lucidePencil,
       lucideTrash2,
       lucideTriangleAlert,

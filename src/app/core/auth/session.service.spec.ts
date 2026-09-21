@@ -51,11 +51,20 @@ describe('SessionService', () => {
 
   it('should clear the session', () => {
     const service = TestBed.inject(SessionService);
-    service.setSession('access-123', 'refresh-123');
+    service.setSession('access-123', 'refresh-123', { email: 'admin@odentix.co' });
     service.clearSession();
     expect(service.accessToken()).toBeNull();
     expect(service.refreshToken()).toBeNull();
+    expect(service.currentUser()).toBeNull();
     expect(service.isAuthenticated()).toBe(false);
     expect(localStorage.getItem('odentix.accessToken')).toBeNull();
+    expect(localStorage.getItem('odentix.currentUser')).toBeNull();
+  });
+
+  it('should persist and restore the current user', () => {
+    const seeded = TestBed.inject(SessionService);
+    seeded.setSession('access-123', 'refresh-123', { email: 'admin@odentix.co' });
+    expect(seeded.currentUser()?.email).toBe('admin@odentix.co');
+    expect(localStorage.getItem('odentix.currentUser')).toContain('admin@odentix.co');
   });
 });
