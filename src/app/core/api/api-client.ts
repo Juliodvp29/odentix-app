@@ -3,6 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
 
+// Base URL is the backend host without path prefix. Paths passed here must
+// be full OpenAPI paths (e.g. `/api/v1/auth/login`), verbatim from schema.ts.
 @Injectable({ providedIn: 'root' })
 export class ApiClient {
   private readonly http = inject(HttpClient);

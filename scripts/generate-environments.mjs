@@ -14,7 +14,7 @@ const targets = [
   },
   {
     file: join(dir, 'environment.ts'),
-    apiUrl: process.env['ODENTIX_API_URL_DEV'] ?? 'http://localhost:8081/api/v1',
+    apiUrl: process.env['ODENTIX_API_URL_DEV'] ?? 'http://localhost:8081',
   },
 ];
 
