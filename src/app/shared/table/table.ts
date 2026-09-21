@@ -36,6 +36,7 @@ import { TablePagination } from './table-pagination';
         [search]="query().search ?? ''"
         [activeFilterCount]="activeFilterCount()"
         [filtersOpen]="showFilters()"
+        [hasFilters]="hasFilterableColumns()"
         [canExport]="exportData() !== undefined"
         [exporting]="exporting()"
         (searchChange)="onSearch($event)"
@@ -101,6 +102,7 @@ export class Table {
     () => new Map(this.cellDefs().map((def) => [def.key(), def.template])),
   );
   readonly activeFilterCount = computed(() => countActiveFilters(this.query().filters));
+  readonly hasFilterableColumns = computed(() => this.columns().some((column) => !!column.filter));
 
   onSortRequested(key: string): void {
     const query = this.query();

@@ -36,6 +36,7 @@ describe('TableBar', () => {
   it('should show the active filter count and toggle the panel', () => {
     let toggled = 0;
     fixture.componentInstance.filtersToggle.subscribe(() => toggled++);
+    fixture.componentRef.setInput('hasFilters', true);
     fixture.componentRef.setInput('activeFilterCount', 2);
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('2');
@@ -44,6 +45,11 @@ describe('TableBar', () => {
     ) as Array<HTMLButtonElement>;
     buttons.find((button) => button.textContent?.includes('Filters'))?.click();
     expect(toggled).toBe(1);
+  });
+
+  it('should hide the filters button without filterable columns', () => {
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).not.toContain('Filters');
   });
 
   it('should emit exportRequested when export is clicked', () => {

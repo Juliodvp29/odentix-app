@@ -20,20 +20,22 @@ const SEARCH_DEBOUNCE_MS = 300;
         />
       </div>
       <div class="flex flex-wrap items-center gap-8">
-        <app-button
-          variant="secondary"
-          (clicked)="filtersToggle.emit()"
-          [attr.aria-expanded]="filtersOpen()"
-        >
-          Filters
-          @if (activeFilterCount() > 0) {
-            <span
-              class="ml-4 rounded-pill bg-teal-soft px-8 py-4 text-caption font-medium text-teal-deep"
-            >
-              {{ activeFilterCount() }}
-            </span>
-          }
-        </app-button>
+        @if (hasFilters()) {
+          <app-button
+            variant="secondary"
+            (clicked)="filtersToggle.emit()"
+            [attr.aria-expanded]="filtersOpen()"
+          >
+            Filters
+            @if (activeFilterCount() > 0) {
+              <span
+                class="ml-4 rounded-pill bg-teal-soft px-8 py-4 text-caption font-medium text-teal-deep"
+              >
+                {{ activeFilterCount() }}
+              </span>
+            }
+          </app-button>
+        }
         @if (canExport()) {
           <app-button
             variant="secondary"
@@ -53,6 +55,7 @@ export class TableBar implements OnDestroy {
   readonly search = input('');
   readonly activeFilterCount = input(0);
   readonly filtersOpen = input(false);
+  readonly hasFilters = input(false);
   readonly canExport = input(false);
   readonly exporting = input(false);
   readonly searchChange = output<string>();
