@@ -6,6 +6,8 @@ import { components } from '@core/api/schema';
 import { TableQuery, createInitialQuery } from '@shared/table/table-models';
 
 export type PatientResponse = components['schemas']['PatientResponse'];
+export type ClinicalRecordResponse = components['schemas']['ClinicalRecordResponse'];
+export type OdontogramResponse = components['schemas']['OdontogramResponse'];
 type PagePatientResponse = components['schemas']['PagePatientResponse'];
 export type CreatePatientRequest = components['schemas']['CreatePatientRequest'];
 export type UpdatePatientRequest = components['schemas']['UpdatePatientRequest'];
@@ -53,6 +55,18 @@ export class PatientsService {
   detail(id: Signal<string>): HttpResourceRef<PatientResponse | undefined> {
     return httpResource<PatientResponse>(() => ({
       url: this.api.url(`/api/v1/patients/${id()}`),
+    }));
+  }
+
+  clinicalRecords(id: Signal<string>): HttpResourceRef<ClinicalRecordResponse[] | undefined> {
+    return httpResource<ClinicalRecordResponse[]>(() => ({
+      url: this.api.url(`/api/v1/patients/${id()}/clinical-records`),
+    }));
+  }
+
+  odontogram(id: Signal<string>): HttpResourceRef<OdontogramResponse | undefined> {
+    return httpResource<OdontogramResponse>(() => ({
+      url: this.api.url(`/api/v1/patients/${id()}/odontogram`),
     }));
   }
 

@@ -128,4 +128,32 @@ describe('PatientsService', () => {
     await flushEffects();
     expect(detail.value()?.firstName).toBe('Luis');
   });
+
+  it('should fetch clinical records for a patient', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    const records = TestBed.runInInjectionContext(() =>
+      service.clinicalRecords(signal('patient-1')),
+    );
+    await flushEffects();
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-1/clinical-records'))
+      .flush([{ id: 'record-1', chiefComplaint: 'Dolor molar' }]);
+    await flushEffects();
+    expect(records.value()?.length).toBe(1);
+    expect(records.value()?.[0]?.chiefComplaint).toBe('Dolor molar');
+  });
+
+  it('should fetch the odontogram for a patient', async () => {
+    await flushEffects();
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    const odontogram = TestBed.runInInjectionContext(() => service.odontogram(signal('patient-1')));
+    await flushEffects();
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-1/odontogram'))
+      .flush({ patientId: 'patient-1', teeth: [{ toothNumber: 16, entries: {} }] });
+    await flushEffects();
+    expect(odontogram.value()?.teeth?.length).toBe(1);
+    expect(odontogram.value()?.teeth?.[0]?.toothNumber).toBe(16);
+  });
 });

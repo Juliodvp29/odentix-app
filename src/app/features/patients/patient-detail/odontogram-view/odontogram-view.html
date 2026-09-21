@@ -1,0 +1,63 @@
+@if (loading()) {
+  <div class="space-y-16" aria-busy="true" aria-label="Cargando odontograma">
+    <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+      <app-skeleton variant="line" />
+      <div class="w-2/3">
+        <app-skeleton variant="line" />
+      </div>
+    </div>
+    <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+      <app-skeleton variant="line" />
+      <div class="w-1/2">
+        <app-skeleton variant="line" />
+      </div>
+    </div>
+  </div>
+} @else if (loadError()) {
+  <div class="space-y-16 rounded-card bg-paper p-24 text-center shadow-resting">
+    <p class="text-body text-danger-deep" role="alert">No pudimos cargar el odontograma.</p>
+    <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+  </div>
+} @else if (isEmpty()) {
+  <div class="py-32 text-center">
+    <p class="text-subheading text-ink">Sin entradas en el odontograma</p>
+    <p class="mt-4 text-body text-mid-gray">Aún no hay piezas registradas para este paciente.</p>
+  </div>
+} @else {
+  <ol class="space-y-16">
+    @for (tooth of teeth(); track tooth.toothNumber) {
+      <li class="rounded-card bg-paper p-24 shadow-resting">
+        <h3 class="text-subheading text-ink">Pieza {{ tooth.toothNumber }}</h3>
+        <div class="mt-16 space-y-16">
+          @for (group of tooth.groups; track group.type) {
+            <section [attr.aria-label]="group.label + ' de la pieza ' + tooth.toothNumber">
+              <span
+                class="inline-block rounded-pill text-caption font-medium"
+                style="padding: 2px 10px"
+                [class]="group.badge"
+              >
+                {{ group.label }}
+              </span>
+              <ul class="mt-8 space-y-8">
+                @for (entry of group.entries; track entry.id) {
+                  <li class="text-body text-ink">
+                    {{ entry.condition || 'Sin descripción' }}
+                    @if (entry.surface) {
+                      <span class="text-mid-gray">· {{ entry.surface }}</span>
+                    }
+                    @if (entry.notes) {
+                      <p class="text-body text-mid-gray">{{ entry.notes }}</p>
+                    }
+                    @if (formatDate(entry.recordedAt)) {
+                      <p class="text-caption text-mid-gray">{{ formatDate(entry.recordedAt) }}</p>
+                    }
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+        </div>
+      </li>
+    }
+  </ol>
+}

@@ -627,14 +627,14 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] Timeline/list of clinical record entries.
-- [ ] Odontogram data view (visual representation can start simple —
+- [x] Timeline/list of clinical record entries.
+- [x] Odontogram data view (visual representation can start simple —
       this is explicitly one of the harder design problems, coordinate
       with `DESIGN.md` before investing in a polished version).
 
 **Acceptance criteria:**
 
-- [ ] Clinical entries and odontogram entries are readable and clearly
+- [x] Clinical entries and odontogram entries are readable and clearly
       separated by type (current state vs. diagnosis vs. plan vs.
       completed treatment — matching the backend's model).
 

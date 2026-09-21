@@ -1,0 +1,57 @@
+@if (loading()) {
+  <div class="space-y-16" aria-busy="true" aria-label="Cargando historia clínica">
+    <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+      <app-skeleton variant="line" />
+      <div class="w-2/3">
+        <app-skeleton variant="line" />
+      </div>
+    </div>
+    <div class="space-y-8 rounded-card bg-paper p-24 shadow-resting">
+      <app-skeleton variant="line" />
+      <div class="w-1/2">
+        <app-skeleton variant="line" />
+      </div>
+    </div>
+  </div>
+} @else if (loadError()) {
+  <div class="space-y-16 rounded-card bg-paper p-24 text-center shadow-resting">
+    <p class="text-body text-danger-deep" role="alert">No pudimos cargar la historia clínica.</p>
+    <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+  </div>
+} @else if (isEmpty()) {
+  <div class="py-32 text-center">
+    <p class="text-subheading text-ink">Sin entradas en la historia clínica</p>
+    <p class="mt-4 text-body text-mid-gray">Aún no hay consultas registradas para este paciente.</p>
+  </div>
+} @else {
+  <ol class="space-y-16">
+    @for (entry of entries(); track entry.id) {
+      <li class="rounded-card bg-paper p-24 shadow-resting">
+        <div class="flex flex-wrap items-baseline justify-between gap-8">
+          <h3 class="text-subheading text-ink">{{ entry.chiefComplaint || 'Consulta' }}</h3>
+          <time class="text-caption text-mid-gray">{{ formatDate(entry.recordedAt) }}</time>
+        </div>
+        <dl class="mt-16 grid gap-16 sm:grid-cols-2">
+          @if (entry.anamnesis) {
+            <div>
+              <dt class="text-caption font-medium text-mid-gray">Anamnesis</dt>
+              <dd class="mt-4 text-body text-ink">{{ entry.anamnesis }}</dd>
+            </div>
+          }
+          @if (entry.diagnosis) {
+            <div>
+              <dt class="text-caption font-medium text-mid-gray">Diagnóstico</dt>
+              <dd class="mt-4 text-body text-ink">{{ entry.diagnosis }}</dd>
+            </div>
+          }
+          @if (entry.evolution) {
+            <div class="sm:col-span-2">
+              <dt class="text-caption font-medium text-mid-gray">Evolución</dt>
+              <dd class="mt-4 text-body text-ink">{{ entry.evolution }}</dd>
+            </div>
+          }
+        </dl>
+      </li>
+    }
+  </ol>
+}

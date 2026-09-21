@@ -110,6 +110,14 @@
           </div>
         </dl>
       </div>
+    } @else if (activeTab() === 'records') {
+      <div role="tabpanel" id="panel-records" aria-labelledby="tab-records">
+        <app-clinical-records-timeline [patientId]="id()" />
+      </div>
+    } @else if (activeTab() === 'odontogram') {
+      <div role="tabpanel" id="panel-odontogram" aria-labelledby="tab-odontogram">
+        <app-odontogram-view [patientId]="id()" />
+      </div>
     } @else {
       <div
         role="tabpanel"

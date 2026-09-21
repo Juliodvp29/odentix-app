@@ -56,23 +56,61 @@ describe('PatientDetailPage', () => {
     expect(fixture.nativeElement.textContent).toContain('Activo');
   });
 
-  it('should switch tabs with proper semantics', async () => {
+  it('should render clinical records and odontogram in their tabs', async () => {
     await flushDetail();
     const tabs = Array.from(
       fixture.nativeElement.querySelectorAll('[role="tab"]'),
     ) as Array<HTMLButtonElement>;
     expect(tabs.length).toBe(4);
+    tabs[1].click();
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-1/clinical-records'))
+      .flush([{ id: 'record-1', chiefComplaint: 'Dolor molar' }]);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Dolor molar');
+    expect(tabs[1].getAttribute('aria-selected')).toBe('true');
+    expect(tabs[0].getAttribute('aria-selected')).toBe('false');
     tabs[2].click();
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('odontograma');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-1/odontogram'))
+      .flush({
+        patientId: 'patient-1',
+        teeth: [
+          {
+            toothNumber: 16,
+            entries: { diagnostico: [{ id: 'entry-1', condition: 'Caries oclusal' }] },
+          },
+        ],
+      });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Pieza 16');
+    expect(fixture.nativeElement.textContent).toContain('Diagnóstico');
     expect(tabs[2].getAttribute('aria-selected')).toBe('true');
-    expect(tabs[0].getAttribute('aria-selected')).toBe('false');
   });
 
   it('should move across tabs with arrow keys', async () => {
     await flushDetail();
     const tablist = fixture.nativeElement.querySelector('[role="tablist"]') as HTMLElement;
     tablist.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const incidental = httpTesting.match((call) =>
+      call.url.endsWith('/api/v1/patients/patient-1/clinical-records'),
+    );
+    for (const request of incidental) {
+      request.flush([]);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 0));
     fixture.detectChanges();
     const tabs = Array.from(
       fixture.nativeElement.querySelectorAll('[role="tab"]'),
