@@ -98,6 +98,27 @@ describe('PatientDetailPage', () => {
     expect(tabs[2].getAttribute('aria-selected')).toBe('true');
   });
 
+  it('should render patient files in their tab', async () => {
+    await flushDetail();
+    const tabs = Array.from(
+      fixture.nativeElement.querySelectorAll('[role="tab"]'),
+    ) as Array<HTMLButtonElement>;
+    tabs[3].click();
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-1/files'))
+      .flush([{ id: 'file-1', fileName: 'radiografia.png' }]);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('radiografia.png');
+    expect(fixture.nativeElement.textContent).toContain('Subir archivo');
+    expect(tabs[3].getAttribute('aria-selected')).toBe('true');
+  });
+
   it('should move across tabs with arrow keys', async () => {
     await flushDetail();
     const tablist = fixture.nativeElement.querySelector('[role="tablist"]') as HTMLElement;

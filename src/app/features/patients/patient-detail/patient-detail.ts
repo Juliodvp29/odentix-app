@@ -14,6 +14,7 @@ import { PatientsService } from '@features/patients/patients.service';
 import { formatDateEs, initialsOf } from '@shared/table/table-models';
 import { ClinicalRecordsTimeline } from './clinical-records-timeline/clinical-records-timeline';
 import { OdontogramView } from './odontogram-view/odontogram-view';
+import { PatientFiles } from './patient-files/patient-files';
 
 export type PatientTab = 'info' | 'records' | 'odontogram' | 'files';
 
@@ -24,13 +25,9 @@ const TABS: ReadonlyArray<{ id: PatientTab; label: string }> = [
   { id: 'files', label: 'Archivos' },
 ];
 
-const TAB_PLACEHOLDERS: Record<'files', string> = {
-  files: 'Próximamente: carga y descarga de archivos.',
-};
-
 @Component({
   selector: 'app-patient-detail',
-  imports: [Button, ClinicalRecordsTimeline, Link, OdontogramView, Skeleton],
+  imports: [Button, ClinicalRecordsTimeline, Link, OdontogramView, PatientFiles, Skeleton],
   templateUrl: './patient-detail.html',
 })
 export class PatientDetailPage {
@@ -39,7 +36,6 @@ export class PatientDetailPage {
   private readonly patients = inject(PatientsService);
 
   readonly tabs = TABS;
-  private readonly placeholders = TAB_PLACEHOLDERS;
   readonly activeTab = signal<PatientTab>('info');
   private readonly tabButtons = viewChildren<ElementRef<HTMLButtonElement>>('tabButton');
 
@@ -61,7 +57,6 @@ export class PatientDetailPage {
     return raw ? formatDateEs(raw) : '';
   });
   readonly isActive = computed(() => (this.patient()?.active ?? true) !== false);
-  readonly placeholderText = computed(() => this.placeholders['files']);
 
   selectTab(tab: PatientTab): void {
     this.activeTab.set(tab);

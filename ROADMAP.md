@@ -648,12 +648,12 @@ that every feature route renders inside.
 
 **Tasks:**
 
-- [ ] File upload UI with progress feedback, and a list of existing
+- [x] File upload UI with progress feedback, and a list of existing
       files with download links.
 
 **Acceptance criteria:**
 
-- [ ] Uploading a file shows progress and updates the list without a
+- [x] Uploading a file shows progress and updates the list without a
       manual refresh; the loading/uploading state never leaves the UI
       in an ambiguous "did it work?" state.
 
