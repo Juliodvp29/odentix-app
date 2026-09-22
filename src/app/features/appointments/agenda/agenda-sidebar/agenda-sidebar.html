@@ -1,0 +1,28 @@
+<div class="space-y-24">
+  <app-agenda-mini-calendar
+    [anchorIsoDate]="anchorIsoDate()"
+    [selectedIsoDate]="anchorIsoDate()"
+    (previousMonth)="previousMonth.emit()"
+    (nextMonth)="nextMonth.emit()"
+    (dayPicked)="dayPicked.emit($event)"
+  />
+
+  <app-agenda-detail-panel [appointment]="selectedAppointment()" (closed)="closed.emit()" />
+
+  @if (legend().length > 0) {
+    <div class="rounded-card bg-paper p-16 shadow-resting">
+      <p class="text-caption font-medium text-mid-gray">CONVENCIÓN DE ESTADOS</p>
+      <ul class="mt-12 grid grid-cols-2 gap-8">
+        @for (entry of legend(); track entry.status) {
+          <li
+            class="flex items-center gap-8 rounded-control px-8 py-4 text-caption font-medium"
+            [class]="entry.badge"
+          >
+            <span class="h-8 w-8 rounded-pill" [class]="entry.dot"></span>
+            {{ entry.label }}
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>

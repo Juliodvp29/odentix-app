@@ -1,4 +1,4 @@
-<div class="grid gap-16 sm:grid-cols-2 lg:grid-cols-7">
+<div class="grid gap-24 sm:grid-cols-2 lg:grid-cols-7">
   @for (column of columns(); track column.isoDate) {
     <section
       [attr.aria-label]="column.label"
@@ -12,24 +12,30 @@
         {{ column.label }}
       </h3>
       @if (column.appointments.length === 0) {
-        <p class="mt-8 text-caption text-mid-gray">Sin citas</p>
+        <p class="mt-12 text-caption text-mid-gray">Sin citas</p>
       } @else {
-        <ul class="mt-8 space-y-8">
+        <ul class="mt-12 space-y-12">
           @for (appointment of column.appointments; track appointment.id) {
-            <li class="border-l-2 border-hairline pl-8">
-              <p class="text-caption font-medium text-ink">
-                {{ formatTime(appointment.startsAt) }}
-              </p>
-              <p class="truncate text-caption text-ink">
-                {{ appointment.patientName || 'Paciente sin nombre' }}
-              </p>
-              <span
-                class="mt-4 inline-block rounded-pill text-caption"
-                style="padding: 1px 8px"
-                [class]="statusBadge(appointment.status)"
+            <li>
+              <button
+                type="button"
+                (click)="appointmentPicked.emit(appointment)"
+                class="block w-full overflow-hidden rounded-control border-l-2 border-hairline py-4 pl-8 pr-4 text-left transition-colors duration-fast hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
               >
-                {{ statusLabel(appointment.status) }}
-              </span>
+                <p class="whitespace-nowrap text-caption font-medium text-ink">
+                  {{ formatTime(appointment.startsAt) }}
+                </p>
+                <p class="truncate text-caption text-ink">
+                  {{ appointment.patientName || 'Paciente sin nombre' }}
+                </p>
+                <span
+                  class="mt-4 inline-block whitespace-nowrap rounded-pill text-caption"
+                  style="padding: 1px 8px"
+                  [class]="statusBadge(appointment.status)"
+                >
+                  {{ statusLabel(appointment.status) }}
+                </span>
+              </button>
             </li>
           }
         </ul>

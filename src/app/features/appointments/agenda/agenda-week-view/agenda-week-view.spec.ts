@@ -42,4 +42,25 @@ describe('AgendaWeekView', () => {
     expect(text).toContain('Martes 22 de septiembre');
     expect(text).toContain('Sin citas');
   });
+
+  it('should emit appointmentPicked when an appointment is clicked', () => {
+    let pickedId: string | undefined;
+    fixture.componentInstance.appointmentPicked.subscribe((appointment) => {
+      pickedId = appointment.id;
+    });
+    const button = Array.from(fixture.nativeElement.querySelectorAll('button')).find((element) =>
+      (element as HTMLButtonElement).textContent?.includes('Ada Luz'),
+    ) as HTMLButtonElement;
+    expect(button).toBeTruthy();
+    button.click();
+    expect(pickedId).toBe('appointment-1');
+  });
+
+  it('should expose appointments as keyboard-focusable buttons', () => {
+    const buttons = Array.from(fixture.nativeElement.querySelectorAll('button')).filter((element) =>
+      (element as HTMLButtonElement).textContent?.includes('Ada Luz'),
+    ) as HTMLButtonElement[];
+    expect(buttons).toHaveLength(1);
+    expect(buttons[0]?.type).toBe('button');
+  });
 });

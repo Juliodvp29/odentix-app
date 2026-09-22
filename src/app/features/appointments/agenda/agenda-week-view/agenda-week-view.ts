@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { formatTimeEs } from '../../agenda-dates';
 import { APPOINTMENT_STATUS_META, AppointmentStatus } from '../../appointment-status';
 import { AppointmentResponse } from '../../appointments.service';
@@ -18,6 +18,8 @@ export interface AgendaDayColumn {
 })
 export class AgendaWeekView {
   readonly columns = input.required<ReadonlyArray<AgendaDayColumn>>();
+
+  readonly appointmentPicked = output<AppointmentResponse>();
 
   formatTime(value: string | undefined): string {
     return formatTimeEs(value);
