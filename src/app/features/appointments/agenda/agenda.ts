@@ -20,8 +20,8 @@ import { APPOINTMENT_STATUS_META } from '../appointment-status';
 import { AppointmentResponse, AppointmentsService } from '../appointments.service';
 import { AgendaDayColumn, AgendaWeekView } from './agenda-week-view/agenda-week-view';
 import { AgendaDetailPanel } from './agenda-detail-panel/agenda-detail-panel';
-import { AgendaMiniCalendar } from './agenda-mini-calendar/agenda-mini-calendar';
 import { AgendaMonthView, MonthDayColumn } from './agenda-month-view/agenda-month-view';
+import { AgendaSidebar } from './agenda-sidebar/agenda-sidebar';
 import { AgendaTimeGrid, TimeGridColumn } from './agenda-time-grid/agenda-time-grid';
 import { AppointmentForm } from './appointment-form/appointment-form';
 
@@ -45,8 +45,8 @@ const VIEW_TABS: ReadonlyArray<{ value: AgendaView; label: string }> = [
   selector: 'app-agenda',
   imports: [
     AgendaDetailPanel,
-    AgendaMiniCalendar,
     AgendaMonthView,
+    AgendaSidebar,
     AgendaTimeGrid,
     AgendaWeekView,
     AppointmentForm,

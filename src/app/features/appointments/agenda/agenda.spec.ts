@@ -75,9 +75,7 @@ describe('AgendaPage', () => {
     await flushInitial([]);
     // In day view, the empty state uses a contextual message instead of a
     // generic "Sin citas programadas" heading (that one is reserved for week/month).
-    expect(fixture.nativeElement.textContent).toContain(
-      'No hay citas para este día',
-    );
+    expect(fixture.nativeElement.textContent).toContain('No hay citas para este día');
   });
 
   it('should navigate to the next day instantly from the prefetch', async () => {
@@ -121,6 +119,27 @@ describe('AgendaPage', () => {
     const columns = fixture.nativeElement.querySelectorAll('section[aria-label]');
     expect(columns.length).toBe(7);
     expect(fixture.nativeElement.textContent).toContain('Ada Luz');
+  });
+
+  it('should open the detail panel from the week view', async () => {
+    await flushInitial([]);
+    clickButton(fixture, 'Semana');
+    await flushEffects();
+    const requests = httpTesting.match((call) => call.url.endsWith('/api/v1/appointments'));
+    expect(requests).toHaveLength(3);
+    requests[0]?.flush([appointmentOn(today)]);
+    requests[1]?.flush([]);
+    requests[2]?.flush([]);
+    await flushEffects();
+    fixture.detectChanges();
+    const block = Array.from(fixture.nativeElement.querySelectorAll('button')).find((element) =>
+      (element as HTMLButtonElement).textContent?.includes('Ada Luz'),
+    ) as HTMLButtonElement;
+    block.click();
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Ficha clínica');
+    expect(text).toContain('CAMBIAR ESTADO');
   });
 
   it('should filter by professional through the backend', async () => {

@@ -1,12 +1,15 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, tap } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
 import { components } from '@core/api/schema';
 import { AgendaView, DateRange, addDays, addMonths, rangeForView, weekStart } from './agenda-dates';
+import { AppointmentStatus } from './appointment-status';
 
 export type AppointmentResponse = components['schemas']['AppointmentResponse'];
 export type CreateAppointmentRequest = components['schemas']['CreateAppointmentRequest'];
+export type UpdateAppointmentStatusRequest =
+  components['schemas']['UpdateAppointmentStatusRequest'];
 export type PagePatientResponse = components['schemas']['PagePatientResponse'];
 
 export interface ProfessionalOption {
@@ -85,6 +88,18 @@ export class AppointmentsService {
     );
   }
 
+  // Advances the appointment through its lifecycle. On success the cached
+  // ranges are patched in place so every agenda view repaints without a refetch.
+  updateStatus(id: string, status: AppointmentStatus): Observable<AppointmentResponse> {
+    const body: UpdateAppointmentStatusRequest = { status };
+    return this.api
+      .patch<UpdateAppointmentStatusRequest, AppointmentResponse>(
+        `/api/v1/appointments/${id}/status`,
+        body,
+      )
+      .pipe(tap((updated) => this.applyUpdated(updated)));
+  }
+
   invalidateAll(): void {
     this.ranges.set(new Map());
   }
@@ -144,5 +159,22 @@ export class AppointmentsService {
 
   private store(key: string, state: RangeState): void {
     this.ranges.update((ranges) => new Map(ranges).set(key, state));
+  }
+
+  private applyUpdated(updated: AppointmentResponse): void {
+    this.ranges.update((ranges) => {
+      const next = new Map<string, RangeState>();
+      for (const [key, state] of ranges) {
+        const index = state.appointments.findIndex((appointment) => appointment.id === updated.id);
+        if (index === -1) {
+          next.set(key, state);
+          continue;
+        }
+        const appointments = [...state.appointments];
+        appointments[index] = { ...appointments[index], ...updated };
+        next.set(key, { ...state, appointments });
+      }
+      return next;
+    });
   }
 }

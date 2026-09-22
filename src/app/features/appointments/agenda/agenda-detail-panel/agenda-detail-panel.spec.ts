@@ -62,4 +62,17 @@ describe('AgendaDetailPanel', () => {
     button.click();
     expect(closed).toBe(true);
   });
+
+  it('should render status transition actions for the selected appointment', () => {
+    fixture.componentRef.setInput('appointment', {
+      id: 'appointment-1',
+      patientName: 'Ada Luz',
+      status: 'programada',
+    });
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('CAMBIAR ESTADO');
+    expect(text).toContain('Confirmar');
+    expect(text).toContain('Cancelar');
+  });
 });
