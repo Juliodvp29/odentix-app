@@ -1,0 +1,29 @@
+<div class="mt-16 border-t border-hairline pt-16">
+  <p class="text-caption font-medium text-mid-gray">CAMBIAR ESTADO</p>
+  @if (isFinal()) {
+    <p class="mt-8 text-body text-mid-gray">Estado final — sin acciones disponibles.</p>
+  } @else {
+    <div class="mt-8 flex flex-wrap gap-8">
+      @for (action of actions(); track action.status) {
+        <app-button
+          [variant]="action.variant"
+          [loading]="action.loading"
+          [disabled]="action.disabled"
+          (clicked)="request(action.status)"
+        >
+          {{ action.label }}
+        </app-button>
+      }
+    </div>
+  }
+</div>
+
+<ng-template #confirmTemplate>
+  <p class="text-body text-ink">¿Cancelar esta cita? La cancelación no se puede deshacer.</p>
+  <div class="mt-16 flex justify-end gap-8">
+    <app-button variant="ghost" (clicked)="dismissCancel()">Volver</app-button>
+    <app-button variant="danger" [loading]="pending() === 'cancelada'" (clicked)="confirmCancel()">
+      Sí, cancelar cita
+    </app-button>
+  </div>
+</ng-template>

@@ -3,11 +3,12 @@ import { Link } from '@shared/link/link';
 import { formatTimeEs } from '../../agenda-dates';
 import { APPOINTMENT_STATUS_META } from '../../appointment-status';
 import { AppointmentResponse } from '../../appointments.service';
+import { AgendaStatusActions } from '../agenda-status-actions/agenda-status-actions';
 
 // Selected appointment detail for the agenda sidebar.
 @Component({
   selector: 'app-agenda-detail-panel',
-  imports: [Link],
+  imports: [AgendaStatusActions, Link],
   templateUrl: './agenda-detail-panel.html',
   host: { class: 'block' },
 })

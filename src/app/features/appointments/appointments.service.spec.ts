@@ -132,4 +132,25 @@ describe('AppointmentsService', () => {
     expect(service.hasData(RANGE, null)).toBe(false);
     expect(service.appointments(RANGE, null)).toEqual([]);
   });
+
+  it('should patch appointment status and update the cached range in place', async () => {
+    service.ensureRange(RANGE, null);
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/appointments')).flush(APPOINTMENTS);
+    await flushEffects();
+
+    let result: { status?: string } | undefined;
+    service.updateStatus('appointment-1', 'confirmada').subscribe((appointment) => {
+      result = appointment;
+    });
+    const request = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/appointments/appointment-1/status'),
+    );
+    expect(request.request.method).toBe('PATCH');
+    expect(request.request.body).toEqual({ status: 'confirmada' });
+    request.flush({ ...APPOINTMENTS[0], status: 'confirmada' });
+    await flushEffects();
+    expect(result?.status).toBe('confirmada');
+    expect(service.appointments(RANGE, null)[0]?.status).toBe('confirmada');
+    expect(service.hasData(RANGE, null)).toBe(true);
+  });
 });

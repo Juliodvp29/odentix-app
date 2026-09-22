@@ -747,13 +747,13 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] UI to move an appointment through its states, disabling invalid
+- [x] UI to move an appointment through its states, disabling invalid
       transitions in the UI itself (in addition to the backend
       rejecting them).
 
 **Acceptance criteria:**
 
-- [ ] Invalid transitions aren't even selectable in the UI, not just
+- [x] Invalid transitions aren't even selectable in the UI, not just
       rejected after the fact.
 
 ---

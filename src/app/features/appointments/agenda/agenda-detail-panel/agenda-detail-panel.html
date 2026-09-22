@@ -74,6 +74,9 @@
       }
     </dl>
 
+    <!-- Status transition actions -->
+    <app-agenda-status-actions class="mt-16" [appointment]="selected" />
+
     <!-- Patient record link -->
     @if (patientRoute(); as route) {
       <app-link [route]="route" class="mt-16 block"> Ficha clínica → </app-link>
