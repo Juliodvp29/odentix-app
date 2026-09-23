@@ -74,6 +74,33 @@ export function toBackendInstant(localDateTime: string): string {
   return `${normalized}${BOGOTA_OFFSET}`;
 }
 
+const localDateTimeFormatter = new Intl.DateTimeFormat('sv-SE', {
+  timeZone: 'America/Bogota',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
+export function toDateTimeLocalBogota(instant: string | undefined): string {
+  if (!instant) {
+    return '';
+  }
+  const date = new Date(instant);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+  const parts = Object.fromEntries(
+    localDateTimeFormatter
+      .formatToParts(date)
+      .filter((part) => part.type !== 'literal')
+      .map((part) => [part.type, part.value]),
+  );
+  return `${parts['year']}-${parts['month']}-${parts['day']}T${parts['hour']}:${parts['minute']}`;
+}
+
 // Local-time ISO date (yyyy-mm-dd) of an instant, used to group appointments.
 export function dayKeyOf(instant: string | undefined): string {
   if (!instant) {

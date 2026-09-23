@@ -1,0 +1,38 @@
+<div class="space-y-16">
+  <p class="text-body text-mid-gray">
+    Paciente:
+    <span class="font-medium text-ink">{{
+      appointment().patientName || 'Paciente seleccionado'
+    }}</span>
+  </p>
+
+  <app-form-field label="Desde" [field]="waitlistForm.desiredFrom">
+    <app-text-input
+      inputId="waitlist-desired-from"
+      type="datetime-local"
+      [field]="waitlistForm.desiredFrom"
+    />
+  </app-form-field>
+
+  <app-form-field label="Hasta" [field]="waitlistForm.desiredTo">
+    <app-text-input
+      inputId="waitlist-desired-to"
+      type="datetime-local"
+      [field]="waitlistForm.desiredTo"
+    />
+  </app-form-field>
+
+  @if (rangeError(); as message) {
+    <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+  @if (serverError(); as message) {
+    <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex justify-end gap-8 pt-8">
+    <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+    <app-button variant="primary" [loading]="saving()" (clicked)="submitWaitlist()">
+      Guardar en lista de espera
+    </app-button>
+  </div>
+</div>

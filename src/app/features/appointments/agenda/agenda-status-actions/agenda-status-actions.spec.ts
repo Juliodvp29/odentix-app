@@ -15,6 +15,10 @@ function appointment(status: string): AppointmentResponse {
   };
 }
 
+function highRiskAppointment(): AppointmentResponse {
+  return { ...appointment('programada'), riskLevel: 'alto' };
+}
+
 function clickButton(fixture: ComponentFixture<AgendaStatusActions>, label: string): void {
   const buttons = Array.from(
     fixture.nativeElement.querySelectorAll('button'),
@@ -122,20 +126,99 @@ describe('AgendaStatusActions', () => {
     try {
       clickInPane('Sí, cancelar cita');
       fixture.detectChanges();
+      const request = httpTesting.expectOne((call) =>
+        call.url.endsWith('/api/v1/appointments/appointment-1/status'),
+      );
+      expect(request.request.body).toEqual({ status: 'cancelada' });
+      request.flush({ ...appointment('programada'), status: 'cancelada' });
+      await fixture.whenStable();
       vi.advanceTimersByTime(300);
     } finally {
       vi.useRealTimers();
     }
     fixture.detectChanges();
+    expect(toasts.toasts().map((toast) => toast.message)).toContain('Cita cancelada.');
+    expect(document.querySelector('.cdk-overlay-pane')).toBeNull();
+  });
+
+  it('should show waitlist candidates inline after canceling a high-risk appointment', async () => {
+    fixture.componentRef.setInput('appointment', highRiskAppointment());
+    fixture.detectChanges();
+    clickButton(fixture, 'Cancelar');
+    clickInPane('Sí, cancelar cita');
+    fixture.detectChanges();
+
     const request = httpTesting.expectOne((call) =>
       call.url.endsWith('/api/v1/appointments/appointment-1/status'),
     );
-    expect(request.request.body).toEqual({ status: 'cancelada' });
-    request.flush({ ...appointment('programada'), status: 'cancelada' });
+    request.flush({
+      ...highRiskAppointment(),
+      status: 'cancelada',
+      waitlistCandidates: [
+        {
+          id: 'entry-1',
+          patientId: 'patient-2',
+          patientName: 'Ana Torres',
+          patientPhone: '3001234567',
+          desiredFrom: '2026-09-21T14:00:00Z',
+          desiredTo: '2026-09-21T15:00:00Z',
+          status: 'activa',
+        },
+      ],
+    });
     await fixture.whenStable();
     fixture.detectChanges();
+
+    const text = paneText();
+    expect(text).toContain('La cita se canceló correctamente');
+    expect(text).toContain('Ana Torres');
+    expect(text).toContain('3001234567');
     expect(toasts.toasts().map((toast) => toast.message)).toContain('Cita cancelada.');
-    expect(document.querySelector('.cdk-overlay-pane')).toBeNull();
+  });
+
+  it('should fetch candidates when the cancellation response omits them', async () => {
+    fixture.componentRef.setInput('appointment', highRiskAppointment());
+    fixture.detectChanges();
+    clickButton(fixture, 'Cancelar');
+    clickInPane('Sí, cancelar cita');
+    fixture.detectChanges();
+
+    const patchRequest = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/appointments/appointment-1/status'),
+    );
+    patchRequest.flush({ ...highRiskAppointment(), status: 'cancelada' });
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const candidatesRequest = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/appointments/appointment-1/waitlist-candidates'),
+    );
+    expect(candidatesRequest.request.method).toBe('GET');
+    candidatesRequest.flush([
+      { id: 'entry-1', patientId: 'patient-2', patientName: 'Ana Torres', status: 'activa' },
+    ]);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(paneText()).toContain('Ana Torres');
+  });
+
+  it('should keep the cancellation modal open when the status request fails', async () => {
+    fixture.componentRef.setInput('appointment', highRiskAppointment());
+    fixture.detectChanges();
+    clickButton(fixture, 'Cancelar');
+    clickInPane('Sí, cancelar cita');
+    fixture.detectChanges();
+
+    const request = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/appointments/appointment-1/status'),
+    );
+    request.flush({ message: 'No se pudo cancelar.' }, { status: 400, statusText: 'Bad Request' });
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(paneText()).toContain('No se pudo cancelar.');
+    expect(document.querySelector('.cdk-overlay-pane')).not.toBeNull();
   });
 
   it('should surface the backend message when a transition is rejected', async () => {

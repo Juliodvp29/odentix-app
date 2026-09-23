@@ -1,14 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { WritableSignal, signal } from '@angular/core';
+import { of } from 'rxjs';
 import { provideRouter } from '@angular/router';
+import { SessionService } from '@core/auth/session.service';
+import { ModalService } from '@shared/modal/modal.service';
+import { ToastService } from '@shared/toast/toast.service';
 import { AgendaDetailPanel } from './agenda-detail-panel';
 
 describe('AgendaDetailPanel', () => {
   let fixture: ComponentFixture<AgendaDetailPanel>;
+  let currentUser: WritableSignal<{ role?: string }>;
+  let open: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
+    currentUser = signal({ role: 'recepcion' });
+    open = vi.fn(() => ({ close: vi.fn(), closed: of(void 0) }));
     await TestBed.configureTestingModule({
       imports: [AgendaDetailPanel],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: SessionService, useValue: { currentUser } },
+        { provide: ModalService, useValue: { open } },
+        { provide: ToastService, useValue: { success: vi.fn() } },
+      ],
     }).compileComponents();
     fixture = TestBed.createComponent(AgendaDetailPanel);
     fixture.detectChanges();
@@ -39,6 +53,7 @@ describe('AgendaDetailPanel', () => {
     expect(text).toContain('Confirmada');
     expect(text).toContain('Traer radiografía');
     expect(text).toContain('Ficha clínica');
+    expect(text).toContain('Añadir a lista de espera');
   });
 
   it('should render avatar initials', () => {

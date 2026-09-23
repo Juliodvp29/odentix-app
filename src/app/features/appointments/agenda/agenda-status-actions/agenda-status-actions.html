@@ -19,11 +19,33 @@
 </div>
 
 <ng-template #confirmTemplate>
-  <p class="text-body text-ink">¿Cancelar esta cita? La cancelación no se puede deshacer.</p>
-  <div class="mt-16 flex justify-end gap-8">
-    <app-button variant="ghost" (clicked)="dismissCancel()">Volver</app-button>
-    <app-button variant="danger" [loading]="pending() === 'cancelada'" (clicked)="confirmCancel()">
-      Sí, cancelar cita
-    </app-button>
-  </div>
+  @if (showRecovery()) {
+    <p class="text-body text-ink">La cita se canceló correctamente.</p>
+    <app-waitlist-recovery-panel
+      class="mt-16"
+      [candidates]="cancellationCandidates()"
+      [loading]="candidatesLoading()"
+      [error]="candidateError()"
+      (retry)="retryCandidates()"
+      (closed)="dismissCancel()"
+    />
+  } @else {
+    <p class="text-body text-ink">¿Cancelar esta cita? La cancelación no se puede deshacer.</p>
+    @if (cancellationError(); as message) {
+      <p class="mt-12 text-caption text-danger-deep" role="alert">{{ message }}</p>
+    }
+    <div class="mt-16 flex justify-end gap-8">
+      <app-button variant="ghost" [disabled]="pending() !== null" (clicked)="dismissCancel()">
+        Volver
+      </app-button>
+      <app-button
+        variant="danger"
+        [loading]="pending() === 'cancelada'"
+        [disabled]="pending() !== null"
+        (clicked)="confirmCancel()"
+      >
+        Sí, cancelar cita
+      </app-button>
+    </div>
+  }
 </ng-template>

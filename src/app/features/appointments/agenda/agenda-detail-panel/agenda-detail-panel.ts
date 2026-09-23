@@ -4,11 +4,12 @@ import { formatTimeEs } from '../../agenda-dates';
 import { APPOINTMENT_STATUS_META } from '../../appointment-status';
 import { AppointmentResponse } from '../../appointments.service';
 import { AgendaStatusActions } from '../agenda-status-actions/agenda-status-actions';
+import { WaitlistEntryAction } from '../../waitlist/waitlist-entry-action/waitlist-entry-action';
 
 // Selected appointment detail for the agenda sidebar.
 @Component({
   selector: 'app-agenda-detail-panel',
-  imports: [AgendaStatusActions, Link],
+  imports: [AgendaStatusActions, Link, WaitlistEntryAction],
   templateUrl: './agenda-detail-panel.html',
   host: { class: 'block' },
 })

@@ -1069,6 +1069,18 @@ export interface components {
             /** Format: date-time */
             desiredTo?: string;
         };
+        ApiErrorResponse: {
+            /** Format: date-time */
+            timestamp?: string;
+            /** Format: int32 */
+            status?: number;
+            error?: string;
+            message?: string;
+            path?: string;
+            errors?: {
+                [key: string]: string;
+            };
+        };
         WaitlistEntryResponse: {
             /** Format: uuid */
             id?: string;
@@ -1076,6 +1088,8 @@ export interface components {
             tenantId?: string;
             /** Format: uuid */
             patientId?: string;
+            patientName?: string;
+            patientPhone?: string;
             /** Format: uuid */
             procedureId?: string;
             /** Format: date-time */
@@ -1970,13 +1984,40 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Entrada creada */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "*/*": components["schemas"]["WaitlistEntryResponse"];
+                };
+            };
+            /** @description Datos inválidos */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Rol sin permiso */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Paciente no encontrado */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
                 };
             };
         };
@@ -3500,13 +3541,31 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description Candidatos encontrados */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "*/*": components["schemas"]["WaitlistEntryResponse"][];
+                };
+            };
+            /** @description Rol sin permiso */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Cita no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
                 };
             };
         };
