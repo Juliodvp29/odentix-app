@@ -1,5 +1,14 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, TemplateRef, computed, inject, input, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  TemplateRef,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Button } from '@shared/button/button';
 import { ModalHandle, ModalService } from '@shared/modal/modal.service';
@@ -21,7 +30,6 @@ const SUCCESS_MESSAGES: Record<AppointmentStatus, string> = {
   cancelada: 'Cita cancelada.',
 };
 
-// Surfaces the backend's own Spanish error message when it rejects a transition.
 function errorMessage(error: unknown): string {
   if (error instanceof HttpErrorResponse) {
     const body = error.error as { message?: unknown; error?: unknown } | null;
@@ -35,8 +43,6 @@ function errorMessage(error: unknown): string {
   return 'No pudimos cambiar el estado. Intenta de nuevo.';
 }
 
-// Status transition controls for an appointment. Only valid transitions
-// render as actions; canceling requires an explicit confirmation step.
 @Component({
   selector: 'app-agenda-status-actions',
   imports: [Button, WaitlistRecoveryPanel],
@@ -45,6 +51,7 @@ function errorMessage(error: unknown): string {
 })
 export class AgendaStatusActions {
   readonly appointment = input.required<AppointmentResponse>();
+  readonly converted = output<AppointmentResponse>();
 
   private readonly appointments = inject(AppointmentsService);
   private readonly waitlist = inject(WaitlistService);
@@ -61,11 +68,9 @@ export class AgendaStatusActions {
   readonly cancellationComplete = signal(false);
 
   readonly transitions = computed(() => allowedTransitions(this.appointment().status));
-
   readonly isFinal = computed(() => this.transitions().length === 0);
   readonly isHighRisk = computed(() => this.appointment().riskLevel === 'alto');
   readonly showRecovery = computed(() => this.isHighRisk() && this.cancellationComplete());
-
   readonly actions = computed(() =>
     this.transitions().map((status) => {
       const meta = APPOINTMENT_STATUS_ACTIONS[status];

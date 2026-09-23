@@ -35,13 +35,37 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Listar entradas de lista de espera
+         * @description Devuelve una página del tenant activo con filtros opcionales por estado y nombre o teléfono.
+         */
+        get: operations["listEntries"];
         put?: never;
         /**
          * Registrar interesado en lista de espera
-         * @description Crea una entrada en estado activa para un paciente del tenant activo, con procedimiento de interés y rango de fechas deseado opcionales.
+         * @description Crea una entrada en estado activa para un paciente del tenant activo.
          */
         post: operations["addEntry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/waitlist/{id}/convert": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Convertir una entrada en una cita
+         * @description Crea una cita atómica para el paciente de la entrada a partir de una cita origen cancelada y compatible.
+         */
+        post: operations["convert"];
         delete?: never;
         options?: never;
         head?: never;
@@ -575,6 +599,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/waitlist/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Cambiar estado de una entrada
+         * @description Permite activa a contactada o descartada, y contactada a descartada. La conversión requiere el endpoint de conversión.
+         */
+        patch: operations["updateStatus"];
+        trace?: never;
+    };
     "/api/v1/treatment-plans/{id}": {
         parameters: {
             query?: never;
@@ -616,7 +660,7 @@ export interface paths {
          * Avanzar estado del plan
          * @description Transiciona el plan según la máquina de estados. Las transiciones inválidas devuelven HTTP 400.
          */
-        patch: operations["updateStatus"];
+        patch: operations["updateStatus_1"];
         trace?: never;
     };
     "/api/v1/tenant/settings": {
@@ -775,7 +819,27 @@ export interface paths {
          * Cambiar estado de la cita
          * @description Avanza la cita por su ciclo de vida (programada → confirmada → atendida / no_show / cancelada). Las transiciones inválidas devuelven 400.
          */
-        patch: operations["updateStatus_1"];
+        patch: operations["updateStatus_2"];
+        trace?: never;
+    };
+    "/api/v1/waitlist/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Consultar una entrada de lista de espera
+         * @description Obtiene una entrada por ID dentro del tenant autenticado.
+         */
+        get: operations["getById_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/tasks/mine": {
@@ -1069,18 +1133,6 @@ export interface components {
             /** Format: date-time */
             desiredTo?: string;
         };
-        ApiErrorResponse: {
-            /** Format: date-time */
-            timestamp?: string;
-            /** Format: int32 */
-            status?: number;
-            error?: string;
-            message?: string;
-            path?: string;
-            errors?: {
-                [key: string]: string;
-            };
-        };
         WaitlistEntryResponse: {
             /** Format: uuid */
             id?: string;
@@ -1098,6 +1150,66 @@ export interface components {
             desiredTo?: string;
             /** @enum {string} */
             status?: "activa" | "contactado" | "convertida" | "descartada";
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            contactedAt?: string;
+            /** Format: date-time */
+            convertedAt?: string;
+            /** Format: date-time */
+            discardedAt?: string;
+            discardReason?: string;
+            /** Format: uuid */
+            convertedAppointmentId?: string;
+        };
+        ApiErrorResponse: {
+            /** Format: date-time */
+            timestamp?: string;
+            /** Format: int32 */
+            status?: number;
+            error?: string;
+            message?: string;
+            path?: string;
+            errors?: {
+                [key: string]: string;
+            };
+        };
+        ConvertWaitlistEntryRequest: {
+            /** Format: uuid */
+            sourceAppointmentId: string;
+            notes?: string;
+        };
+        AppointmentResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            patientId?: string;
+            patientName?: string;
+            /** Format: uuid */
+            professionalId?: string;
+            professionalName?: string;
+            /** Format: uuid */
+            roomId?: string;
+            roomName?: string;
+            /** Format: uuid */
+            procedureId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            estimatedValueCop?: number;
+            /** @enum {string} */
+            riskLevel?: "bajo" | "medio" | "alto";
+            /** @enum {string} */
+            status?: "programada" | "confirmada" | "atendida" | "no_show" | "cancelada";
+            notes?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            waitlistCandidates?: components["schemas"]["WaitlistEntryResponse"][];
         };
         CreateTreatmentPlanItemRequest: {
             /** Format: uuid */
@@ -1412,36 +1524,6 @@ export interface components {
             patient?: components["schemas"]["ConvertLeadPatientData"];
             appointment?: components["schemas"]["ConvertLeadAppointmentData"];
         };
-        AppointmentResponse: {
-            /** Format: uuid */
-            id?: string;
-            /** Format: uuid */
-            patientId?: string;
-            patientName?: string;
-            /** Format: uuid */
-            professionalId?: string;
-            professionalName?: string;
-            /** Format: uuid */
-            roomId?: string;
-            roomName?: string;
-            /** Format: uuid */
-            procedureId?: string;
-            /** Format: date-time */
-            startsAt?: string;
-            /** Format: date-time */
-            endsAt?: string;
-            estimatedValueCop?: number;
-            /** @enum {string} */
-            riskLevel?: "bajo" | "medio" | "alto";
-            /** @enum {string} */
-            status?: "programada" | "confirmada" | "atendida" | "no_show" | "cancelada";
-            notes?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            waitlistCandidates?: components["schemas"]["WaitlistEntryResponse"][];
-        };
         ConvertLeadResponse: {
             /** Format: uuid */
             leadId?: string;
@@ -1664,6 +1746,11 @@ export interface components {
             riskLevel?: "bajo" | "medio" | "alto";
             notes?: string;
         };
+        UpdateWaitlistStatusRequest: {
+            /** @enum {string} */
+            status: "activa" | "contactado" | "convertida" | "descartada";
+            discardReason?: string;
+        };
         UpdateTreatmentPlanRequest: {
             /** Format: uuid */
             professionalId?: string;
@@ -1751,21 +1838,6 @@ export interface components {
             /** @enum {string} */
             status: "programada" | "confirmada" | "atendida" | "no_show" | "cancelada";
         };
-        PortfolioSummaryResponse: {
-            totalAmountCop?: number;
-            overdueAmountCop?: number;
-            upcomingAmountCop?: number;
-            paidAmountCop?: number;
-            outstandingAmountCop?: number;
-            /** Format: int64 */
-            totalInstallmentsCount?: number;
-            /** Format: int64 */
-            overdueInstallmentsCount?: number;
-            /** Format: int64 */
-            upcomingInstallmentsCount?: number;
-            /** Format: int64 */
-            paidInstallmentsCount?: number;
-        };
         Pageable: {
             /** Format: int32 */
             page?: number;
@@ -1773,14 +1845,14 @@ export interface components {
             size?: number;
             sort?: string[];
         };
-        PagePatientResponse: {
+        Page: {
             /** Format: int32 */
             totalPages?: number;
             /** Format: int64 */
             totalElements?: number;
             /** Format: int32 */
             size?: number;
-            content?: components["schemas"]["PatientResponse"][];
+            content?: unknown[];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
@@ -1806,6 +1878,39 @@ export interface components {
             empty?: boolean;
             sorted?: boolean;
             unsorted?: boolean;
+        };
+        PortfolioSummaryResponse: {
+            totalAmountCop?: number;
+            overdueAmountCop?: number;
+            upcomingAmountCop?: number;
+            paidAmountCop?: number;
+            outstandingAmountCop?: number;
+            /** Format: int64 */
+            totalInstallmentsCount?: number;
+            /** Format: int64 */
+            overdueInstallmentsCount?: number;
+            /** Format: int64 */
+            upcomingInstallmentsCount?: number;
+            /** Format: int64 */
+            paidInstallmentsCount?: number;
+        };
+        PagePatientResponse: {
+            /** Format: int32 */
+            totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            size?: number;
+            content?: components["schemas"]["PatientResponse"][];
+            /** Format: int32 */
+            number?: number;
+            sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            first?: boolean;
+            last?: boolean;
+            empty?: boolean;
         };
         OdontogramResponse: {
             /** Format: uuid */
@@ -1971,6 +2076,57 @@ export interface operations {
             };
         };
     };
+    listEntries: {
+        parameters: {
+            query: {
+                status?: "activa" | "contactado" | "convertida" | "descartada";
+                query?: string;
+                pageable: components["schemas"]["Pageable"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Página de entradas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["Page"];
+                };
+            };
+            /** @description Filtro o paginación inválidos */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description No autenticado */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Rol sin permiso */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
     addEntry: {
         parameters: {
             query?: never;
@@ -2002,6 +2158,15 @@ export interface operations {
                     "*/*": components["schemas"]["ApiErrorResponse"];
                 };
             };
+            /** @description No autenticado */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
             /** @description Rol sin permiso */
             403: {
                 headers: {
@@ -2013,6 +2178,86 @@ export interface operations {
             };
             /** @description Paciente no encontrado */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    convert: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConvertWaitlistEntryRequest"];
+            };
+        };
+        responses: {
+            /** @description La entrada ya estaba convertida; se devuelve la misma cita */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AppointmentResponse"];
+                };
+            };
+            /** @description Cita creada */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AppointmentResponse"];
+                };
+            };
+            /** @description Cita origen o compatibilidad inválida */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description No autenticado */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Rol sin permiso */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Entrada o cita origen no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Estado incompatible o horario ocupado */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2916,6 +3161,77 @@ export interface operations {
             };
         };
     };
+    updateStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateWaitlistStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description Entrada actualizada o estado repetido */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WaitlistEntryResponse"];
+                };
+            };
+            /** @description Solicitud inválida */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description No autenticado */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Rol sin permiso */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Entrada no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Transición no permitida */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
     getTreatmentPlan: {
         parameters: {
             query?: never;
@@ -2964,7 +3280,7 @@ export interface operations {
             };
         };
     };
-    updateStatus: {
+    updateStatus_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -3290,7 +3606,7 @@ export interface operations {
             };
         };
     };
-    updateStatus_1: {
+    updateStatus_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -3312,6 +3628,55 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["AppointmentResponse"];
+                };
+            };
+        };
+    };
+    getById_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Entrada encontrada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WaitlistEntryResponse"];
+                };
+            };
+            /** @description No autenticado */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Rol sin permiso */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Entrada no encontrada */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiErrorResponse"];
                 };
             };
         };

@@ -4,7 +4,7 @@
 
 <ng-template #entryTemplate>
   <app-waitlist-entry-form
-    [appointment]="appointment()"
+    [initialData]="formData()"
     (saved)="onSaved()"
     (cancelled)="onCancelled()"
   />

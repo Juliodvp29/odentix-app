@@ -5,10 +5,10 @@
         Candidatos para este horario
       </h3>
       <p class="mt-4 text-body text-mid-gray">
-        Estas personas podrían Encajar en el espacio liberado.
+        Estas personas podrían encajar en el espacio liberado.
       </p>
     </div>
-    <app-button variant="ghost" (clicked)="closed.emit()">Cerrar</app-button>
+    <app-button variant="ghost" (clicked)="close()">Cerrar</app-button>
   </div>
 
   @if (loading()) {
@@ -36,13 +36,35 @@
     </div>
   } @else {
     <ul class="mt-16 space-y-8" aria-live="polite">
-      @for (candidate of candidates(); track candidate.id ?? candidate.patientId) {
+      @for (candidate of visibleCandidates(); track candidate.id ?? candidate.patientId ?? $index) {
         <li class="rounded-card bg-paper p-12 shadow-resting">
-          <p class="text-body font-medium text-ink">{{ candidateName(candidate) }}</p>
-          <p class="mt-4 text-caption text-mid-gray">{{ candidatePhone(candidate) }}</p>
-          <p class="mt-4 text-caption text-mid-gray">{{ candidateRange(candidate) }}</p>
+          <div class="flex flex-wrap items-start justify-between gap-8">
+            <div class="min-w-0">
+              <p class="text-body font-medium text-ink">{{ candidateName(candidate) }}</p>
+              <p class="mt-4 text-caption text-mid-gray">{{ candidatePhone(candidate) }}</p>
+              <p class="mt-4 text-caption text-mid-gray">{{ candidateRange(candidate) }}</p>
+            </div>
+            @if (canConvert(candidate)) {
+              <app-button variant="secondary" (clicked)="openConversion(candidate)">
+                Convertir
+              </app-button>
+            }
+          </div>
         </li>
       }
     </ul>
   }
 </section>
+
+<ng-template #conversionTemplate>
+  @if (selectedCandidate(); as candidate) {
+    <app-waitlist-convert-dialog
+      [entry]="candidate"
+      [sourceAppointmentId]="sourceAppointmentId() ?? ''"
+      [sourceStartsAt]="sourceStartsAt()"
+      [sourceEndsAt]="sourceEndsAt()"
+      (converted)="onConverted($event)"
+      (cancelled)="onConversionCancelled()"
+    />
+  }
+</ng-template>

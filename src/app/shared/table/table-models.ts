@@ -106,7 +106,7 @@ export function describeFilter(column: TableColumn, value: FilterValue): string 
         const label = filter.options.find((option) => option.value === selected[0])?.label;
         return `${column.header}: ${label ?? selected[0]}`;
       }
-      return `${column.header}: ${selected.length} selected`;
+      return `${column.header}: ${selected.length} seleccionados`;
     }
     case 'date': {
       const range = value as DateRange;
@@ -114,9 +114,9 @@ export function describeFilter(column: TableColumn, value: FilterValue): string 
         return `${column.header}: ${formatDateEs(range.from)} – ${formatDateEs(range.to)}`;
       }
       if (range.from) {
-        return `${column.header}: from ${formatDateEs(range.from)}`;
+        return `${column.header}: desde ${formatDateEs(range.from)}`;
       }
-      return `${column.header}: until ${formatDateEs(range.to ?? '')}`;
+      return `${column.header}: hasta ${formatDateEs(range.to ?? '')}`;
     }
     case 'number': {
       const range = value as NumberRange;

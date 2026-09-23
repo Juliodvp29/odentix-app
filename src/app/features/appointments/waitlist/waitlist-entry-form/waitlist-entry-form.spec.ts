@@ -1,17 +1,15 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { AppointmentResponse } from '../../appointments.service';
-import { WaitlistService } from '../waitlist.service';
 import { WaitlistEntryForm } from './waitlist-entry-form';
+import { WaitlistService } from '../waitlist.service';
 
-const APPOINTMENT: AppointmentResponse = {
-  id: 'appointment-1',
+const INITIAL_DATA = {
   patientId: 'patient-1',
   patientName: 'Ada Luz',
-  startsAt: '2026-09-22T14:00:00Z',
-  endsAt: '2026-09-22T14:30:00Z',
-  status: 'programada',
+  procedureId: 'procedure-1',
+  desiredFrom: '2026-09-22T14:00:00Z',
+  desiredTo: '2026-09-22T14:30:00Z',
 };
 
 describe('WaitlistEntryForm', () => {
@@ -45,11 +43,11 @@ describe('WaitlistEntryForm', () => {
       providers: [{ provide: WaitlistService, useValue: { addEntry } }],
     }).compileComponents();
     fixture = TestBed.createComponent(WaitlistEntryForm);
-    fixture.componentRef.setInput('appointment', APPOINTMENT);
+    fixture.componentRef.setInput('initialData', INITIAL_DATA);
     fixture.detectChanges();
   });
 
-  it('should prefill the patient and appointment window', () => {
+  it('should prefill the generic patient data and appointment window', () => {
     expect(fixture.nativeElement.textContent).toContain('Ada Luz');
     expect(dateInputs().map((input) => input.value)).toEqual([
       '2026-09-22T09:00',
@@ -57,7 +55,7 @@ describe('WaitlistEntryForm', () => {
     ]);
   });
 
-  it('should register the entry and emit saved', async () => {
+  it('should register the entry with the hidden procedure id and emit saved', async () => {
     let saved = false;
     fixture.componentInstance.saved.subscribe(() => (saved = true));
     clickButton('Guardar en lista de espera');
@@ -65,6 +63,7 @@ describe('WaitlistEntryForm', () => {
 
     expect(addEntry).toHaveBeenCalledWith({
       patientId: 'patient-1',
+      procedureId: 'procedure-1',
       desiredFrom: '2026-09-22T09:00:00-05:00',
       desiredTo: '2026-09-22T09:30:00-05:00',
     });

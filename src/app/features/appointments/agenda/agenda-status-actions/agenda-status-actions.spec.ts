@@ -203,6 +203,44 @@ describe('AgendaStatusActions', () => {
     expect(paneText()).toContain('Ana Torres');
   });
 
+  it('should convert an inline candidate using the cancelled appointment', async () => {
+    fixture.componentRef.setInput('appointment', highRiskAppointment());
+    fixture.detectChanges();
+    clickButton(fixture, 'Cancelar');
+    clickInPane('Sí, cancelar cita');
+    fixture.detectChanges();
+
+    httpTesting
+      .expectOne((call) => call.url.endsWith('/api/v1/appointments/appointment-1/status'))
+      .flush({
+        ...highRiskAppointment(),
+        status: 'cancelada',
+        waitlistCandidates: [
+          {
+            id: 'entry-1',
+            patientId: 'patient-2',
+            patientName: 'Ana Torres',
+            status: 'activa',
+          },
+        ],
+      });
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    clickInPane('Convertir');
+    await fixture.whenStable();
+    clickInPane('Convertir en cita');
+    const request = httpTesting.expectOne((call) =>
+      call.url.endsWith('/api/v1/waitlist/entry-1/convert'),
+    );
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ sourceAppointmentId: 'appointment-1' });
+    request.flush({ id: 'appointment-2', patientId: 'patient-2', status: 'programada' });
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(paneText()).toContain('No hay candidatos compatibles');
+  });
   it('should keep the cancellation modal open when the status request fails', async () => {
     fixture.componentRef.setInput('appointment', highRiskAppointment());
     fixture.detectChanges();

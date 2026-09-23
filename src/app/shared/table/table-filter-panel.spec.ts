@@ -66,7 +66,7 @@ describe('TableFilterPanel', () => {
 
   it('should emit a date range', () => {
     const from = fixture.nativeElement.querySelector(
-      '[aria-label="Joined from"]',
+      '[aria-label="Joined desde"]',
     ) as HTMLInputElement;
     from.value = '2026-01-01';
     from.dispatchEvent(new Event('change', { bubbles: true }));
@@ -75,7 +75,7 @@ describe('TableFilterPanel', () => {
 
   it('should emit a number range', () => {
     const min = fixture.nativeElement.querySelector(
-      '[aria-label="Salary minimum"]',
+      '[aria-label="Salary mínimo"]',
     ) as HTMLInputElement;
     min.value = '100';
     min.dispatchEvent(new Event('change', { bubbles: true }));
@@ -88,7 +88,7 @@ describe('TableFilterPanel', () => {
     const buttons = Array.from(
       fixture.nativeElement.querySelectorAll('button'),
     ) as Array<HTMLButtonElement>;
-    buttons.find((button) => button.textContent?.includes('Clear all'))?.click();
+    buttons.find((button) => button.textContent?.includes('Limpiar todo'))?.click();
     expect(cleared).toBe(1);
   });
 });

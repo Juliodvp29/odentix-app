@@ -7,7 +7,11 @@
     (dayPicked)="dayPicked.emit($event)"
   />
 
-  <app-agenda-detail-panel [appointment]="selectedAppointment()" (closed)="closed.emit()" />
+  <app-agenda-detail-panel
+    [appointment]="selectedAppointment()"
+    (closed)="closed.emit()"
+    (converted)="converted.emit($event)"
+  />
 
   @if (legend().length > 0) {
     <div class="rounded-card bg-paper p-16 shadow-resting">

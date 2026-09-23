@@ -26,6 +26,16 @@ export class WaitlistEntryAction {
       Boolean(this.appointment().patientId) &&
       this.session.currentUser()?.role !== 'especialista_externo',
   );
+  readonly formData = computed(() => {
+    const appointment = this.appointment();
+    return {
+      patientId: appointment.patientId ?? '',
+      patientName: appointment.patientName,
+      procedureId: appointment.procedureId,
+      desiredFrom: appointment.startsAt,
+      desiredTo: appointment.endsAt,
+    };
+  });
 
   open(): void {
     if (!this.canRegister()) {

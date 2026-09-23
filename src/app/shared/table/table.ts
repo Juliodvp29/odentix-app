@@ -87,7 +87,7 @@ export class Table {
   readonly total = input(0);
   readonly loading = input(false);
   readonly query = input.required<TableQuery>();
-  readonly emptyMessage = input('No results found');
+  readonly emptyMessage = input('No hay resultados');
   readonly exportData = input<ExportDataProvider | undefined>(undefined);
   readonly exportFilename = input('export.xlsx');
   readonly rowActions = input<TemplateRef<{ $implicit: TableRow }> | null>(null);

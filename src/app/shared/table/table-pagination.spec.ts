@@ -19,14 +19,14 @@ describe('TablePagination', () => {
   });
 
   it('should describe the visible range', () => {
-    expect(fixture.nativeElement.textContent).toContain('11–20 of 35');
+    expect(fixture.nativeElement.textContent).toContain('11–20 de 35');
   });
 
   it('should emit the previous page', () => {
     let emitted = 0;
     fixture.componentInstance.pageChange.subscribe((page) => (emitted = page));
     buttons()
-      .find((button) => button.textContent?.includes('Previous'))
+      .find((button) => button.textContent?.includes('Anterior'))
       ?.click();
     expect(emitted).toBe(1);
   });
@@ -35,7 +35,7 @@ describe('TablePagination', () => {
     let emitted = 0;
     fixture.componentInstance.pageChange.subscribe((page) => (emitted = page));
     buttons()
-      .find((button) => button.textContent?.includes('Next'))
+      .find((button) => button.textContent?.includes('Siguiente'))
       ?.click();
     expect(emitted).toBe(3);
   });
@@ -45,7 +45,7 @@ describe('TablePagination', () => {
     fixture.componentInstance.pageChange.subscribe(() => emitted++);
     fixture.componentRef.setInput('page', 1);
     fixture.detectChanges();
-    const previous = buttons().find((button) => button.textContent?.includes('Previous'));
+    const previous = buttons().find((button) => button.textContent?.includes('Anterior'));
     expect(previous?.disabled).toBe(true);
     previous?.click();
     expect(emitted).toBe(0);

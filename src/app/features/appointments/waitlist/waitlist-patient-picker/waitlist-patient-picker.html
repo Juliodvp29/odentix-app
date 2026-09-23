@@ -1,0 +1,53 @@
+<div class="space-y-8">
+  <label for="waitlist-patient-search" class="block text-body font-medium text-ink">
+    Buscar paciente
+  </label>
+  <div class="relative">
+    <span class="pointer-events-none absolute inset-y-0 left-12 flex items-center text-mid-gray">
+      <app-icon name="search" />
+    </span>
+    <input
+      id="waitlist-patient-search"
+      type="search"
+      autocomplete="off"
+      placeholder="Escribe nombre o teléfono…"
+      [value]="search()"
+      (input)="onSearch($event)"
+      aria-describedby="waitlist-patient-search-help"
+      class="block w-full rounded-control border border-hairline bg-surface-alt py-8 pl-32 pr-12 text-body text-ink placeholder:text-mid-gray focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+    />
+  </div>
+  <p id="waitlist-patient-search-help" class="text-caption text-mid-gray">
+    Selecciona un paciente para continuar.
+  </p>
+
+  @if (loading()) {
+    <div class="space-y-8" aria-busy="true" aria-label="Buscando pacientes">
+      <app-skeleton variant="line" />
+      <app-skeleton variant="line" />
+    </div>
+  } @else if (error(); as message) {
+    <div class="rounded-control bg-danger-soft px-12 py-8" role="alert">
+      <p class="text-caption text-danger-deep">{{ message }}</p>
+      <app-button class="mt-8" variant="secondary" (clicked)="retry()">Reintentar</app-button>
+    </div>
+  } @else if (empty()) {
+    <p class="text-body text-mid-gray">No encontramos pacientes con esa búsqueda.</p>
+  } @else if (results.value(); as patients) {
+    @if (patients.length > 0) {
+      <ul class="space-y-4">
+        @for (patient of patients; track patient.id) {
+          <li>
+            <button
+              type="button"
+              (click)="pick(patient)"
+              class="block w-full rounded-control border border-hairline bg-paper px-12 py-8 text-left text-body text-ink transition-colors duration-fast hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+            >
+              {{ patientName(patient) }}
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  }
+</div>

@@ -43,13 +43,13 @@ describe('TableBar', () => {
     const buttons = Array.from(
       fixture.nativeElement.querySelectorAll('button'),
     ) as Array<HTMLButtonElement>;
-    buttons.find((button) => button.textContent?.includes('Filters'))?.click();
+    buttons.find((button) => button.textContent?.includes('Filtros'))?.click();
     expect(toggled).toBe(1);
   });
 
   it('should hide the filters button without filterable columns', () => {
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).not.toContain('Filters');
+    expect(fixture.nativeElement.textContent).not.toContain('Filtros');
   });
 
   it('should emit exportRequested when export is clicked', () => {
@@ -60,7 +60,7 @@ describe('TableBar', () => {
     const buttons = Array.from(
       fixture.nativeElement.querySelectorAll('button'),
     ) as Array<HTMLButtonElement>;
-    buttons.find((button) => button.textContent?.includes('Export'))?.click();
+    buttons.find((button) => button.textContent?.includes('Exportar'))?.click();
     expect(emitted).toBe(1);
   });
 });

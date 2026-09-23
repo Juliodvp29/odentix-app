@@ -12,8 +12,8 @@ const SEARCH_DEBOUNCE_MS = 300;
       <div class="relative min-w-0 flex-1">
         <input
           type="search"
-          aria-label="Search records"
-          placeholder="Search…"
+          aria-label="Buscar registros"
+          placeholder="Buscar…"
           [value]="searchValue()"
           (input)="onSearchInput($event)"
           class="w-full rounded-control border border-transparent bg-surface-alt px-12 py-8 text-body text-ink placeholder:text-mid-gray focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
@@ -26,7 +26,7 @@ const SEARCH_DEBOUNCE_MS = 300;
             (clicked)="filtersToggle.emit()"
             [attr.aria-expanded]="filtersOpen()"
           >
-            Filters
+            Filtros
             @if (activeFilterCount() > 0) {
               <span
                 class="ml-4 rounded-pill bg-teal-soft px-8 py-4 text-caption font-medium text-teal-deep"
@@ -44,7 +44,7 @@ const SEARCH_DEBOUNCE_MS = 300;
             iconPosition="end"
             (clicked)="exportRequested.emit()"
           >
-            Export
+            Exportar
           </app-button>
         }
       </div>

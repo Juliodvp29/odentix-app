@@ -5,21 +5,52 @@ import { firstValueFrom } from 'rxjs';
 import { Button } from '@shared/button/button';
 import { FormField } from '@shared/form-field/form-field';
 import { TextInput } from '@shared/text-input/text-input';
-import { AppointmentResponse } from '../../appointments.service';
 import { toBackendInstant, toDateTimeLocalBogota } from '../../agenda-dates';
 import { CreateWaitlistEntryRequest, WaitlistService } from '../waitlist.service';
 
+export interface WaitlistEntryFormData {
+  readonly patientId: string;
+  readonly patientName?: string;
+  readonly procedureId?: string;
+  readonly desiredFrom?: string;
+  readonly desiredTo?: string;
+}
+
 interface WaitlistFormModel {
   patientId: string;
+  procedureId: string;
   desiredFrom: string;
   desiredTo: string;
 }
 
-function toFormModel(appointment: AppointmentResponse): WaitlistFormModel {
+const EMPTY_DATA: WaitlistEntryFormData = {
+  patientId: '',
+  patientName: '',
+  procedureId: '',
+  desiredFrom: '',
+  desiredTo: '',
+};
+
+function hasTimeZone(value: string): boolean {
+  return /(?:Z|[+-]\d{2}:?\d{2})$/i.test(value);
+}
+
+function toLocalDateTime(value: string | undefined): string {
+  if (!value) {
+    return '';
+  }
+  if (hasTimeZone(value)) {
+    return toDateTimeLocalBogota(value);
+  }
+  return value.slice(0, 16);
+}
+
+function toFormModel(data: WaitlistEntryFormData): WaitlistFormModel {
   return {
-    patientId: appointment.patientId ?? '',
-    desiredFrom: toDateTimeLocalBogota(appointment.startsAt),
-    desiredTo: toDateTimeLocalBogota(appointment.endsAt),
+    patientId: data.patientId,
+    procedureId: data.procedureId ?? '',
+    desiredFrom: toLocalDateTime(data.desiredFrom),
+    desiredTo: toLocalDateTime(data.desiredTo),
   };
 }
 
@@ -46,13 +77,13 @@ function errorMessage(error: unknown): string {
   host: { class: 'block' },
 })
 export class WaitlistEntryForm {
-  readonly appointment = input.required<AppointmentResponse>();
+  readonly initialData = input<WaitlistEntryFormData>(EMPTY_DATA);
   readonly saved = output<void>();
   readonly cancelled = output<void>();
 
   private readonly waitlist = inject(WaitlistService);
 
-  readonly model = linkedSignal(() => toFormModel(this.appointment()));
+  readonly model = linkedSignal(() => toFormModel(this.initialData()));
   readonly waitlistForm = form(this.model, (schema) => {
     required(schema.patientId, { message: 'El paciente es obligatorio.' });
   });
@@ -83,6 +114,7 @@ export class WaitlistEntryForm {
     try {
       const body: CreateWaitlistEntryRequest = {
         patientId: model.patientId,
+        procedureId: model.procedureId || undefined,
         desiredFrom: model.desiredFrom ? toBackendInstant(model.desiredFrom) : undefined,
         desiredTo: model.desiredTo ? toBackendInstant(model.desiredTo) : undefined,
       };

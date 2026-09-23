@@ -185,6 +185,7 @@
       (nextMonth)="goToMonth(1)"
       (dayPicked)="pickDay($event)"
       (closed)="closeDetail()"
+      (converted)="onConverted()"
     />
   </div>
 } @else if (view() === 'month') {
@@ -200,6 +201,7 @@
       (nextMonth)="goToMonth(1)"
       (dayPicked)="pickDay($event)"
       (closed)="closeDetail()"
+      (converted)="onConverted()"
     />
   </div>
 } @else {
@@ -211,6 +213,7 @@
         class="xl:col-start-3"
         [appointment]="selectedAppointment()"
         (closed)="closeDetail()"
+        (converted)="onConverted()"
       />
     </div>
   </div>

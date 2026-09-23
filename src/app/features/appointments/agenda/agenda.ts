@@ -229,6 +229,11 @@ export class AgendaPage {
     this.selectedId.set(null);
   }
 
+  onConverted(): void {
+    this.agenda.invalidateAll();
+    this.refresh();
+  }
+
   onFilterChange(): void {
     this.selectedId.set(null);
     this.refresh();

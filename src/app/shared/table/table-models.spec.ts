@@ -58,7 +58,7 @@ describe('table models', () => {
         },
       };
       expect(describeFilter(column, ['a'])).toBe('Role: A');
-      expect(describeFilter(column, ['a', 'b'])).toBe('Role: 2 selected');
+      expect(describeFilter(column, ['a', 'b'])).toBe('Role: 2 seleccionados');
     });
 
     it('should describe date ranges', () => {
@@ -66,8 +66,8 @@ describe('table models', () => {
       expect(describeFilter(column, { from: '2026-01-01', to: '2026-01-31' })).toContain(
         'Joined: ',
       );
-      expect(describeFilter(column, { from: '2026-01-01' })).toContain('from ');
-      expect(describeFilter(column, { to: '2026-01-31' })).toContain('until ');
+      expect(describeFilter(column, { from: '2026-01-01' })).toContain('desde ');
+      expect(describeFilter(column, { to: '2026-01-31' })).toContain('hasta ');
     });
 
     it('should describe number ranges', () => {

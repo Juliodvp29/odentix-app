@@ -10,8 +10,6 @@ export interface AgendaLegendEntry {
   readonly dot: string;
 }
 
-// Right-hand column of the agenda: month navigator, selected appointment
-// detail, and the status convention legend.
 @Component({
   selector: 'app-agenda-sidebar',
   imports: [AgendaDetailPanel, AgendaMiniCalendar],
@@ -27,4 +25,5 @@ export class AgendaSidebar {
   readonly nextMonth = output<void>();
   readonly dayPicked = output<string>();
   readonly closed = output<void>();
+  readonly converted = output<AppointmentResponse>();
 }

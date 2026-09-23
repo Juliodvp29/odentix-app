@@ -21,7 +21,7 @@ export interface ActiveChip {
           <button
             type="button"
             (click)="remove.emit(chip.key)"
-            [attr.aria-label]="'Remove filter ' + chip.label"
+            [attr.aria-label]="'Quitar filtro ' + chip.label"
             class="inline-flex text-mid-gray hover:text-ink"
           >
             <app-icon name="x" />

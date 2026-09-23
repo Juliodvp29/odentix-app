@@ -26,8 +26,12 @@
       [candidates]="cancellationCandidates()"
       [loading]="candidatesLoading()"
       [error]="candidateError()"
+      [sourceAppointmentId]="appointment().id ?? null"
+      [sourceStartsAt]="appointment().startsAt"
+      [sourceEndsAt]="appointment().endsAt"
       (retry)="retryCandidates()"
       (closed)="dismissCancel()"
+      (converted)="converted.emit($event)"
     />
   } @else {
     <p class="text-body text-ink">¿Cancelar esta cita? La cancelación no se puede deshacer.</p>

@@ -15,7 +15,7 @@ import { TableColumn } from './table-models';
             <button
               type="button"
               (click)="requestSort(column)"
-              [attr.aria-label]="'Sort by ' + column.header"
+              [attr.aria-label]="'Ordenar por ' + column.header"
               class="inline-flex items-center gap-4 uppercase hover:text-ink"
             >
               {{ column.header }}
@@ -28,7 +28,7 @@ import { TableColumn } from './table-models';
       }
       @if (hasActions()) {
         <th scope="col" class="border-b border-hairline px-16 py-8">
-          <span class="sr-only">Actions</span>
+          <span class="sr-only">Acciones</span>
         </th>
       }
     </tr>
