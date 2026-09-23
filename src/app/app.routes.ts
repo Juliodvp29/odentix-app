@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/auth/auth.guard';
+import { waitlistGuard } from './features/appointments/waitlist/waitlist.guard';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,11 @@ export const routes: Routes = [
       {
         path: 'appointments',
         loadChildren: () => import('./features/appointments/appointments.routes'),
+      },
+      {
+        path: 'waitlist',
+        canActivate: [waitlistGuard],
+        loadChildren: () => import('./features/appointments/waitlist/waitlist.routes'),
       },
       {
         path: 'treatment-plans',

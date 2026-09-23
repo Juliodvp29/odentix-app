@@ -1,0 +1,11 @@
+@if (canRegister()) {
+  <app-button variant="secondary" (clicked)="open()">Añadir a lista de espera</app-button>
+}
+
+<ng-template #entryTemplate>
+  <app-waitlist-entry-form
+    [initialData]="formData()"
+    (saved)="onSaved()"
+    (cancelled)="onCancelled()"
+  />
+</ng-template>

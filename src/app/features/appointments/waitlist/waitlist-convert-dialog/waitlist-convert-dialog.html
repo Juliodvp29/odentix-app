@@ -1,0 +1,25 @@
+<form class="space-y-16" (submit)="confirm(); $event.preventDefault()">
+  <div class="rounded-control bg-surface-alt px-12 py-12">
+    <p class="text-caption text-mid-gray">Paciente</p>
+    <p class="mt-4 text-body font-medium text-ink">{{ patientName() }}</p>
+    <p class="mt-8 text-caption text-mid-gray">Horario de la cita cancelada</p>
+    <p class="mt-4 text-body text-ink">{{ schedule() }}</p>
+  </div>
+
+  <p class="text-body text-ink">
+    Se creará una cita con este horario y el paciente quedará como convertido.
+  </p>
+
+  <app-form-field label="Notas (opcional)" [field]="notesForm.notes">
+    <app-text-input [field]="notesForm.notes" placeholder="Motivo de la conversión" />
+  </app-form-field>
+
+  @if (error(); as message) {
+    <p class="text-body text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex justify-end gap-8 border-t border-hairline pt-16">
+    <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [loading]="saving()">Convertir en cita</app-button>
+  </div>
+</form>

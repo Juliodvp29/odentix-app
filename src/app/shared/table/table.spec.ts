@@ -158,11 +158,11 @@ describe('Table', () => {
   const sortButton = (): HTMLButtonElement =>
     fixture.nativeElement.querySelector('th button') as HTMLButtonElement;
 
-  function openFilters(): void {
+  function openFiltros(): void {
     const buttons = Array.from(
       fixture.nativeElement.querySelectorAll('button'),
     ) as Array<HTMLButtonElement>;
-    buttons.find((button) => button.textContent?.includes('Filters'))?.click();
+    buttons.find((button) => button.textContent?.includes('Filtros'))?.click();
     fixture.detectChanges();
   }
 
@@ -222,7 +222,7 @@ describe('Table', () => {
   });
 
   it('should filter by select from the panel and show a chip', () => {
-    openFilters();
+    openFiltros();
     const radios = Array.from(
       fixture.nativeElement.querySelectorAll('input[type="radio"]'),
     ) as Array<HTMLInputElement>;
@@ -233,14 +233,14 @@ describe('Table', () => {
   });
 
   it('should remove a filter through its chip', () => {
-    openFilters();
+    openFiltros();
     const radios = Array.from(
       fixture.nativeElement.querySelectorAll('input[type="radio"]'),
     ) as Array<HTMLInputElement>;
     radios[0].click();
     fixture.detectChanges();
     const remove = fixture.nativeElement.querySelector(
-      '[aria-label="Remove filter Role: Dentist"]',
+      '[aria-label="Quitar filtro Role: Dentist"]',
     ) as HTMLButtonElement;
     remove.click();
     fixture.detectChanges();
@@ -248,7 +248,7 @@ describe('Table', () => {
   });
 
   it('should not render chips without active filters', () => {
-    expect(fixture.nativeElement.querySelector('[aria-label^="Remove filter"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[aria-label^="Quitar filtro"]')).toBeNull();
   });
 
   it('should render layout components as blocks for stacked layouts', () => {
@@ -259,7 +259,7 @@ describe('Table', () => {
   });
 
   it('should filter by multiple statuses from the panel', () => {
-    openFilters();
+    openFiltros();
     const boxes = Array.from(
       fixture.nativeElement.querySelectorAll('input[type="checkbox"]'),
     ) as Array<HTMLInputElement>;
@@ -269,9 +269,9 @@ describe('Table', () => {
   });
 
   it('should filter by date range from the panel', () => {
-    openFilters();
+    openFiltros();
     const from = fixture.nativeElement.querySelector(
-      '[aria-label="Joined from"]',
+      '[aria-label="Joined desde"]',
     ) as HTMLInputElement;
     from.value = '2026-01-01';
     from.dispatchEvent(new Event('change', { bubbles: true }));
@@ -282,9 +282,9 @@ describe('Table', () => {
   });
 
   it('should filter by salary minimum from the panel', () => {
-    openFilters();
+    openFiltros();
     const min = fixture.nativeElement.querySelector(
-      '[aria-label="Salary minimum"]',
+      '[aria-label="Salary mínimo"]',
     ) as HTMLInputElement;
     min.value = '1000000';
     min.dispatchEvent(new Event('change', { bubbles: true }));
@@ -310,14 +310,14 @@ describe('Table', () => {
 
   it('should show the empty state with no rows', () => {
     searchFor('zzz-no-match');
-    expect(bodyText()).toContain('No results found');
+    expect(bodyText()).toContain('No hay resultados');
   });
 
   it('should emit page changes from pagination', () => {
     const buttons = Array.from(
       fixture.nativeElement.querySelectorAll('nav button'),
     ) as Array<HTMLButtonElement>;
-    buttons.find((button) => button.textContent?.includes('Next'))?.click();
+    buttons.find((button) => button.textContent?.includes('Siguiente'))?.click();
     fixture.detectChanges();
     expect(fixture.componentInstance.lastQuery?.page).toBe(2);
     expect(bodyText()).toContain('Luis');

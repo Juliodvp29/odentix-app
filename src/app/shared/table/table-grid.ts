@@ -89,7 +89,7 @@ export class TableGrid {
   readonly sortKey = input<string | undefined>(undefined);
   readonly sortDir = input<'asc' | 'desc' | undefined>(undefined);
   readonly pageSize = input(10);
-  readonly emptyMessage = input('No results found');
+  readonly emptyMessage = input('No hay resultados');
   readonly hasActions = input(false);
   readonly templates = input<Map<string, TemplateRef<{ $implicit: TableRow }>>>(new Map());
   readonly actions = input<TemplateRef<{ $implicit: TableRow }> | null>(null);

@@ -74,8 +74,14 @@
       }
     </dl>
 
+    <app-waitlist-entry-action class="mt-16" [appointment]="selected" />
+
     <!-- Status transition actions -->
-    <app-agenda-status-actions class="mt-16" [appointment]="selected" />
+    <app-agenda-status-actions
+      class="mt-16"
+      [appointment]="selected"
+      (converted)="converted.emit($event)"
+    />
 
     <!-- Patient record link -->
     @if (patientRoute(); as route) {

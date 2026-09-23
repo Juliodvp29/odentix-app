@@ -766,13 +766,13 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] UI to register a waitlist entry.
-- [ ] When cancelling a high-value appointment, surface the backend's
+- [x] UI to register a waitlist entry.
+- [x] When cancelling a high-risk appointment, surface the backend's
       suggested waitlist candidates directly in that flow.
 
 **Acceptance criteria:**
 
-- [ ] Cancelling a qualifying appointment shows candidates inline,
+- [x] Cancelling a qualifying appointment shows candidates inline,
       without navigating away from the cancellation flow.
 
 ---

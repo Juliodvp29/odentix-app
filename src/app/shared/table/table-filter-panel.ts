@@ -18,8 +18,8 @@ const controlClasses =
   template: `
     <div class="space-y-16 rounded-card bg-paper p-16 shadow-raised">
       <div class="flex items-center justify-between">
-        <p class="text-body font-medium text-ink">Filters</p>
-        <app-button variant="ghost" (clicked)="clearRequested.emit()">Clear all</app-button>
+        <p class="text-body font-medium text-ink">Filtros</p>
+        <app-button variant="ghost" (clicked)="clearRequested.emit()">Limpiar todo</app-button>
       </div>
       @for (column of filterableColumns(); track column.key) {
         <div class="space-y-8">
@@ -57,22 +57,22 @@ const controlClasses =
             @case ('date') {
               <div class="flex flex-wrap items-center gap-8">
                 <label class="flex items-center gap-8 text-caption text-mid-gray">
-                  From
+                  Desde
                   <input
                     type="date"
                     [value]="dateRange(column.key).from ?? ''"
                     (change)="emitDate(column.key, 'from', dateValue($event))"
-                    [attr.aria-label]="column.header + ' from'"
+                    [attr.aria-label]="column.header + ' desde'"
                     [class]="controlClasses"
                   />
                 </label>
                 <label class="flex items-center gap-8 text-caption text-mid-gray">
-                  To
+                  Hasta
                   <input
                     type="date"
                     [value]="dateRange(column.key).to ?? ''"
                     (change)="emitDate(column.key, 'to', dateValue($event))"
-                    [attr.aria-label]="column.header + ' to'"
+                    [attr.aria-label]="column.header + ' hasta'"
                     [class]="controlClasses"
                   />
                 </label>
@@ -81,22 +81,22 @@ const controlClasses =
             @case ('number') {
               <div class="flex flex-wrap items-center gap-8">
                 <label class="flex items-center gap-8 text-caption text-mid-gray">
-                  Min
+                  Mínimo
                   <input
                     type="number"
                     [value]="numberRange(column.key).min ?? ''"
                     (change)="emitNumber(column.key, 'min', numberValue($event))"
-                    [attr.aria-label]="column.header + ' minimum'"
+                    [attr.aria-label]="column.header + ' mínimo'"
                     [class]="controlClasses"
                   />
                 </label>
                 <label class="flex items-center gap-8 text-caption text-mid-gray">
-                  Max
+                  Máximo
                   <input
                     type="number"
                     [value]="numberRange(column.key).max ?? ''"
                     (change)="emitNumber(column.key, 'max', numberValue($event))"
-                    [attr.aria-label]="column.header + ' maximum'"
+                    [attr.aria-label]="column.header + ' máximo'"
                     [class]="controlClasses"
                   />
                 </label>

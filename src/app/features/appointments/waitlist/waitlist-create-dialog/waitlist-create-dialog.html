@@ -1,0 +1,20 @@
+<div class="space-y-16">
+  @if (patient(); as selectedPatient) {
+    <div class="flex items-center justify-between gap-8 rounded-control bg-surface-alt px-12 py-8">
+      <div class="min-w-0">
+        <p class="truncate text-body font-medium text-ink">{{ patientName(selectedPatient) }}</p>
+        @if (selectedPatient.phone) {
+          <p class="text-caption text-mid-gray">{{ selectedPatient.phone }}</p>
+        }
+      </div>
+      <app-button variant="ghost" (clicked)="changePatient()">Cambiar</app-button>
+    </div>
+    <app-waitlist-entry-form
+      [initialData]="formData()"
+      (saved)="saved.emit()"
+      (cancelled)="cancelled.emit()"
+    />
+  } @else {
+    <app-waitlist-patient-picker (selected)="selectPatient($event)" />
+  }
+</div>

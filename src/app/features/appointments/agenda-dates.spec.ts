@@ -11,6 +11,7 @@ import {
   monthCells,
   rangeForView,
   toBackendInstant,
+  toDateTimeLocalBogota,
   todayIsoDate,
   weekDays,
   weekStart,
@@ -70,6 +71,12 @@ describe('agenda-dates', () => {
   it('should convert datetime-local values to backend instants', () => {
     expect(toBackendInstant('2026-09-22T09:00')).toBe('2026-09-22T09:00:00-05:00');
     expect(toBackendInstant('2026-09-22T09:00:00')).toBe('2026-09-22T09:00:00-05:00');
+  });
+
+  it('should convert backend instants to Bogota datetime-local values', () => {
+    expect(toDateTimeLocalBogota('2026-09-22T14:00:00Z')).toBe('2026-09-22T09:00');
+    expect(toDateTimeLocalBogota(undefined)).toBe('');
+    expect(toDateTimeLocalBogota('not-a-date')).toBe('');
   });
 
   it('should build month ranges and shift months with clamping', () => {
