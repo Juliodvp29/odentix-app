@@ -1,0 +1,48 @@
+<div
+  class="rounded-card border border-hairline bg-surface p-6 shadow-xs"
+  data-testid="treatment-plan-summary"
+>
+  <h3 class="text-xs font-semibold uppercase tracking-wider text-mid-gray">
+    Resumen del presupuesto
+  </h3>
+
+  <div class="mt-4 space-y-3 text-sm">
+    <div class="flex items-center justify-between text-mid-gray">
+      <span>Procedimientos incluidos:</span>
+      <span class="font-medium text-ink" data-testid="summary-count">
+        {{ itemsCount() }} {{ itemsCount() === 1 ? 'procedimiento' : 'procedimientos' }}
+      </span>
+    </div>
+
+    <div class="flex items-center justify-between text-mid-gray">
+      <span>Subtotal valor bruto:</span>
+      <span class="font-medium text-ink" data-testid="summary-gross">
+        {{ formattedGross() }}
+      </span>
+    </div>
+
+    <div class="flex items-center justify-between text-mid-gray">
+      <span>Descuentos aplicados:</span>
+      <span
+        class="font-medium"
+        [class]="totals().discount > 0 ? 'text-success-deep' : 'text-ink'"
+        data-testid="summary-discount"
+      >
+        {{ totals().discount > 0 ? '-' : '' }}{{ formattedDiscount() }}
+      </span>
+    </div>
+
+    <div class="my-3 border-t border-hairline pt-3">
+      <div class="flex items-baseline justify-between">
+        <span class="text-base font-semibold text-ink">Total neto a pagar:</span>
+        <span
+          class="text-2xl font-bold tracking-tight text-teal-deep"
+          data-testid="summary-net"
+        >
+          {{ formattedNet() }}
+        </span>
+      </div>
+      <p class="mt-1 text-right text-xs text-mid-gray">Pesos colombianos (COP)</p>
+    </div>
+  </div>
+</div>

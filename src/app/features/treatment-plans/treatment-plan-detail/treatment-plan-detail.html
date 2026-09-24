@@ -1,0 +1,135 @@
+<div class="space-y-6">
+  <!-- Navigation / Breadcrumb -->
+  <div>
+    <a
+      routerLink="/treatment-plans"
+      class="inline-flex items-center gap-1.5 text-xs font-medium text-teal hover:underline"
+    >
+      <app-icon name="chevron-left" />
+      Volver a planes de tratamiento
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="space-y-4" data-testid="detail-loading">
+      <app-skeleton height="h-24" />
+      <app-skeleton height="h-64" />
+    </div>
+  } @else if (error() || !plan()) {
+    <div
+      class="rounded-card border border-danger bg-danger-soft p-6 text-center text-sm text-danger-deep"
+      role="alert"
+    >
+      <p class="font-medium">No fue posible cargar el plan de tratamiento.</p>
+      <div class="mt-3">
+        <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+      </div>
+    </div>
+  } @else {
+    <!-- Header Card -->
+    <div class="rounded-card border border-hairline bg-surface p-6 shadow-xs space-y-4">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-2xl font-bold tracking-tight text-ink" data-testid="plan-title">
+              {{ plan()!.diagnosis || 'Plan de tratamiento' }}
+            </h1>
+            <app-treatment-plan-status-pill [status]="plan()!.status" />
+          </div>
+          <p class="mt-1 text-sm text-mid-gray">
+            Registrado el {{ formatDate(plan()!.createdAt) }}
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 border-t border-hairline pt-4 sm:grid-cols-2">
+        <div>
+          <span class="block text-xs font-medium uppercase tracking-wider text-mid-gray">
+            Paciente
+          </span>
+          <div class="mt-1 text-sm font-semibold text-ink">
+            @if (plan()!.patientId) {
+              <a
+                [routerLink]="['/patients', plan()!.patientId]"
+                class="text-teal hover:underline"
+              >
+                {{ plan()!.patientFullName || 'Ver paciente' }}
+              </a>
+            } @else {
+              <span>{{ plan()!.patientFullName || 'Sin especificar' }}</span>
+            }
+          </div>
+        </div>
+
+        <div>
+          <span class="block text-xs font-medium uppercase tracking-wider text-mid-gray">
+            Profesional a cargo
+          </span>
+          <div class="mt-1 text-sm font-semibold text-ink">
+            {{ plan()!.professionalFullName || 'Sin asignar' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Procedures & Totals Grid -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <!-- Items Table (2 cols) -->
+      <div class="space-y-4 lg:col-span-2">
+        <div class="overflow-hidden rounded-card border border-hairline bg-surface shadow-xs">
+          <div class="border-b border-hairline bg-surface-alt px-4 py-3">
+            <h2 class="text-sm font-semibold text-ink">
+              Procedimientos incluidos ({{ items().length }})
+            </h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="border-b border-hairline text-xs font-medium uppercase tracking-wider text-mid-gray">
+                <tr>
+                  <th scope="col" class="px-4 py-2.5">Pieza dental</th>
+                  <th scope="col" class="px-4 py-2.5 text-right">Precio base</th>
+                  <th scope="col" class="px-4 py-2.5 text-right">Descuento</th>
+                  <th scope="col" class="px-4 py-2.5 text-right">Neto COP</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-hairline">
+                @for (item of items(); track item.id) {
+                  <tr>
+                    <td class="px-4 py-3 font-medium text-ink">
+                      {{ item.toothNumber ? 'Pieza ' + item.toothNumber : 'General (Toda la boca)' }}
+                    </td>
+                    <td class="px-4 py-3 text-right text-mid-gray">
+                      {{ formatPrice(item.priceCop) }}
+                    </td>
+                    <td class="px-4 py-3 text-right text-mid-gray">
+                      {{ (item.discountCop ?? 0) > 0 ? '-' + formatPrice(item.discountCop) : '—' }}
+                    </td>
+                    <td class="px-4 py-3 text-right font-semibold text-ink">
+                      {{ formatPrice(item.netPriceCop) }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Summary (1 col) -->
+      <div>
+        <div class="rounded-card border border-hairline bg-surface p-6 shadow-xs space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-mid-gray">
+            Resumen financiero
+          </h3>
+          <div class="flex items-baseline justify-between border-t border-hairline pt-3">
+            <span class="text-sm font-semibold text-ink">Total neto a pagar:</span>
+            <span class="text-2xl font-bold tracking-tight text-teal-deep">
+              {{ formatPrice(plan()!.totalPriceCop) }}
+            </span>
+          </div>
+          <p class="text-right text-xs text-mid-gray">Moneda legal: Pesos colombianos (COP)</p>
+        </div>
+      </div>
+    </div>
+  }
+</div>

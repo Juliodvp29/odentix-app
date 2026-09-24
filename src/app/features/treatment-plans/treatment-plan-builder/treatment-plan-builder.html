@@ -1,0 +1,209 @@
+<div class="space-y-6">
+  <!-- Page / Modal Header -->
+  <div class="border-b border-hairline pb-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-ink">
+          Nuevo plan de tratamiento
+        </h1>
+        <p class="mt-1 text-sm text-mid-gray">
+          Propuesta clínica de procedimientos, piezas dentales y presupuesto estimado.
+        </p>
+      </div>
+      <div class="hidden sm:flex sm:items-center sm:gap-2">
+        <app-button variant="ghost" (clicked)="cancelled.emit()">
+          Cancelar
+        </app-button>
+        <app-button
+          variant="primary"
+          [loading]="saving()"
+          [disabled]="!isValid() || saving()"
+          (clicked)="submitPlan()"
+        >
+          Guardar borrador
+        </app-button>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div
+      class="rounded-control border border-danger bg-danger-soft p-4 text-sm text-danger-deep"
+      role="alert"
+    >
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- Main Grid Layout -->
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <!-- Left 2 Cols: Form details & Items -->
+    <div class="space-y-6 lg:col-span-2">
+      <!-- Section: Patient & Professional -->
+      <div class="rounded-card border border-hairline bg-surface p-6 shadow-xs space-y-4">
+        <h2 class="text-base font-semibold text-ink">Información general</h2>
+
+        <!-- Patient Selection -->
+        <div>
+          <label class="block text-xs font-medium uppercase tracking-wider text-mid-gray mb-1">
+            Paciente *
+          </label>
+          @if (activePatientId() && activePatientName()) {
+            <div class="flex items-center justify-between rounded-control border border-hairline bg-surface-alt px-3 py-2 text-sm">
+              <span class="font-medium text-ink" data-testid="selected-patient-name">
+                {{ activePatientName() }}
+              </span>
+              @if (!initialPatientId()) {
+                <button
+                  type="button"
+                  (click)="clearPatient()"
+                  class="text-xs text-teal hover:underline"
+                >
+                  Cambiar
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="relative">
+              <input
+                type="text"
+                placeholder="Buscar paciente por nombre o documento..."
+                [value]="patientSearch()"
+                (input)="patientSearch.set($any($event.target).value)"
+                class="block w-full rounded-control border border-hairline bg-surface-alt px-3 py-2 text-sm text-ink placeholder:text-mid-gray focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+                data-testid="patient-search-input"
+              />
+              @if (patientResults.value(); as results) {
+                @if (results.length > 0) {
+                  <ul class="absolute z-20 mt-1 max-h-48 w-full overflow-auto rounded-control border border-hairline bg-paper py-1 shadow-md">
+                    @for (patient of results; track patient.id) {
+                      <li>
+                        <button
+                          type="button"
+                          (click)="pickPatient(patient)"
+                          class="w-full px-3 py-2 text-left text-sm hover:bg-surface-alt focus:bg-surface-alt"
+                        >
+                          <span class="font-medium text-ink">
+                            {{ patient.firstName }} {{ patient.lastName }}
+                          </span>
+                          <span class="ml-2 text-xs text-mid-gray">
+                            {{ patient.documentType }} {{ patient.documentNumber }}
+                          </span>
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                }
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Professional -->
+        <div>
+          <label for="professional-select" class="block text-xs font-medium uppercase tracking-wider text-mid-gray mb-1">
+            Profesional a cargo
+          </label>
+          <app-select
+            inputId="professional-select"
+            [value]="professionalId()"
+            [options]="professionalSelectOptions()"
+            placeholder="Seleccionar odontólogo / especialista..."
+            (valueChange)="professionalId.set($event)"
+          />
+        </div>
+
+        <!-- Diagnosis / Clinical Note -->
+        <div>
+          <label for="diagnosis-input" class="block text-xs font-medium uppercase tracking-wider text-mid-gray mb-1">
+            Diagnóstico / Objetivo clínico
+          </label>
+          <textarea
+            id="diagnosis-input"
+            rows="2"
+            placeholder="Ej. Rehabilitación oral del sector anterior, fase 1 ortodoncia..."
+            [value]="diagnosis()"
+            (input)="diagnosis.set($any($event.target).value)"
+            class="block w-full rounded-control border border-hairline bg-surface-alt px-3 py-2 text-sm text-ink placeholder:text-mid-gray focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+            data-testid="diagnosis-input"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Section: Procedure Items -->
+      <div class="rounded-card border border-hairline bg-surface p-6 shadow-xs space-y-4">
+        <div class="flex items-center justify-between border-b border-hairline pb-3">
+          <div>
+            <h2 class="text-base font-semibold text-ink">Procedimientos y costos</h2>
+            <p class="text-xs text-mid-gray">
+              Asigna piezas dentales (FDI), procedimientos y descuentos por ítem.
+            </p>
+          </div>
+          <app-button variant="secondary" (clicked)="addItem()">
+            <span class="inline-flex items-center gap-1.5">
+              <app-icon name="plus" />
+              Agregar procedimiento
+            </span>
+          </app-button>
+        </div>
+
+        <!-- Table Column Headers (desktop) -->
+        <div class="hidden sm:flex sm:items-center sm:gap-4 text-xs font-medium uppercase tracking-wider text-mid-gray px-1">
+          <div class="w-44">Pieza dental</div>
+          <div class="flex-1">Procedimiento</div>
+          <div class="w-36 text-right">Precio base</div>
+          <div class="w-32 text-right">Descuento</div>
+          <div class="w-36 text-right">Neto COP</div>
+          <div class="w-10"></div>
+        </div>
+
+        <!-- Rows list -->
+        <div class="divide-y divide-hairline">
+          @for (item of items(); track item.id; let idx = $index) {
+            <app-treatment-plan-item-row
+              [item]="item"
+              [index]="idx"
+              [canRemove]="items().length > 1"
+              (itemChange)="updateItem(idx, $event)"
+              (remove)="removeItem(idx)"
+            />
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Right 1 Col: Summary & Actions -->
+    <div class="space-y-4">
+      <div class="sticky top-6 space-y-4">
+        <app-treatment-plan-summary
+          [totals]="totals()"
+          [itemsCount]="items().length"
+        />
+
+        <div class="rounded-card border border-hairline bg-surface p-4 text-xs text-mid-gray space-y-2">
+          <div class="flex items-center gap-1.5 font-medium text-ink">
+            <app-icon name="check" class="text-teal" />
+            <span>Cálculo aritmético en vivo</span>
+          </div>
+          <p>
+            Los subtotales, descuentos y valor final neto se actualizan al instante sin demoras ni recargas.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-2 sm:hidden">
+          <app-button
+            variant="primary"
+            [loading]="saving()"
+            [disabled]="!isValid() || saving()"
+            (clicked)="submitPlan()"
+          >
+            Guardar borrador
+          </app-button>
+          <app-button variant="ghost" (clicked)="cancelled.emit()">
+            Cancelar
+          </app-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

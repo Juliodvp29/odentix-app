@@ -791,12 +791,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] UI to build a treatment plan with multiple procedure items,
+- [x] UI to build a treatment plan with multiple procedure items,
       running total updating live as items are added/removed.
 
 **Acceptance criteria:**
 
-- [ ] The total updates instantly on every item change, no
+- [x] The total updates instantly on every item change, no
       round-trip needed for basic arithmetic that can happen client-side.
 
 ---

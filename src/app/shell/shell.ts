@@ -45,6 +45,12 @@ export const NAV_ITEMS: ReadonlyArray<NavItem> = [
     icon: 'calendar',
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
   },
+  {
+    path: '/treatment-plans',
+    label: 'Planes de tratamiento',
+    icon: 'file-text',
+    roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar', 'especialista_externo'],
+  },
 ];
 
 const ROLE_LABELS: Record<UserRole, string> = {

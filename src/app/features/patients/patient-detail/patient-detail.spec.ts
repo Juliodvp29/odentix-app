@@ -61,7 +61,7 @@ describe('PatientDetailPage', () => {
     const tabs = Array.from(
       fixture.nativeElement.querySelectorAll('[role="tab"]'),
     ) as Array<HTMLButtonElement>;
-    expect(tabs.length).toBe(4);
+    expect(tabs.length).toBe(5);
     tabs[1].click();
     fixture.detectChanges();
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -106,12 +106,40 @@ describe('PatientDetailPage', () => {
     expect(fixture.nativeElement.textContent).toContain('Diagnóstico');
   });
 
-  it('should render patient files in their tab', async () => {
+  it('should render treatment plans in their tab', async () => {
     await flushDetail();
     const tabs = Array.from(
       fixture.nativeElement.querySelectorAll('[role="tab"]'),
     ) as Array<HTMLButtonElement>;
     tabs[3].click();
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    httpTesting
+      .expectOne((call) => call.url.includes('/api/v1/treatment-plans'))
+      .flush([
+        {
+          id: 'plan-test-1',
+          patientId: 'patient-1',
+          diagnosis: 'Ortodoncia invisible',
+          status: 'borrador',
+          totalPriceCop: 3500000,
+        },
+      ]);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Ortodoncia invisible');
+    expect(tabs[3].getAttribute('aria-selected')).toBe('true');
+  });
+
+  it('should render patient files in their tab', async () => {
+    await flushDetail();
+    const tabs = Array.from(
+      fixture.nativeElement.querySelectorAll('[role="tab"]'),
+    ) as Array<HTMLButtonElement>;
+    tabs[4].click();
     fixture.detectChanges();
     await new Promise((resolve) => setTimeout(resolve, 0));
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -124,7 +152,7 @@ describe('PatientDetailPage', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('radiografia.png');
     expect(fixture.nativeElement.textContent).toContain('Subir archivo');
-    expect(tabs[3].getAttribute('aria-selected')).toBe('true');
+    expect(tabs[4].getAttribute('aria-selected')).toBe('true');
   });
 
   it('should move across tabs with arrow keys', async () => {

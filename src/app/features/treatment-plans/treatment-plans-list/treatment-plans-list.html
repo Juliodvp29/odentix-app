@@ -1,0 +1,145 @@
+<div class="space-y-4">
+  <!-- Actions & Filters Bar -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    @if (!patientId()) {
+      <div class="flex items-center gap-2">
+        <label for="filter-status" class="text-xs font-medium text-mid-gray">Estado:</label>
+        <div class="w-48">
+          <app-select
+            inputId="filter-status"
+            [value]="statusFilter()"
+            [options]="statusOptions"
+            placeholder="Todos los estados"
+            (valueChange)="statusFilter.set($event)"
+          />
+        </div>
+      </div>
+    } @else {
+      <div></div>
+    }
+
+    <div>
+      @if (patientId()) {
+        <app-button variant="primary" (clicked)="newPlanClicked.emit()">
+          <span class="inline-flex items-center gap-1.5">
+            <app-icon name="plus" />
+            Nuevo plan de tratamiento
+          </span>
+        </app-button>
+      } @else {
+        <a
+          routerLink="/treatment-plans/new"
+          class="inline-flex items-center gap-1.5 rounded-control bg-teal px-4 py-2 text-sm font-medium text-paper transition-colors duration-fast hover:bg-teal-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+        >
+          <app-icon name="plus" />
+          Nuevo plan de tratamiento
+        </a>
+      }
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="space-y-3" data-testid="plans-loading">
+      <app-skeleton height="h-16" />
+      <app-skeleton height="h-16" />
+      <app-skeleton height="h-16" />
+    </div>
+  } @else if (error()) {
+    <!-- Error State -->
+    <div
+      class="rounded-card border border-danger bg-danger-soft p-6 text-center text-sm text-danger-deep"
+      role="alert"
+    >
+      <p class="font-medium">Error al cargar los planes de tratamiento.</p>
+      <div class="mt-3">
+        <app-button variant="secondary" (clicked)="retry()">Reintentar</app-button>
+      </div>
+    </div>
+  } @else if (plans().length === 0) {
+    <!-- Empty State -->
+    <div
+      class="rounded-card border border-dashed border-hairline bg-surface p-8 text-center"
+      data-testid="plans-empty"
+    >
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-alt text-mid-gray">
+        <app-icon name="file-text" />
+      </div>
+      <h3 class="mt-3 text-sm font-semibold text-ink">No hay planes de tratamiento</h3>
+      <p class="mt-1 text-xs text-mid-gray">
+        {{ patientId() ? 'Este paciente no tiene propuestas clínicas registradas todavía.' : 'No se encontraron planes con los filtros seleccionados.' }}
+      </p>
+    </div>
+  } @else {
+    <!-- Plans Table / List -->
+    <div class="overflow-hidden rounded-card border border-hairline bg-surface shadow-xs">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-hairline bg-surface-alt text-xs font-medium uppercase tracking-wider text-mid-gray">
+            <tr>
+              <th scope="col" class="px-4 py-3">Diagnóstico / Propuesta</th>
+              @if (!patientId()) {
+                <th scope="col" class="px-4 py-3">Paciente</th>
+              }
+              <th scope="col" class="px-4 py-3">Profesional</th>
+              <th scope="col" class="px-4 py-3">Estado</th>
+              <th scope="col" class="px-4 py-3 text-right">Total neto</th>
+              <th scope="col" class="px-4 py-3 text-right">Fecha</th>
+              <th scope="col" class="px-4 py-3 text-right">Acción</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-hairline">
+            @for (plan of plans(); track plan.id) {
+              <tr class="transition-colors hover:bg-surface-alt">
+                <td class="px-4 py-3">
+                  <div class="font-medium text-ink">
+                    {{ plan.diagnosis || 'Plan de tratamiento' }}
+                  </div>
+                  <div class="text-xs text-mid-gray">
+                    {{ (plan.items?.length ?? 0) }} {{ (plan.items?.length ?? 0) === 1 ? 'procedimiento' : 'procedimientos' }}
+                  </div>
+                </td>
+                @if (!patientId()) {
+                  <td class="px-4 py-3 text-ink">
+                    @if (plan.patientId) {
+                      <a
+                        [routerLink]="['/patients', plan.patientId]"
+                        class="font-medium text-teal hover:underline"
+                      >
+                        {{ plan.patientFullName || 'Ver paciente' }}
+                      </a>
+                    } @else {
+                      <span>{{ plan.patientFullName || '—' }}</span>
+                    }
+                  </td>
+                }
+                <td class="px-4 py-3 text-mid-gray">
+                  {{ plan.professionalFullName || 'Sin asignar' }}
+                </td>
+                <td class="px-4 py-3">
+                  <app-treatment-plan-status-pill [status]="plan.status" />
+                </td>
+                <td class="px-4 py-3 text-right font-semibold text-ink">
+                  {{ formatPrice(plan.totalPriceCop) }}
+                </td>
+                <td class="px-4 py-3 text-right text-xs text-mid-gray">
+                  {{ formatDate(plan.createdAt) }}
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <a
+                    [routerLink]="['/treatment-plans', plan.id]"
+                    class="inline-flex items-center gap-1 text-xs font-medium text-teal hover:underline"
+                    data-testid="view-plan-link"
+                  >
+                    Ver detalle
+                    <app-icon name="chevron-right" />
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

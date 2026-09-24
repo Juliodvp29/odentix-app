@@ -1,0 +1,104 @@
+<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+  <!-- Tooth / FDI piece -->
+  <div class="w-full sm:w-44">
+    <app-select
+      [inputId]="'tooth-' + item().id"
+      [value]="selectedToothString()"
+      [options]="toothSelectOptions"
+      (valueChange)="onToothSelect($event)"
+    />
+  </div>
+
+  <!-- Procedure Preset & Name -->
+  <div class="flex-1 space-y-2">
+    <app-select
+      [inputId]="'procedure-' + item().id"
+      [value]="item().procedureId"
+      [options]="procedureSelectOptions"
+      (valueChange)="onProcedureSelect($event)"
+    />
+
+    @if (item().procedureId === 'proc-otro') {
+      <input
+        type="text"
+        [value]="item().procedureName"
+        (input)="onNameChange($event)"
+        placeholder="Nombre o detalle del procedimiento"
+        class="block w-full rounded-control border border-hairline bg-surface-alt px-3 py-1.5 text-xs text-ink placeholder:text-mid-gray focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+      />
+    }
+  </div>
+
+  <!-- Base Price (COP) -->
+  <div class="w-full sm:w-36">
+    <label [for]="'price-' + item().id" class="block text-xs font-medium text-mid-gray sm:hidden">
+      Precio base
+    </label>
+    <div class="relative rounded-control">
+      <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-xs text-mid-gray">
+        $
+      </span>
+      <input
+        type="number"
+        min="0"
+        step="1000"
+        [id]="'price-' + item().id"
+        [value]="item().priceCop"
+        (input)="onPriceChange($event)"
+        placeholder="Precio"
+        class="block w-full rounded-control border border-hairline bg-surface-alt py-2 pl-6 pr-2 text-right text-sm text-ink focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+      />
+    </div>
+  </div>
+
+  <!-- Discount (COP) -->
+  <div class="w-full sm:w-32">
+    <label [for]="'discount-' + item().id" class="block text-xs font-medium text-mid-gray sm:hidden">
+      Descuento
+    </label>
+    <div class="relative rounded-control">
+      <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-xs text-mid-gray">
+        -$
+      </span>
+      <input
+        type="number"
+        min="0"
+        step="1000"
+        [id]="'discount-' + item().id"
+        [value]="item().discountCop"
+        (input)="onDiscountChange($event)"
+        placeholder="0"
+        class="block w-full rounded-control border border-hairline bg-surface-alt py-2 pl-7 pr-2 text-right text-sm text-ink focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+        [class.border-danger]="hasDiscountError()"
+      />
+    </div>
+  </div>
+
+  <!-- Computed Net Price -->
+  <div class="flex items-center justify-between sm:w-36 sm:justify-end">
+    <span class="text-xs text-mid-gray sm:hidden">Neto:</span>
+    <span
+      class="text-right text-sm font-semibold tracking-tight text-ink"
+      data-testid="item-net-price"
+    >
+      {{ formattedNetPrice() }}
+    </span>
+  </div>
+
+  <!-- Remove Button -->
+  <div class="flex justify-end sm:w-10">
+    <app-icon-button
+      label="Eliminar procedimiento"
+      [disabled]="!canRemove()"
+      (clicked)="remove.emit()"
+    >
+      <app-icon name="trash-2" class="text-mid-gray hover:text-danger" />
+    </app-icon-button>
+  </div>
+</div>
+
+@if (hasDiscountError()) {
+  <p class="mt-1 text-xs text-danger" data-testid="discount-error">
+    El descuento no puede superar el precio base del procedimiento.
+  </p>
+}

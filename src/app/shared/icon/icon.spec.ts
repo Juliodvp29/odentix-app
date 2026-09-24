@@ -16,6 +16,7 @@ const names: ReadonlyArray<IconName> = [
   'check',
   'eye',
   'eye-off',
+  'file-text',
   'triangle-alert',
   'layout-dashboard',
   'log-out',

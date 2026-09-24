@@ -7,6 +7,7 @@ import {
   forwardRef,
   inject,
   input,
+  output,
   signal,
   viewChild,
 } from '@angular/core';
@@ -29,18 +30,33 @@ let nextSelectId = 0;
   host: { class: 'block' },
   template: `
     <div class="relative" (keydown)="onKeydown($event)">
-      <select
-        #native
-        [id]="inputId() + '-native'"
-        [formField]="field()"
-        tabindex="-1"
-        aria-hidden="true"
-        class="sr-only"
-      >
-        @for (option of allOptions(); track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
-        }
-      </select>
+      @if (field(); as f) {
+        <select
+          #native
+          [id]="inputId() + '-native'"
+          [formField]="f"
+          tabindex="-1"
+          aria-hidden="true"
+          class="sr-only"
+        >
+          @for (option of allOptions(); track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      } @else {
+        <select
+          #native
+          [id]="inputId() + '-native'"
+          [value]="selectedValue()"
+          tabindex="-1"
+          aria-hidden="true"
+          class="sr-only"
+        >
+          @for (option of allOptions(); track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      }
       <button
         #trigger
         type="button"
@@ -75,25 +91,29 @@ let nextSelectId = 0;
 })
 export class Select implements FormFieldControl {
   readonly inputId = input<string>(`select-${(nextSelectId += 1)}`);
-  readonly field = input.required<Field<string>>();
+  readonly field = input<Field<string> | null>(null);
+  readonly value = input<string | null>(null);
+  readonly disabled = input(false);
   readonly options = input<ReadonlyArray<SelectOption>>([]);
   readonly placeholder = input('');
+
+  readonly valueChange = output<string>();
 
   private readonly document = inject(DOCUMENT);
   private readonly host = inject(ElementRef);
   private readonly trigger = viewChild('trigger', { read: ElementRef });
   private readonly nativeSelect = viewChild('native', { read: ElementRef });
-  private readonly state = computed(() => this.field()());
+  private readonly state = computed(() => this.field()?.());
 
   readonly open = signal(false);
 
   readonly showError = computed(() => {
     const state = this.state();
-    return state.touched() && state.errors().length > 0;
+    return state ? state.touched() && state.errors().length > 0 : false;
   });
   readonly interactive = computed(() => {
     const state = this.state();
-    return !state.disabled() && !state.readonly();
+    return state ? !state.disabled() && !state.readonly() : !this.disabled();
   });
   readonly describedBy = computed(() => (this.showError() ? `${this.inputId()}-error` : null));
   readonly allOptions = computed<ReadonlyArray<SelectOption>>(() =>
@@ -101,7 +121,13 @@ export class Select implements FormFieldControl {
       ? [{ value: '', label: this.placeholder() }, ...this.options()]
       : [...this.options()],
   );
-  readonly selectedValue = computed(() => this.state().value());
+  readonly selectedValue = computed(() => {
+    const state = this.state();
+    if (state) {
+      return state.value();
+    }
+    return this.value() ?? '';
+  });
   readonly displayLabel = computed(
     () => this.allOptions().find((option) => option.value === this.selectedValue())?.label ?? '',
   );
@@ -128,7 +154,7 @@ export class Select implements FormFieldControl {
   });
 
   markTouched(): void {
-    this.state().markAsTouched();
+    this.state()?.markAsTouched();
   }
 
   toggle(): void {
@@ -151,14 +177,17 @@ export class Select implements FormFieldControl {
   }
 
   choose(option: SelectOption, refocus = true): void {
-    const native = this.nativeSelect();
-    if (!native || !this.interactive()) {
+    if (!this.interactive()) {
       return;
     }
-    const select = native.nativeElement as HTMLSelectElement;
-    select.value = option.value;
-    select.dispatchEvent(new Event('input', { bubbles: true }));
-    select.dispatchEvent(new Event('change', { bubbles: true }));
+    this.valueChange.emit(option.value);
+    const native = this.nativeSelect();
+    if (native) {
+      const select = native.nativeElement as HTMLSelectElement;
+      select.value = option.value;
+      select.dispatchEvent(new Event('input', { bubbles: true }));
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
     this.close(refocus);
   }
 

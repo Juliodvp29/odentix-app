@@ -1,11 +1,25 @@
 import { Routes } from '@angular/router';
 
-// Temporary placeholder route. Replaced by the real treatment plan routes in Fase 5.
 const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('../placeholder/coming-soon').then((m) => m.ComingSoon),
+    loadComponent: () =>
+      import('./treatment-plans-list/treatment-plans-list').then((m) => m.TreatmentPlansList),
     data: { title: 'Planes de tratamiento' },
+  },
+  {
+    path: 'new',
+    loadComponent: () =>
+      import('./treatment-plan-builder/treatment-plan-builder-page').then(
+        (m) => m.TreatmentPlanBuilderPage,
+      ),
+    data: { title: 'Nuevo plan de tratamiento' },
+  },
+  {
+    path: ':id',
+    loadComponent: () =>
+      import('./treatment-plan-detail/treatment-plan-detail').then((m) => m.TreatmentPlanDetail),
+    data: { title: 'Detalle de plan de tratamiento' },
   },
 ];
 

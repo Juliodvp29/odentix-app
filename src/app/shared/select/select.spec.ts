@@ -118,3 +118,49 @@ describe('Select inside FormField', () => {
     expect(triggerButton().getAttribute('aria-describedby')).toBe(error.id);
   });
 });
+
+@Component({
+  imports: [Select],
+  template: `
+    <app-select
+      [value]="selected()"
+      [options]="items"
+      placeholder="Select an option"
+      (valueChange)="selected.set($event)"
+    />
+  `,
+})
+class StandaloneHost {
+  readonly selected = signal('');
+  readonly items = [
+    { value: 'opt1', label: 'Option 1' },
+    { value: 'opt2', label: 'Option 2' },
+  ];
+}
+
+describe('Select standalone (without field)', () => {
+  let fixture: ComponentFixture<StandaloneHost>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [StandaloneHost],
+    }).compileComponents();
+    fixture = TestBed.createComponent(StandaloneHost);
+    fixture.detectChanges();
+  });
+
+  it('should render and select options emitting valueChange', () => {
+    const trigger = fixture.nativeElement.querySelector('button[type="button"]') as HTMLButtonElement;
+    expect(trigger.textContent).toContain('Select an option');
+
+    trigger.click();
+    fixture.detectChanges();
+
+    const options = Array.from(fixture.nativeElement.querySelectorAll('[role="option"]')) as HTMLElement[];
+    options[1].click();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.selected()).toBe('opt1');
+    expect(trigger.textContent).toContain('Option 1');
+  });
+});
