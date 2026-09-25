@@ -78,7 +78,9 @@ describe('WaitlistRowActions', () => {
   it('should confirm and patch a contact status', async () => {
     let updated: WaitlistEntryResponse | undefined;
     fixture.componentInstance.updated.subscribe((entry) => (updated = entry));
-    (fixture.nativeElement.querySelector('button[aria-haspopup="menu"]') as HTMLButtonElement).click();
+    (
+      fixture.nativeElement.querySelector('button[aria-haspopup="menu"]') as HTMLButtonElement
+    ).click();
     await settle();
     paneButton('Marcar contactado').click();
     await settle();
@@ -92,7 +94,9 @@ describe('WaitlistRowActions', () => {
   });
 
   it('should send a discard reason when provided', async () => {
-    (fixture.nativeElement.querySelector('button[aria-haspopup="menu"]') as HTMLButtonElement).click();
+    (
+      fixture.nativeElement.querySelector('button[aria-haspopup="menu"]') as HTMLButtonElement
+    ).click();
     await settle();
     paneButton('Descartar').click();
     await settle();

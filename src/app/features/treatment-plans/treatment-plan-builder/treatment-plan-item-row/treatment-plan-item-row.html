@@ -1,0 +1,173 @@
+<div
+  class="grid grid-cols-1 gap-12 sm:grid-cols-2 sm:items-end lg:grid lg:grid-cols-[minmax(0,136px)_minmax(0,1fr)_132px_132px_132px_36px] lg:items-center lg:gap-12"
+>
+  <div class="min-w-0">
+    <label
+      [for]="'tooth-' + item().id"
+      class="mb-4 block text-caption font-medium text-ink-soft lg:sr-only"
+    >
+      Pieza dental
+    </label>
+    <app-select
+      [inputId]="'tooth-' + item().id"
+      [value]="selectedToothString()"
+      [options]="toothSelectOptions"
+      (valueChange)="onToothSelect($event)"
+    />
+  </div>
+
+  <div class="min-w-0 space-y-8">
+    <label
+      [for]="'procedure-' + item().id"
+      class="mb-4 block text-caption font-medium text-ink-soft lg:sr-only"
+    >
+      Procedimiento
+    </label>
+    <app-select
+      [inputId]="'procedure-' + item().id"
+      [value]="item().procedureId"
+      [options]="procedureSelectOptions"
+      (valueChange)="onProcedureSelect($event)"
+    />
+
+    @if (item().procedureId === 'proc-otro') {
+      <label
+        [for]="'procedure-name-' + item().id"
+        class="block text-caption font-medium text-ink-soft"
+      >
+        Detalle del procedimiento
+      </label>
+      <input
+        [id]="'procedure-name-' + item().id"
+        type="text"
+        [value]="item().procedureName"
+        (input)="onNameChange($event)"
+        placeholder="Nombre o detalle del procedimiento"
+        class="block w-full rounded-control border border-hairline bg-surface-alt px-12 py-8 text-body text-ink placeholder:text-mid-gray focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+      />
+    }
+  </div>
+
+  <div class="min-w-0">
+    <label
+      [for]="'price-' + item().id"
+      class="mb-4 block text-caption font-medium text-ink-soft lg:sr-only"
+    >
+      Precio base
+    </label>
+    <div class="relative rounded-control">
+      <span
+        class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-8 text-caption text-ink-soft"
+      >
+        $
+      </span>
+      <input
+        type="number"
+        min="0"
+        step="1000"
+        [id]="'price-' + item().id"
+        [value]="item().priceCop"
+        (input)="onPriceChange($event)"
+        placeholder="Precio"
+        class="block w-full rounded-control border border-hairline bg-surface-alt py-8 pl-24 pr-28 text-right text-body text-ink focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+      />
+      <div class="absolute inset-y-0 right-1 flex flex-col justify-center py-1">
+        <button
+          type="button"
+          (click)="stepPrice(1000)"
+          class="flex h-3.5 w-5 items-center justify-center rounded-sm text-mid-gray transition-colors duration-fast hover:bg-hairline hover:text-ink active:scale-95"
+          tabindex="-1"
+          aria-label="Aumentar precio"
+        >
+          <app-icon name="chevron-up" class="text-[10px]" />
+        </button>
+        <button
+          type="button"
+          (click)="stepPrice(-1000)"
+          class="flex h-3.5 w-5 items-center justify-center rounded-sm text-mid-gray transition-colors duration-fast hover:bg-hairline hover:text-ink active:scale-95"
+          tabindex="-1"
+          aria-label="Disminuir precio"
+        >
+          <app-icon name="chevron-down" class="text-[10px]" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="min-w-0">
+    <label
+      [for]="'discount-' + item().id"
+      class="mb-4 block text-caption font-medium text-ink-soft lg:sr-only"
+    >
+      Descuento
+    </label>
+    <div class="relative rounded-control">
+      <span
+        class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-8 text-caption text-ink-soft"
+      >
+        -$
+      </span>
+      <input
+        type="number"
+        min="0"
+        step="1000"
+        [id]="'discount-' + item().id"
+        [value]="item().discountCop"
+        (input)="onDiscountChange($event)"
+        placeholder="0"
+        [attr.aria-invalid]="hasDiscountError()"
+        [attr.aria-describedby]="hasDiscountError() ? 'discount-error-' + item().id : null"
+        class="block w-full rounded-control border border-hairline bg-surface-alt py-8 pl-24 pr-28 text-right text-body text-ink focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        [class.border-danger]="hasDiscountError()"
+      />
+      <div class="absolute inset-y-0 right-1 flex flex-col justify-center py-1">
+        <button
+          type="button"
+          (click)="stepDiscount(1000)"
+          class="flex h-3.5 w-5 items-center justify-center rounded-sm text-mid-gray transition-colors duration-fast hover:bg-hairline hover:text-ink active:scale-95"
+          tabindex="-1"
+          aria-label="Aumentar descuento"
+        >
+          <app-icon name="chevron-up" class="text-[10px]" />
+        </button>
+        <button
+          type="button"
+          (click)="stepDiscount(-1000)"
+          class="flex h-3.5 w-5 items-center justify-center rounded-sm text-mid-gray transition-colors duration-fast hover:bg-hairline hover:text-ink active:scale-95"
+          tabindex="-1"
+          aria-label="Disminuir descuento"
+        >
+          <app-icon name="chevron-down" class="text-[10px]" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex min-w-0 items-center justify-between sm:justify-end">
+    <span class="text-caption text-ink-soft lg:hidden">Neto:</span>
+    <span class="text-right text-body font-semibold text-ink" data-testid="item-net-price">
+      {{ formattedNetPrice() }}
+    </span>
+  </div>
+
+  <div class="flex justify-end">
+    <app-icon-button
+      label="Eliminar procedimiento"
+      [disabled]="!canRemove()"
+      (clicked)="remove.emit()"
+    >
+      <app-icon name="trash-2" class="text-ink-soft hover:text-danger" />
+    </app-icon-button>
+  </div>
+</div>
+
+@if (hasDiscountError()) {
+  <p
+    [id]="'discount-error-' + item().id"
+    class="mt-4 text-caption text-danger-deep"
+    role="alert"
+    data-testid="discount-error"
+  >
+    El descuento no puede superar el precio base del procedimiento.
+  </p>
+}

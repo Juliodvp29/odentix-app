@@ -71,6 +71,9 @@ the app, not decided ad hoc per screen):
   actionable, not urgent, until it's actually out of stock
 - Opportunities priority → Teal intensity (soft → base) rather than a
   separate color scale — priority is emphasis, not a status
+- Treatment plans: `borrador`/`abandonado` → neutral; `presentado`/
+  `en_ejecucion` → Info or Teal Soft; `en_decision`/`pospuesto` → Warning;
+  `aceptado`/`completado` → Success; `rechazado` → Danger.
 
 ---
 

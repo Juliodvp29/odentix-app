@@ -118,6 +118,23 @@
       <div role="tabpanel" id="panel-odontogram" aria-labelledby="tab-odontogram">
         <app-odontogram-view [patientId]="id()" />
       </div>
+    } @else if (activeTab() === 'plans') {
+      <div role="tabpanel" id="panel-plans" aria-labelledby="tab-plans">
+        @if (isCreatingPlan()) {
+          <app-treatment-plan-builder
+            [initialPatientId]="id()"
+            [initialPatientName]="fullName()"
+            (saved)="isCreatingPlan.set(false)"
+            (cancelled)="isCreatingPlan.set(false)"
+          />
+        } @else {
+          <app-treatment-plans-list
+            [patientId]="id()"
+            [patientName]="fullName()"
+            (newPlanClicked)="isCreatingPlan.set(true)"
+          />
+        }
+      </div>
     } @else {
       <div role="tabpanel" id="panel-files" aria-labelledby="tab-files">
         <app-patient-files [patientId]="id()" />

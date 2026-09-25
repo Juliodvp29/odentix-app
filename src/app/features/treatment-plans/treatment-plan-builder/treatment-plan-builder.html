@@ -1,0 +1,288 @@
+<form class="space-y-24" (submit)="submitPlan(); $event.preventDefault()">
+  <header class="border-b border-hairline pb-16">
+    <div class="flex flex-wrap items-center justify-between gap-16">
+      <div class="min-w-0">
+        <h1 class="text-heading font-semibold text-ink">Nuevo plan de tratamiento</h1>
+        <p class="mt-4 text-body text-ink-soft">
+          Propuesta clínica de procedimientos, piezas dentales y presupuesto estimado.
+        </p>
+      </div>
+      <div class="hidden items-center gap-8 sm:flex">
+        <app-button type="button" variant="ghost" (clicked)="cancelled.emit()">Cancelar</app-button>
+        <app-button
+          type="submit"
+          variant="primary"
+          [loading]="saving()"
+          [disabled]="!isValid() || saving()"
+        >
+          Guardar borrador
+        </app-button>
+      </div>
+    </div>
+  </header>
+
+  @if (errorMessage(); as message) {
+    <div
+      class="rounded-control border border-danger bg-danger-soft p-16 text-body text-danger-deep"
+      role="alert"
+      aria-live="assertive"
+    >
+      {{ message }}
+    </div>
+  }
+
+  @if (!isValid() && !saving()) {
+    <p id="plan-validation-help" class="text-caption text-danger-deep" role="status">
+      @if (!activePatientId()) {
+        Selecciona un paciente para continuar.
+      } @else if (hasDiscountError()) {
+        Revisa los descuentos: no pueden superar el precio del procedimiento.
+      } @else if (items().length === 0) {
+        Agrega al menos un procedimiento al plan.
+      } @else {
+        Revisa los precios de los procedimientos antes de guardar.
+      }
+    </p>
+  }
+
+  <div class="grid grid-cols-1 gap-24 lg:grid-cols-3">
+    <div class="space-y-24 lg:contents">
+      <section
+        class="space-y-16 rounded-card border border-hairline bg-paper p-20 shadow-resting lg:col-span-2 lg:order-1"
+        aria-labelledby="general-info-heading"
+      >
+        <h2 id="general-info-heading" class="text-subheading font-semibold text-ink">
+          Información general
+        </h2>
+
+        <div>
+          <label
+            for="patient-search"
+            class="mb-8 block text-caption font-medium tracking-caption text-ink"
+          >
+            Paciente <span aria-hidden="true">*</span>
+          </label>
+          @if (activePatientId() && activePatientName()) {
+            <div
+              class="flex items-center justify-between rounded-control border border-hairline bg-surface-alt px-12 py-8 text-body"
+              role="status"
+            >
+              <span class="font-medium text-ink" data-testid="selected-patient-name">
+                {{ activePatientName() }}
+              </span>
+              @if (!initialPatientId()) {
+                <button
+                  type="button"
+                  (click)="clearPatient()"
+                  class="rounded-sm text-caption font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                >
+                  Cambiar
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="relative">
+              <input
+                id="patient-search"
+                type="search"
+                autocomplete="off"
+                required
+                aria-required="true"
+                aria-describedby="patient-search-help"
+                aria-controls="patient-results"
+                [attr.aria-expanded]="patientResultsOpen()"
+                placeholder="Buscar paciente por nombre o documento..."
+                [value]="patientSearch()"
+                (input)="patientSearch.set($any($event.target).value)"
+                class="block w-full rounded-control border border-hairline bg-surface-alt px-12 py-8 text-body text-ink placeholder:text-mid-gray focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+                data-testid="patient-search-input"
+              />
+
+              @if (patientSearchLoading()) {
+                <div
+                  id="patient-results"
+                  class="absolute z-20 mt-4 space-y-8 rounded-control border border-hairline bg-paper p-12 shadow-raised"
+                  aria-live="polite"
+                  aria-label="Buscando pacientes"
+                >
+                  <span class="sr-only">Buscando pacientes...</span>
+                  <app-skeleton variant="line" />
+                  <app-skeleton variant="line" />
+                </div>
+              } @else if (patientSearchError()) {
+                <div
+                  id="patient-results"
+                  class="absolute z-20 mt-4 rounded-control border border-hairline bg-paper p-12 shadow-raised"
+                  role="alert"
+                >
+                  <p class="text-body text-danger-deep">No pudimos buscar pacientes.</p>
+                  <app-button
+                    class="mt-8"
+                    type="button"
+                    variant="secondary"
+                    (clicked)="retryPatientSearch()"
+                  >
+                    Reintentar
+                  </app-button>
+                </div>
+              } @else if (patientSearchEmpty()) {
+                <div
+                  id="patient-results"
+                  class="absolute z-20 mt-4 rounded-control border border-hairline bg-paper p-12 shadow-raised"
+                >
+                  <p class="text-body text-ink-soft">No encontramos pacientes con esa búsqueda.</p>
+                </div>
+              } @else if (patientResultsOpen()) {
+                <ul
+                  id="patient-results"
+                  role="listbox"
+                  aria-label="Pacientes encontrados"
+                  class="absolute z-20 mt-4 max-h-64 overflow-auto rounded-control border border-hairline bg-paper p-4 shadow-raised"
+                >
+                  @for (patient of patientResults.value() ?? []; track patient.id) {
+                    <li role="presentation">
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected="false"
+                        (click)="pickPatient(patient)"
+                        class="w-full rounded-sm px-8 py-8 text-left text-body text-ink transition-colors duration-fast hover:bg-surface-alt focus-visible:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                      >
+                        <span class="font-medium">
+                          {{ patient.firstName }} {{ patient.lastName }}
+                        </span>
+                        <span class="ml-8 text-caption text-ink-soft">
+                          {{ patient.documentType }} {{ patient.documentNumber }}
+                        </span>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+            <p id="patient-search-help" class="mt-4 text-caption text-ink-soft">
+              Escribe al menos dos caracteres para buscar.
+            </p>
+          }
+        </div>
+
+        <div>
+          <label
+            for="professional-select"
+            class="mb-8 block text-caption font-medium tracking-caption text-ink"
+          >
+            Profesional a cargo
+          </label>
+          <app-select
+            inputId="professional-select"
+            [value]="professionalId()"
+            [options]="professionalSelectOptions()"
+            placeholder="Seleccionar odontólogo / especialista..."
+            (valueChange)="professionalId.set($event)"
+          />
+          @if (professionalOptions().length === 0) {
+            <p id="professional-help" class="mt-4 text-caption text-ink-soft">
+              No hay profesionales disponibles en este momento.
+            </p>
+          } @else {
+            <p class="mt-4 text-caption text-ink-soft">Opcional: puedes asignarlo después.</p>
+          }
+        </div>
+
+        <div>
+          <label
+            for="diagnosis-input"
+            class="mb-8 block text-caption font-medium tracking-caption text-ink"
+          >
+            Diagnóstico / Objetivo clínico
+          </label>
+          <textarea
+            id="diagnosis-input"
+            rows="2"
+            placeholder="Ej. Rehabilitación oral del sector anterior, fase 1..."
+            [value]="diagnosis()"
+            (input)="diagnosis.set($any($event.target).value)"
+            class="block w-full rounded-control border border-hairline bg-surface-alt px-12 py-8 text-body text-ink placeholder:text-mid-gray focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal"
+            data-testid="diagnosis-input"
+          ></textarea>
+        </div>
+      </section>
+
+      <section
+        class="space-y-16 rounded-card border border-hairline bg-paper p-20 shadow-resting lg:col-span-3 lg:order-3"
+        aria-labelledby="procedures-heading"
+      >
+        <div
+          class="flex flex-wrap items-center justify-between gap-16 border-b border-hairline pb-16"
+        >
+          <div>
+            <h2 id="procedures-heading" class="text-subheading font-semibold text-ink">
+              Procedimientos y costos
+            </h2>
+            <p class="mt-4 text-caption text-ink-soft">
+              Asigna piezas dentales (FDI), procedimientos y descuentos por ítem.
+            </p>
+          </div>
+          <app-button variant="secondary" icon="plus" (clicked)="addItem()">
+            Agregar procedimiento
+          </app-button>
+        </div>
+
+        <div class="space-y-8" role="region" aria-label="Procedimientos del plan">
+          <div
+            class="hidden px-8 text-caption font-medium tracking-caption text-ink-soft lg:grid lg:grid-cols-[minmax(0,136px)_minmax(0,1fr)_132px_132px_132px_36px] lg:items-center lg:gap-12"
+            role="row"
+          >
+            <div role="columnheader">Pieza dental</div>
+            <div class="min-w-0" role="columnheader">Procedimiento</div>
+            <div class="text-right" role="columnheader">Precio base</div>
+            <div class="text-right" role="columnheader">Descuento</div>
+            <div class="text-right" role="columnheader">Neto COP</div>
+            <div aria-hidden="true"></div>
+          </div>
+          <div class="divide-y divide-hairline">
+            @for (item of items(); track item.id; let idx = $index) {
+              <app-treatment-plan-item-row
+                [item]="item"
+                [index]="idx"
+                [canRemove]="items().length > 1"
+                (itemChange)="updateItem(idx, $event)"
+                (remove)="removeItem(idx)"
+              />
+            }
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="space-y-16 lg:col-span-1 lg:order-2">
+      <div class="sticky top-24 space-y-16">
+        <app-treatment-plan-summary [totals]="totals()" [itemsCount]="items().length" />
+
+        <div class="space-y-8 rounded-card border border-hairline bg-paper p-16 shadow-resting">
+          <div class="flex items-center gap-8 text-body font-medium text-ink">
+            <app-icon name="check" class="text-teal" />
+            <span>Cálculo aritmético en vivo</span>
+          </div>
+          <p class="text-caption text-ink-soft">
+            Los subtotales, descuentos y valor final se actualizan al instante.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-8 sm:hidden">
+          <app-button
+            type="submit"
+            variant="primary"
+            [loading]="saving()"
+            [disabled]="!isValid() || saving()"
+          >
+            Guardar borrador
+          </app-button>
+          <app-button type="button" variant="ghost" (clicked)="cancelled.emit()">
+            Cancelar
+          </app-button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</form>

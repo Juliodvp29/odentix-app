@@ -19,7 +19,7 @@ import { SelectOption } from './select';
       role="listbox"
       [attr.aria-label]="label()"
       (keydown)="onKeydown($event)"
-      class="absolute right-0 left-0 top-full z-50 mt-4 rounded-control bg-paper py-4 shadow-raised"
+      class="absolute right-0 top-full z-50 mt-4 min-w-48 max-w-96 rounded-control bg-paper py-4 shadow-raised"
     >
       @for (option of options(); track option.value; let i = $index) {
         <div

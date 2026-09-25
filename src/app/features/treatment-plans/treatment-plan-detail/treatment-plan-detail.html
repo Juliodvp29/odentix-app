@@ -1,0 +1,171 @@
+<div class="space-y-24">
+  <a
+    routerLink="/treatment-plans"
+    class="inline-flex items-center gap-4 text-caption font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+  >
+    <app-icon name="chevron-left" />
+    Volver a planes de tratamiento
+  </a>
+
+  @if (loading()) {
+    <section
+      class="space-y-16"
+      aria-busy="true"
+      aria-label="Cargando plan de tratamiento"
+      data-testid="detail-loading"
+    >
+      <div class="h-64"><app-skeleton variant="block" /></div>
+      <div class="h-160"><app-skeleton variant="block" /></div>
+    </section>
+  } @else if (error() || !plan()) {
+    <div
+      class="rounded-card border border-danger bg-danger-soft p-24 text-center text-body text-danger-deep"
+      role="alert"
+    >
+      <p class="font-medium">No fue posible cargar el plan de tratamiento.</p>
+      <app-button class="mt-12" type="button" variant="secondary" (clicked)="retry()">
+        Reintentar
+      </app-button>
+    </div>
+  } @else {
+    <section
+      class="space-y-16 rounded-card border border-hairline bg-paper p-20 shadow-resting"
+      aria-labelledby="plan-title"
+    >
+      <div class="flex flex-col gap-16 sm:flex-row sm:items-start sm:justify-between">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-12">
+            <h1
+              id="plan-title"
+              class="text-heading font-semibold text-ink"
+              data-testid="plan-title"
+            >
+              {{ plan()!.diagnosis || 'Plan de tratamiento' }}
+            </h1>
+            <app-treatment-plan-status-pill [status]="plan()!.status" />
+          </div>
+          <p class="mt-4 text-body text-ink-soft">
+            Registrado el {{ formatDate(plan()!.createdAt) }}
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-16 border-t border-hairline pt-16 sm:grid-cols-2">
+        <div>
+          <span class="block text-caption font-medium tracking-caption text-ink-soft"
+            >Paciente</span
+          >
+          <div class="mt-4 text-body font-medium text-ink">
+            @if (plan()!.patientId) {
+              <a
+                [routerLink]="['/patients', plan()!.patientId]"
+                class="text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+              >
+                {{ plan()!.patientFullName || 'Ver paciente' }}
+              </a>
+            } @else {
+              <span>{{ plan()!.patientFullName || 'Sin especificar' }}</span>
+            }
+          </div>
+        </div>
+
+        <div>
+          <span class="block text-caption font-medium tracking-caption text-ink-soft">
+            Profesional a cargo
+          </span>
+          <div class="mt-4 text-body font-medium text-ink">
+            {{ plan()!.professionalFullName || 'Sin asignar' }}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 gap-24 lg:grid-cols-3">
+      <section class="lg:col-span-2" aria-labelledby="procedures-detail-heading">
+        <div
+          class="overflow-hidden rounded-card border border-hairline bg-paper shadow-resting"
+          role="region"
+          aria-label="Procedimientos del plan"
+          tabindex="0"
+        >
+          <div class="border-b border-hairline bg-surface-alt px-16 py-12">
+            <h2 id="procedures-detail-heading" class="text-body font-semibold text-ink">
+              Procedimientos incluidos ({{ items().length }})
+            </h2>
+          </div>
+          @if (items().length === 0) {
+            <div class="p-24 text-center">
+              <p class="text-subheading text-ink">Sin procedimientos registrados</p>
+              <p class="mt-4 text-body text-ink-soft">
+                Este plan todavía no tiene procedimientos asociados.
+              </p>
+            </div>
+          } @else {
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-body">
+                <caption class="sr-only">
+                  Procedimientos incluidos en el plan
+                </caption>
+                <thead
+                  class="border-b border-hairline text-caption font-medium tracking-caption text-ink-soft"
+                >
+                  <tr>
+                    <th scope="col" class="px-16 py-12">Pieza dental</th>
+                    <th scope="col" class="px-16 py-12 text-right">Precio base</th>
+                    <th scope="col" class="px-16 py-12 text-right">Descuento</th>
+                    <th scope="col" class="px-16 py-12 text-right">Neto COP</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-hairline">
+                  @for (item of items(); track item.id) {
+                    <tr>
+                      <td class="px-16 py-16 font-medium text-ink">
+                        {{
+                          item.toothNumber ? 'Pieza ' + item.toothNumber : 'General (Toda la boca)'
+                        }}
+                      </td>
+                      <td class="px-16 py-16 text-right text-ink-soft">
+                        {{ formatPrice(item.priceCop) }}
+                      </td>
+                      <td class="px-16 py-16 text-right text-ink-soft">
+                        {{
+                          (item.discountCop ?? 0) > 0 ? '-' + formatPrice(item.discountCop) : '—'
+                        }}
+                      </td>
+                      <td class="px-16 py-16 text-right font-semibold text-ink">
+                        {{ formatPrice(item.netPriceCop) }}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </section>
+
+      <aside aria-labelledby="financial-summary-heading">
+        <div class="space-y-12 rounded-card border border-hairline bg-paper p-20 shadow-resting">
+          <h2
+            id="financial-summary-heading"
+            class="text-caption font-medium tracking-caption text-ink-soft"
+          >
+            Resumen financiero
+          </h2>
+          <div
+            class="flex items-baseline justify-between gap-12 border-t border-hairline pt-16"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <span class="text-body font-semibold text-ink">Total neto a pagar:</span>
+            <span class="text-heading-sm font-semibold tracking-heading-sm text-teal-deep">
+              {{ formatPrice(plan()!.totalPriceCop) }}
+            </span>
+          </div>
+          <p class="text-right text-caption text-ink-soft">Moneda legal: pesos colombianos (COP)</p>
+        </div>
+      </aside>
+    </div>
+  }
+</div>

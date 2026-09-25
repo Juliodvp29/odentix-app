@@ -15,19 +15,31 @@ import { formatDateEs, initialsOf } from '@shared/table/table-models';
 import { ClinicalRecordsTimeline } from './clinical-records-timeline/clinical-records-timeline';
 import { OdontogramView } from './odontogram-view/odontogram-view';
 import { PatientFiles } from './patient-files/patient-files';
+import { TreatmentPlansList } from '@features/treatment-plans/treatment-plans-list/treatment-plans-list';
+import { TreatmentPlanBuilder } from '@features/treatment-plans/treatment-plan-builder/treatment-plan-builder';
 
-export type PatientTab = 'info' | 'records' | 'odontogram' | 'files';
+export type PatientTab = 'info' | 'records' | 'odontogram' | 'plans' | 'files';
 
 const TABS: ReadonlyArray<{ id: PatientTab; label: string }> = [
   { id: 'info', label: 'Información' },
   { id: 'records', label: 'Historia clínica' },
   { id: 'odontogram', label: 'Odontograma' },
+  { id: 'plans', label: 'Planes de tratamiento' },
   { id: 'files', label: 'Archivos' },
 ];
 
 @Component({
   selector: 'app-patient-detail',
-  imports: [Button, ClinicalRecordsTimeline, Link, OdontogramView, PatientFiles, Skeleton],
+  imports: [
+    Button,
+    ClinicalRecordsTimeline,
+    Link,
+    OdontogramView,
+    PatientFiles,
+    Skeleton,
+    TreatmentPlanBuilder,
+    TreatmentPlansList,
+  ],
   templateUrl: './patient-detail.html',
 })
 export class PatientDetailPage {
@@ -37,6 +49,7 @@ export class PatientDetailPage {
 
   readonly tabs = TABS;
   readonly activeTab = signal<PatientTab>('info');
+  readonly isCreatingPlan = signal(false);
   private readonly tabButtons = viewChildren<ElementRef<HTMLButtonElement>>('tabButton');
 
   readonly detail = this.patients.detail(this.id);
