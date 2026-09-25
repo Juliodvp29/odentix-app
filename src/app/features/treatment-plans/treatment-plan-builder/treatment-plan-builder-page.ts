@@ -14,7 +14,7 @@ import { TreatmentPlanBuilder } from './treatment-plan-builder';
     />
   `,
   host: {
-    class: 'block py-4',
+    class: 'block py-16',
   },
 })
 export class TreatmentPlanBuilderPage {

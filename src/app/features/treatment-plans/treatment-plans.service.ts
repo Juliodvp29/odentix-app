@@ -61,9 +61,7 @@ export class TreatmentPlansService {
   }
 
   // Reactive resource for listing treatment plans of a specific patient.
-  patientPlans(
-    patientId: Signal<string>,
-  ): HttpResourceRef<TreatmentPlanResponse[] | undefined> {
+  patientPlans(patientId: Signal<string>): HttpResourceRef<TreatmentPlanResponse[] | undefined> {
     return httpResource<TreatmentPlanResponse[]>(() => {
       const pId = patientId();
       if (!pId) return undefined;

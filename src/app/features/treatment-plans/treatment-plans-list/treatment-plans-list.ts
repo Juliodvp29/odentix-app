@@ -7,11 +7,7 @@ import { Icon } from '@shared/icon/icon';
 import { Select } from '@shared/select/select';
 import { Skeleton } from '@shared/skeleton/skeleton';
 import { formatDateEs } from '@shared/table/table-models';
-import {
-  STATUS_META,
-  TreatmentPlanResponse,
-  formatCop,
-} from '../treatment-plan-models';
+import { STATUS_META, TreatmentPlanResponse, formatCop } from '../treatment-plan-models';
 import { TreatmentPlanStatusPill } from '../treatment-plan-status-pill/treatment-plan-status-pill';
 
 @Component({
@@ -19,7 +15,7 @@ import { TreatmentPlanStatusPill } from '../treatment-plan-status-pill/treatment
   imports: [Button, Icon, RouterLink, Select, Skeleton, TreatmentPlanStatusPill],
   templateUrl: './treatment-plans-list.html',
   host: {
-    class: 'block space-y-4',
+    class: 'block space-y-24',
   },
 })
 export class TreatmentPlansList {

@@ -16,6 +16,9 @@ describe('TreatmentPlanStatusPill', () => {
     fixture.componentRef.setInput('status', 'borrador');
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Borrador');
+    const pill = fixture.nativeElement.querySelector('[data-testid="status-pill"]');
+    expect(pill.classList.contains('rounded-pill')).toBe(true);
+    expect(pill.className).not.toContain('border');
   });
 
   it('should render the correct label for aceptado', () => {

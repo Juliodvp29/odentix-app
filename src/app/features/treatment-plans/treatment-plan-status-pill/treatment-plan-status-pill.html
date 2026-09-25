@@ -1,8 +1,7 @@
 <span
-  class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium tracking-wide transition-colors"
-  [class]="meta().bgClass + ' ' + meta().textClass + ' ' + meta().borderClass"
+  class="inline-flex items-center rounded-pill px-10 py-2 text-caption font-medium leading-caption tracking-caption"
+  [class]="meta().bgClass + ' ' + meta().textClass"
   data-testid="status-pill"
 >
-  <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80" aria-hidden="true"></span>
   {{ meta().label }}
 </span>

@@ -57,13 +57,20 @@ describe('TreatmentPlanItemRow', () => {
     fixture.detectChanges();
 
     const error = fixture.nativeElement.querySelector('[data-testid="discount-error"]');
+    const discount = fixture.nativeElement.querySelector(
+      'input[placeholder="0"]',
+    ) as HTMLInputElement;
     expect(error).not.toBeNull();
+    expect(discount.getAttribute('aria-invalid')).toBe('true');
+    expect(discount.getAttribute('aria-describedby')).toBe('discount-error-draft-1');
     expect(error.textContent).toContain('El descuento no puede superar el precio base');
   });
 
   it('should emit remove event when trash button is clicked', () => {
     const removeSpy = vi.spyOn(component.remove, 'emit');
-    const button = fixture.nativeElement.querySelector('button[aria-label="Eliminar procedimiento"]') as HTMLButtonElement;
+    const button = fixture.nativeElement.querySelector(
+      'button[aria-label="Eliminar procedimiento"]',
+    ) as HTMLButtonElement;
     button.click();
 
     expect(removeSpy).toHaveBeenCalled();
@@ -83,6 +90,68 @@ describe('TreatmentPlanItemRow', () => {
       expect.objectContaining({
         procedureId: 'proc-implante',
         priceCop: 2200000,
+      }),
+    );
+  });
+
+  it('should step price up and down via stepper buttons', () => {
+    const emitSpy = vi.spyOn(component.itemChange, 'emit');
+    const increaseBtn = fixture.nativeElement.querySelector(
+      'button[aria-label="Aumentar precio"]',
+    ) as HTMLButtonElement;
+    const decreaseBtn = fixture.nativeElement.querySelector(
+      'button[aria-label="Disminuir precio"]',
+    ) as HTMLButtonElement;
+
+    increaseBtn.click();
+    expect(emitSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        priceCop: 131000,
+      }),
+    );
+
+    decreaseBtn.click();
+    expect(emitSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        priceCop: 129000,
+      }),
+    );
+  });
+
+  it('should step discount up and down via stepper buttons without going below zero', () => {
+    const emitSpy = vi.spyOn(component.itemChange, 'emit');
+    const increaseBtn = fixture.nativeElement.querySelector(
+      'button[aria-label="Aumentar descuento"]',
+    ) as HTMLButtonElement;
+    const decreaseBtn = fixture.nativeElement.querySelector(
+      'button[aria-label="Disminuir descuento"]',
+    ) as HTMLButtonElement;
+
+    increaseBtn.click();
+    expect(emitSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        discountCop: 11000,
+      }),
+    );
+
+    decreaseBtn.click();
+    expect(emitSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        discountCop: 9000,
+      }),
+    );
+
+    // Test clamped to 0
+    fixture.componentRef.setInput('item', {
+      ...DRAFT_ITEM,
+      discountCop: 500,
+    });
+    fixture.detectChanges();
+
+    decreaseBtn.click();
+    expect(emitSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        discountCop: 0,
       }),
     );
   });

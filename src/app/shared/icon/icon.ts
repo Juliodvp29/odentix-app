@@ -6,6 +6,7 @@ import {
   lucideChevronDown,
   lucideChevronLeft,
   lucideChevronRight,
+  lucideChevronUp,
   lucideDownload,
   lucideEye,
   lucideEyeOff,
@@ -28,6 +29,7 @@ export type IconName =
   | 'chevron-down'
   | 'chevron-left'
   | 'chevron-right'
+  | 'chevron-up'
   | 'search'
   | 'refresh'
   | 'pencil'
@@ -49,6 +51,7 @@ const ICON_NAMES: Record<IconName, string> = {
   'chevron-down': 'lucideChevronDown',
   'chevron-left': 'lucideChevronLeft',
   'chevron-right': 'lucideChevronRight',
+  'chevron-up': 'lucideChevronUp',
   search: 'lucideSearch',
   refresh: 'lucideRefreshCw',
   pencil: 'lucidePencil',
@@ -75,6 +78,7 @@ const ICON_NAMES: Record<IconName, string> = {
       lucideChevronDown,
       lucideChevronLeft,
       lucideChevronRight,
+      lucideChevronUp,
       lucideDownload,
       lucideEye,
       lucideEyeOff,

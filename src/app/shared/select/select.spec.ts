@@ -61,9 +61,11 @@ describe('Select inside FormField', () => {
     expect(document.activeElement).toBe(triggerButton());
   });
 
-  it('should open the listbox on click', () => {
+  it('should open the listbox on click with a readable minimum width', () => {
     openPanel();
     expect(listbox()).not.toBeNull();
+    expect(listbox()?.classList.contains('min-w-48')).toBe(true);
+    expect(listbox()?.classList.contains('max-w-96')).toBe(true);
     expect(listbox()?.querySelectorAll('[role="option"]').length).toBe(3);
   });
 
@@ -150,13 +152,17 @@ describe('Select standalone (without field)', () => {
   });
 
   it('should render and select options emitting valueChange', () => {
-    const trigger = fixture.nativeElement.querySelector('button[type="button"]') as HTMLButtonElement;
+    const trigger = fixture.nativeElement.querySelector(
+      'button[type="button"]',
+    ) as HTMLButtonElement;
     expect(trigger.textContent).toContain('Select an option');
 
     trigger.click();
     fixture.detectChanges();
 
-    const options = Array.from(fixture.nativeElement.querySelectorAll('[role="option"]')) as HTMLElement[];
+    const options = Array.from(
+      fixture.nativeElement.querySelectorAll('[role="option"]'),
+    ) as HTMLElement[];
     options[1].click();
     fixture.detectChanges();
 

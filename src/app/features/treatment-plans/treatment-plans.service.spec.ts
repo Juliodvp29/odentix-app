@@ -60,10 +60,7 @@ describe('TreatmentPlansService', () => {
       result = res;
     });
 
-    expect(api.get).toHaveBeenCalledWith(
-      '/api/v1/treatment-plans',
-      expect.any(HttpParams),
-    );
+    expect(api.get).toHaveBeenCalledWith('/api/v1/treatment-plans', expect.any(HttpParams));
     expect(result).toEqual([MOCK_PLAN]);
   });
 

@@ -42,7 +42,7 @@ describe('TreatmentPlanBuilderPage', () => {
         },
         {
           provide: ToastService,
-          useValue: { show: vi.fn() },
+          useValue: { success: vi.fn() },
         },
       ],
     }).compileComponents();

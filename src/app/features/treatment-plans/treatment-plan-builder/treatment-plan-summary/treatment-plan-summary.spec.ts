@@ -30,5 +30,8 @@ describe('TreatmentPlanSummary', () => {
     expect(discount.textContent).toContain('50.000');
     expect(net.textContent).toContain('450.000');
     expect(count.textContent).toContain('2 procedimientos');
+    expect(fixture.nativeElement.querySelector('[role="status"]')?.getAttribute('aria-live')).toBe(
+      'polite',
+    );
   });
 });

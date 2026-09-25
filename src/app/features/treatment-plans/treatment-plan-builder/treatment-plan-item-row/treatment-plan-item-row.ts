@@ -23,7 +23,7 @@ export interface TreatmentPlanItemDraft {
   imports: [Icon, IconButton, Select],
   templateUrl: './treatment-plan-item-row.html',
   host: {
-    class: 'block border-b border-hairline py-4 last:border-b-0',
+    class: 'block border-b border-hairline px-8 py-12 last:border-b-0',
   },
 })
 export class TreatmentPlanItemRow {
@@ -99,6 +99,22 @@ export class TreatmentPlanItemRow {
     this.itemChange.emit({
       ...this.item(),
       discountCop: Math.max(0, val),
+    });
+  }
+
+  stepPrice(delta: number): void {
+    const current = this.item().priceCop || 0;
+    this.itemChange.emit({
+      ...this.item(),
+      priceCop: Math.max(0, current + delta),
+    });
+  }
+
+  stepDiscount(delta: number): void {
+    const current = this.item().discountCop || 0;
+    this.itemChange.emit({
+      ...this.item(),
+      discountCop: Math.max(0, current + delta),
     });
   }
 }

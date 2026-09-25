@@ -1,9 +1,10 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { debounceTime, of } from 'rxjs';
+import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, of } from 'rxjs';
 import { Button } from '@shared/button/button';
 import { Icon } from '@shared/icon/icon';
 import { Select, SelectOption } from '@shared/select/select';
+import { Skeleton } from '@shared/skeleton/skeleton';
 import { ToastService } from '@shared/toast/toast.service';
 import { PatientResponse, PatientsService } from '@features/patients/patients.service';
 import { AppointmentsService } from '@features/appointments/appointments.service';
@@ -35,10 +36,10 @@ function createDraftItem(toothNumber: number | null = null): TreatmentPlanItemDr
 
 @Component({
   selector: 'app-treatment-plan-builder',
-  imports: [Button, Icon, Select, TreatmentPlanItemRow, TreatmentPlanSummary],
+  imports: [Button, Icon, Select, Skeleton, TreatmentPlanItemRow, TreatmentPlanSummary],
   templateUrl: './treatment-plan-builder.html',
   host: {
-    class: 'block max-w-5xl mx-auto space-y-6',
+    class: 'block mx-auto max-w-5xl',
   },
 })
 export class TreatmentPlanBuilder {
@@ -60,14 +61,44 @@ export class TreatmentPlanBuilder {
 
   readonly patientSearch = signal('');
   readonly selectedPatient = signal<{ id: string; name: string } | null>(null);
+  private readonly debouncedPatientSearch = toSignal(
+    toObservable(this.patientSearch).pipe(debounceTime(250), distinctUntilChanged()),
+    { initialValue: '' },
+  );
 
   readonly patientResults = rxResource({
-    params: () => this.patientSearch(),
-    stream: ({ params: query }) =>
-      query.trim().length < 2
+    params: () => this.debouncedPatientSearch(),
+    stream: ({ params: query }) => {
+      const normalizedQuery = query.trim();
+      return normalizedQuery.length < 2
         ? of([])
-        : this.patientsService.searchPatients(query.trim()).pipe(debounceTime(250)),
+        : this.patientsService.searchPatients(normalizedQuery);
+    },
   });
+
+  readonly patientSearchSettled = computed(
+    () => this.patientSearch().trim() === this.debouncedPatientSearch().trim(),
+  );
+  readonly patientSearchLoading = computed(
+    () => this.patientSearch().trim().length >= 2 && this.patientResults.isLoading(),
+  );
+  readonly patientSearchError = computed(
+    () => this.patientSearch().trim().length >= 2 && this.patientResults.error() !== undefined,
+  );
+  readonly patientSearchEmpty = computed(
+    () =>
+      this.patientSearchSettled() &&
+      this.patientSearch().trim().length >= 2 &&
+      !this.patientSearchLoading() &&
+      !this.patientSearchError() &&
+      (this.patientResults.value()?.length ?? 0) === 0,
+  );
+  readonly patientResultsOpen = computed(
+    () =>
+      this.patientSearchSettled() &&
+      this.patientSearch().trim().length >= 2 &&
+      (this.patientResults.value()?.length ?? 0) > 0,
+  );
 
   readonly professionalId = signal<string>('');
   readonly professionalOptions = computed(() => this.appointmentsService.professionalOptions());
@@ -123,6 +154,12 @@ export class TreatmentPlanBuilder {
     this.selectedPatient.set(null);
   }
 
+  retryPatientSearch(): void {
+    if (this.patientSearch().trim().length >= 2) {
+      this.patientResults.reload();
+    }
+  }
+
   submitPlan(): void {
     if (!this.isValid() || this.saving()) return;
 
@@ -145,7 +182,7 @@ export class TreatmentPlanBuilder {
     this.plansService.createTreatmentPlan(request).subscribe({
       next: (created) => {
         this.saving.set(false);
-        this.toasts.show('Plan de tratamiento creado correctamente en estado borrador.');
+        this.toasts.success('Plan de tratamiento creado correctamente en estado borrador.');
         this.saved.emit(created);
       },
       error: (err) => {

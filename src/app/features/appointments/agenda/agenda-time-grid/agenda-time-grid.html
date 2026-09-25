@@ -36,7 +36,10 @@
       <!-- Hour gutter -->
       <div aria-hidden="true" class="relative">
         @for (hour of hours; track hour) {
-          <div [style.height.px]="hourHeight" class="pr-8 text-right text-caption text-mid-gray whitespace-nowrap">
+          <div
+            [style.height.px]="hourHeight"
+            class="pr-8 text-right text-caption text-mid-gray whitespace-nowrap"
+          >
             {{ formatHour(hour) }}
           </div>
         }
@@ -78,7 +81,7 @@
               <!-- Status badge — float right, always visible -->
               <span
                 class="float-right ml-4 inline-block rounded-pill text-caption font-medium"
-                style="padding: 1px 6px; font-size: 11px;"
+                style="padding: 1px 6px; font-size: 11px"
                 [class]="statusBadge(row.appointment)"
               >
                 {{ statusLabel(row.appointment) }}
@@ -95,7 +98,7 @@
 
               @if (blockHeight(row) >= 36) {
                 <!-- Time range — only when there is enough vertical room -->
-                <span class="block truncate text-caption text-mid-gray" style="margin-top: 2px;">
+                <span class="block truncate text-caption text-mid-gray" style="margin-top: 2px">
                   {{ formatTime(row.appointment.startsAt) }} –
                   {{ formatTime(row.appointment.endsAt) }}
                 </span>
@@ -104,7 +107,10 @@
               @if (blockHeight(row) >= 64) {
                 <!-- Notes — only for longer appointments -->
                 @if (row.appointment.notes) {
-                  <span class="block truncate text-caption text-mid-gray italic" style="margin-top: 2px;">
+                  <span
+                    class="block truncate text-caption text-mid-gray italic"
+                    style="margin-top: 2px"
+                  >
                     {{ row.appointment.notes }}
                   </span>
                 }
@@ -119,7 +125,7 @@
               class="pointer-events-none absolute inset-x-0 z-10 flex items-center"
               [style.top.px]="nowTop"
             >
-              <span class="shrink-0 rounded-pill bg-teal" style="width: 10px; height: 10px;"></span>
+              <span class="shrink-0 rounded-pill bg-teal" style="width: 10px; height: 10px"></span>
               <div class="h-px flex-1 bg-teal"></div>
             </div>
           }

@@ -13,63 +13,53 @@ export interface StatusMeta {
   readonly label: string;
   readonly bgClass: string;
   readonly textClass: string;
-  readonly borderClass: string;
 }
 
 export const STATUS_META: Record<TreatmentPlanStatus, StatusMeta> = {
   borrador: {
     label: 'Borrador',
-    bgClass: 'bg-[var(--color-surface-alt)]',
-    textClass: 'text-[var(--color-mid-gray)]',
-    borderClass: 'border-[var(--color-hairline)]',
+    bgClass: 'bg-surface-alt',
+    textClass: 'text-ink-soft',
   },
   presentado: {
     label: 'Presentado',
-    bgClass: 'bg-[var(--color-info-soft)]',
-    textClass: 'text-[var(--color-info-deep)]',
-    borderClass: 'border-[var(--color-info)]',
+    bgClass: 'bg-info-soft',
+    textClass: 'text-info-deep',
   },
   en_decision: {
     label: 'En decisión',
-    bgClass: 'bg-[var(--color-warning-soft)]',
-    textClass: 'text-[var(--color-warning-deep)]',
-    borderClass: 'border-[var(--color-warning)]',
+    bgClass: 'bg-warning-soft',
+    textClass: 'text-warning-deep',
   },
   aceptado: {
     label: 'Aceptado',
-    bgClass: 'bg-[var(--color-success-soft)]',
-    textClass: 'text-[var(--color-success-deep)]',
-    borderClass: 'border-[var(--color-success)]',
+    bgClass: 'bg-success-soft',
+    textClass: 'text-success-deep',
   },
   en_ejecucion: {
     label: 'En ejecución',
-    bgClass: 'bg-[var(--color-teal-soft)]',
-    textClass: 'text-[var(--color-teal-deep)]',
-    borderClass: 'border-[var(--color-teal)]',
+    bgClass: 'bg-teal-soft',
+    textClass: 'text-teal-deep',
   },
   completado: {
     label: 'Completado',
-    bgClass: 'bg-[var(--color-success-soft)]',
-    textClass: 'text-[var(--color-success-deep)]',
-    borderClass: 'border-[var(--color-success)]',
+    bgClass: 'bg-success-soft',
+    textClass: 'text-success-deep',
   },
   rechazado: {
     label: 'Rechazado',
-    bgClass: 'bg-[var(--color-danger-soft)]',
-    textClass: 'text-[var(--color-danger-deep)]',
-    borderClass: 'border-[var(--color-danger)]',
+    bgClass: 'bg-danger-soft',
+    textClass: 'text-danger-deep',
   },
   pospuesto: {
     label: 'Pospuesto',
-    bgClass: 'bg-[var(--color-warning-soft)]',
-    textClass: 'text-[var(--color-warning-deep)]',
-    borderClass: 'border-[var(--color-warning)]',
+    bgClass: 'bg-warning-soft',
+    textClass: 'text-warning-deep',
   },
   abandonado: {
     label: 'Abandonado',
-    bgClass: 'bg-[var(--color-surface-alt)]',
-    textClass: 'text-[var(--color-mid-gray)]',
-    borderClass: 'border-[var(--color-hairline)]',
+    bgClass: 'bg-surface-alt',
+    textClass: 'text-ink-soft',
   },
 };
 
@@ -99,9 +89,7 @@ export interface ToothOption {
 }
 
 const FDI_TEETH: ReadonlyArray<number> = [
-  18, 17, 16, 15, 14, 13, 12, 11,
-  21, 22, 23, 24, 25, 26, 27, 28,
-  48, 47, 46, 45, 44, 43, 42, 41,
+  18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28, 48, 47, 46, 45, 44, 43, 42, 41,
   31, 32, 33, 34, 35, 36, 37, 38,
 ];
 

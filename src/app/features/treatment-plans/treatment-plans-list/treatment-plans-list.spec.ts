@@ -36,11 +36,7 @@ describe('TreatmentPlansList', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TreatmentPlansList],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideRouter([]),
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TreatmentPlansList);
@@ -50,6 +46,16 @@ describe('TreatmentPlansList', () => {
 
   afterEach(() => {
     httpTesting.verify();
+  });
+
+  it('should expose a busy loading state while plans resolve', () => {
+    fixture.detectChanges();
+
+    const loading = fixture.nativeElement.querySelector('[data-testid="plans-loading"]');
+    expect(loading).not.toBeNull();
+    expect(loading.getAttribute('aria-busy')).toBe('true');
+
+    httpTesting.expectOne((call) => call.url.includes('/api/v1/treatment-plans')).flush([]);
   });
 
   it('should render the list of plans with status, diagnosis, and price', async () => {

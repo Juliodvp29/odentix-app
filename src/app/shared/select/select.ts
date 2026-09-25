@@ -133,9 +133,9 @@ export class Select implements FormFieldControl {
   );
   readonly classes = computed(
     () =>
-      'flex w-full items-center justify-between gap-8 rounded-control border border-transparent ' +
+      'flex w-full items-center justify-between gap-8 rounded-control border border-hairline ' +
       'bg-surface-alt px-12 py-8 text-body text-ink ' +
-      'focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal ' +
+      'focus:border-teal focus:bg-paper focus:outline-none focus:ring-1 focus:ring-teal ' +
       'disabled:cursor-not-allowed disabled:opacity-50' +
       (this.showError() ? ' border-danger' : ''),
   );

@@ -17,7 +17,7 @@ import { TreatmentPlansService } from '../treatment-plans.service';
   imports: [Button, Icon, RouterLink, Skeleton, TreatmentPlanStatusPill],
   templateUrl: './treatment-plan-detail.html',
   host: {
-    class: 'block max-w-5xl mx-auto space-y-6',
+    class: 'block mx-auto max-w-5xl',
   },
 })
 export class TreatmentPlanDetail {

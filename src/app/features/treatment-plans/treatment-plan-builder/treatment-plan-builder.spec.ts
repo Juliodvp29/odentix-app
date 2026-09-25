@@ -42,15 +42,13 @@ describe('TreatmentPlanBuilder', () => {
         {
           provide: AppointmentsService,
           useValue: {
-            professionalOptions: () => [
-              { id: 'prof-1', name: 'Dr. Mario Bros' },
-            ],
+            professionalOptions: () => [{ id: 'prof-1', name: 'Dr. Mario Bros' }],
           },
         },
         {
           provide: ToastService,
           useValue: {
-            show: vi.fn(),
+            success: vi.fn(),
           },
         },
       ],
@@ -61,6 +59,18 @@ describe('TreatmentPlanBuilder', () => {
     fixture.componentRef.setInput('initialPatientId', 'patient-123');
     fixture.componentRef.setInput('initialPatientName', 'Carlos Pérez');
     fixture.detectChanges();
+  });
+
+  it('should expose a semantic form and accessible patient search', () => {
+    fixture.componentRef.setInput('initialPatientId', null);
+    fixture.componentRef.setInput('initialPatientName', null);
+    fixture.detectChanges();
+
+    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    const input = fixture.nativeElement.querySelector('#patient-search') as HTMLInputElement;
+    expect(form).not.toBeNull();
+    expect(input.getAttribute('aria-required')).toBe('true');
+    expect(input.getAttribute('aria-controls')).toBe('patient-results');
   });
 
   it('should initialize with initial patient and 1 default procedure with instant total', () => {
@@ -142,5 +152,8 @@ describe('TreatmentPlanBuilder', () => {
       ],
     });
     expect(saveSpy).toHaveBeenCalledWith(MOCK_CREATED);
+    expect(TestBed.inject(ToastService).success).toHaveBeenCalledWith(
+      'Plan de tratamiento creado correctamente en estado borrador.',
+    );
   });
 });

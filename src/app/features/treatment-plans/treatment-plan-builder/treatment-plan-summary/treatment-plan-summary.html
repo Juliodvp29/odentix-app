@@ -1,48 +1,55 @@
-<div
-  class="rounded-card border border-hairline bg-surface p-6 shadow-xs"
+<section
+  class="rounded-card border border-hairline bg-paper p-20 shadow-resting"
   data-testid="treatment-plan-summary"
+  aria-labelledby="budget-summary-heading"
 >
-  <h3 class="text-xs font-semibold uppercase tracking-wider text-mid-gray">
+  <h3 id="budget-summary-heading" class="text-caption font-medium tracking-caption text-ink-soft">
     Resumen del presupuesto
   </h3>
 
-  <div class="mt-4 space-y-3 text-sm">
-    <div class="flex items-center justify-between text-mid-gray">
+  <div class="mt-16 space-y-12 text-body">
+    <div class="flex items-center justify-between gap-12 text-ink-soft">
       <span>Procedimientos incluidos:</span>
       <span class="font-medium text-ink" data-testid="summary-count">
         {{ itemsCount() }} {{ itemsCount() === 1 ? 'procedimiento' : 'procedimientos' }}
       </span>
     </div>
 
-    <div class="flex items-center justify-between text-mid-gray">
+    <div class="flex items-center justify-between gap-12 text-ink-soft">
       <span>Subtotal valor bruto:</span>
       <span class="font-medium text-ink" data-testid="summary-gross">
         {{ formattedGross() }}
       </span>
     </div>
 
-    <div class="flex items-center justify-between text-mid-gray">
+    <div class="flex items-center justify-between gap-12 text-ink-soft">
       <span>Descuentos aplicados:</span>
       <span
         class="font-medium"
-        [class]="totals().discount > 0 ? 'text-success-deep' : 'text-ink'"
+        [class.text-success-deep]="totals().discount > 0"
+        [class.text-ink]="totals().discount === 0"
         data-testid="summary-discount"
       >
         {{ totals().discount > 0 ? '-' : '' }}{{ formattedDiscount() }}
       </span>
     </div>
 
-    <div class="my-3 border-t border-hairline pt-3">
-      <div class="flex items-baseline justify-between">
-        <span class="text-base font-semibold text-ink">Total neto a pagar:</span>
+    <div
+      class="mt-16 border-t border-hairline pt-16"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <div class="flex items-baseline justify-between gap-12">
+        <span class="text-subheading font-semibold text-ink">Total neto a pagar:</span>
         <span
-          class="text-2xl font-bold tracking-tight text-teal-deep"
+          class="text-heading-sm font-semibold tracking-heading-sm text-teal-deep"
           data-testid="summary-net"
         >
           {{ formattedNet() }}
         </span>
       </div>
-      <p class="mt-1 text-right text-xs text-mid-gray">Pesos colombianos (COP)</p>
+      <p class="mt-4 text-right text-caption text-ink-soft">Pesos colombianos (COP)</p>
     </div>
   </div>
-</div>
+</section>

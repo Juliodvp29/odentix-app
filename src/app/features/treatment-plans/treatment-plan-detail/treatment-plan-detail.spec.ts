@@ -65,11 +65,19 @@ describe('TreatmentPlanDetail', () => {
     expect(fixture.nativeElement.textContent).toContain('650.000');
   });
 
+  it('should render a clear empty state when no procedures exist', () => {
+    setup({ ...MOCK_PLAN, items: [] });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Sin procedimientos registrados');
+  });
+
   it('should render loading skeleton while resolving', () => {
     setup(null, true);
     fixture.detectChanges();
 
     const loading = fixture.nativeElement.querySelector('[data-testid="detail-loading"]');
     expect(loading).not.toBeNull();
+    expect(loading.getAttribute('aria-busy')).toBe('true');
   });
 });
