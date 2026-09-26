@@ -12,11 +12,13 @@ import {
   lucideEyeOff,
   lucideFileText,
   lucideLayoutDashboard,
+  lucideLock,
   lucideLogOut,
   lucidePencil,
   lucidePlus,
   lucideRefreshCw,
   lucideSearch,
+  lucideTarget,
   lucideTrash2,
   lucideTriangleAlert,
   lucideUsers,
@@ -31,6 +33,7 @@ export type IconName =
   | 'chevron-right'
   | 'chevron-up'
   | 'search'
+  | 'target'
   | 'refresh'
   | 'pencil'
   | 'plus'
@@ -42,6 +45,7 @@ export type IconName =
   | 'file-text'
   | 'triangle-alert'
   | 'layout-dashboard'
+  | 'lock'
   | 'log-out'
   | 'users';
 
@@ -53,6 +57,7 @@ const ICON_NAMES: Record<IconName, string> = {
   'chevron-right': 'lucideChevronRight',
   'chevron-up': 'lucideChevronUp',
   search: 'lucideSearch',
+  target: 'lucideTarget',
   refresh: 'lucideRefreshCw',
   pencil: 'lucidePencil',
   plus: 'lucidePlus',
@@ -64,6 +69,7 @@ const ICON_NAMES: Record<IconName, string> = {
   'file-text': 'lucideFileText',
   'triangle-alert': 'lucideTriangleAlert',
   'layout-dashboard': 'lucideLayoutDashboard',
+  lock: 'lucideLock',
   'log-out': 'lucideLogOut',
   users: 'lucideUsers',
 };
@@ -84,11 +90,13 @@ const ICON_NAMES: Record<IconName, string> = {
       lucideEyeOff,
       lucideFileText,
       lucideLayoutDashboard,
+      lucideLock,
       lucideLogOut,
       lucidePencil,
       lucidePlus,
       lucideRefreshCw,
       lucideSearch,
+      lucideTarget,
       lucideTrash2,
       lucideTriangleAlert,
       lucideUsers,

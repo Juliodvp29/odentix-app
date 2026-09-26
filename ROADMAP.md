@@ -868,11 +868,11 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Kanban-style or list view of leads by pipeline stage.
+- [x] Kanban-style or list view of leads by pipeline stage.
 
 **Acceptance criteria:**
 
-- [ ] The view clearly communicates how many leads are in each stage
+- [x] The view clearly communicates how many leads are in each stage
       at a glance.
 
 ---

@@ -1,0 +1,120 @@
+import { components } from '@core/api/schema';
+
+export type LeadResponse = components['schemas']['LeadResponse'];
+export type PageLeadResponse = components['schemas']['PageLeadResponse'];
+export type UpdateLeadStatusRequest = components['schemas']['UpdateLeadStatusRequest'];
+
+export type LeadStatus = NonNullable<LeadResponse['status']>;
+
+export interface LeadStageMeta {
+  readonly label: string;
+  readonly bgClass: string;
+  readonly textClass: string;
+}
+
+// Funnel order follows the backend pipeline; colors use only existing
+// tones (approved mapping): nuevo neutral, early contact Info,
+// appointment stages Teal Soft, proposed treatment Warning,
+// accepted treatment Success, lost Danger.
+export const LEAD_STAGES: ReadonlyArray<LeadStatus> = [
+  'nuevo',
+  'contactado',
+  'calificado',
+  'cita_propuesta',
+  'cita_agendada',
+  'cita_asistida',
+  'tratamiento_propuesto',
+  'tratamiento_aceptado',
+  'perdido',
+];
+
+export const LEAD_STAGE_META: Record<LeadStatus, LeadStageMeta> = {
+  nuevo: {
+    label: 'Nuevo',
+    bgClass: 'bg-surface-alt',
+    textClass: 'text-ink-soft',
+  },
+  contactado: {
+    label: 'Contactado',
+    bgClass: 'bg-info-soft',
+    textClass: 'text-info-deep',
+  },
+  calificado: {
+    label: 'Calificado',
+    bgClass: 'bg-info-soft',
+    textClass: 'text-info-deep',
+  },
+  cita_propuesta: {
+    label: 'Cita propuesta',
+    bgClass: 'bg-teal-soft',
+    textClass: 'text-teal-deep',
+  },
+  cita_agendada: {
+    label: 'Cita agendada',
+    bgClass: 'bg-teal-soft',
+    textClass: 'text-teal-deep',
+  },
+  cita_asistida: {
+    label: 'Cita asistida',
+    bgClass: 'bg-teal-soft',
+    textClass: 'text-teal-deep',
+  },
+  tratamiento_propuesto: {
+    label: 'Tratamiento propuesto',
+    bgClass: 'bg-warning-soft',
+    textClass: 'text-warning-deep',
+  },
+  tratamiento_aceptado: {
+    label: 'Tratamiento aceptado',
+    bgClass: 'bg-success-soft',
+    textClass: 'text-success-deep',
+  },
+  perdido: {
+    label: 'Perdido',
+    bgClass: 'bg-danger-soft',
+    textClass: 'text-danger-deep',
+  },
+};
+
+export type LeadsByStage = Record<LeadStatus, LeadResponse[]>;
+
+export function emptyLeadsByStage(): LeadsByStage {
+  return {
+    nuevo: [],
+    contactado: [],
+    calificado: [],
+    cita_propuesta: [],
+    cita_agendada: [],
+    cita_asistida: [],
+    tratamiento_propuesto: [],
+    tratamiento_aceptado: [],
+    perdido: [],
+  };
+}
+
+// Groups leads into every funnel stage; leads with an unknown or
+// missing status fall back to the first stage instead of disappearing.
+export function groupLeadsByStage(leads: ReadonlyArray<LeadResponse>): LeadsByStage {
+  const grouped = emptyLeadsByStage();
+  for (const lead of leads) {
+    const status = lead.status;
+    if (status && status in grouped) {
+      grouped[status as LeadStatus].push(lead);
+    } else {
+      grouped.nuevo.push(lead);
+    }
+  }
+  return grouped;
+}
+
+// Initials for the assignee avatar (initials-only per the design system).
+export function assigneeInitials(name: string | null | undefined): string {
+  const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return '—';
+  }
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}

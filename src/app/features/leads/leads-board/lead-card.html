@@ -1,0 +1,65 @@
+<article
+  class="space-y-12 rounded-card border border-hairline bg-paper p-16 shadow-resting"
+  [attr.aria-label]="lead().fullName || 'Prospecto'"
+>
+  <div class="flex items-start justify-between gap-8">
+    <a
+      [routerLink]="['/leads', lead().id]"
+      class="min-w-0 truncate text-body font-medium text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+    >
+      {{ lead().fullName || 'Sin nombre' }}
+    </a>
+    @if (lead().convertedPatientId) {
+      <a
+        [routerLink]="['/patients', lead().convertedPatientId]"
+        class="shrink-0 rounded-pill bg-success-soft px-10 py-2 text-caption font-medium text-success-deep"
+      >
+        Convertido
+      </a>
+    }
+  </div>
+
+  @if (lead().source || lead().procedureOfInterest) {
+    <p class="truncate text-caption text-mid-gray">
+      {{ lead().source || 'Origen desconocido' }}
+      @if (lead().procedureOfInterest) {
+        · {{ lead().procedureOfInterest }}
+      }
+    </p>
+  }
+
+  <dl class="space-y-4 text-caption">
+    @if (lead().estimatedValueCop) {
+      <div class="flex items-baseline justify-between gap-8">
+        <dt class="text-mid-gray">Valor est.</dt>
+        <dd class="font-semibold text-ink">{{ formatValue(lead().estimatedValueCop) }}</dd>
+      </div>
+    }
+    <div class="flex items-baseline justify-between gap-8">
+      <dt class="text-mid-gray">Último contacto</dt>
+      <dd class="text-ink-soft">{{ formatDate(lead().lastContactAt) }}</dd>
+    </div>
+  </dl>
+
+  <div class="flex items-center gap-8 border-t border-hairline pt-12">
+    <span
+      class="flex h-24 w-24 shrink-0 items-center justify-center rounded-pill bg-teal-soft text-caption font-medium text-teal-deep"
+      [attr.aria-label]="lead().assignedToName ? 'Responsable: ' + lead().assignedToName : 'Sin responsable'"
+      aria-hidden="false"
+    >
+      {{ initials() }}
+    </span>
+    <span class="min-w-0 flex-1 truncate text-caption text-ink-soft">
+      {{ lead().assignedToName || 'Sin asignar' }}
+    </span>
+    <label class="sr-only" [for]="'lead-stage-' + lead().id">Mover a etapa</label>
+    <app-select
+      class="w-40 shrink-0"
+      [inputId]="'lead-stage-' + lead().id"
+      [value]="lead().status ?? ''"
+      [options]="stageOptions()"
+      [disabled]="moving()"
+      (valueChange)="moveTo($event)"
+    />
+  </div>
+</article>
