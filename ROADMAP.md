@@ -902,13 +902,13 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] UI action to convert a qualified lead, reusing the patient
+- [x] UI action to convert a qualified lead, reusing the patient
       creation flow's components where sensible instead of duplicating
       them.
 
 **Acceptance criteria:**
 
-- [ ] Converting a lead navigates to the resulting patient record
+- [x] Converting a lead navigates to the resulting patient record
       directly, closing the loop visibly.
 
 ---

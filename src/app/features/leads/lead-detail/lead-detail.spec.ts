@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { describe, expect, it, vi } from 'vitest';
 import { ToastService } from '@shared/toast/toast.service';
 import { LeadActivityResponse, LeadResponse } from '../lead-models';
+import { LeadConvertAction } from '../lead-convert-action/lead-convert-action';
 import { LeadStageSelect } from '../lead-stage-select/lead-stage-select';
 import { LeadsService } from '../leads.service';
 import { LeadDetail } from './lead-detail';
@@ -123,5 +124,24 @@ describe('LeadDetail', () => {
     expect(selector).not.toBeNull();
     selector.componentInstance.moved.emit({ id: 'lead-1', status: 'calificado' });
     expect(detailReload).toHaveBeenCalled();
+  });
+
+  it('should render the conversion action for the current lead', () => {
+    setup();
+    const action = fixture.debugElement.query(By.directive(LeadConvertAction));
+    expect(action).not.toBeNull();
+    expect(action.componentInstance.lead().id).toBe('lead-1');
+    expect(fixture.nativeElement.textContent).toContain('Convertir en paciente');
+  });
+
+  it('should navigate to the patient record when the lead is converted', () => {
+    setup();
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const action = fixture.debugElement.query(By.directive(LeadConvertAction));
+    action.componentInstance.converted.emit({ leadId: 'lead-1', patientId: 'patient-9' });
+
+    expect(navigate).toHaveBeenCalledWith(['/patients', 'patient-9']);
   });
 });

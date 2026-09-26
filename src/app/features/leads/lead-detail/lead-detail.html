@@ -61,13 +61,16 @@
             }
           </p>
         </div>
-        <app-lead-stage-select
-          class="w-40 shrink-0"
-          [leadId]="lead()!.id"
-          [status]="lead()!.status"
-          [leadName]="lead()!.fullName"
-          (moved)="onStageMoved()"
-        />
+        <div class="flex shrink-0 flex-col gap-8 sm:items-end">
+          <app-lead-stage-select
+            class="w-40"
+            [leadId]="lead()!.id"
+            [status]="lead()!.status"
+            [leadName]="lead()!.fullName"
+            (moved)="onStageMoved()"
+          />
+          <app-lead-convert-action [lead]="lead()!" (converted)="goToPatient($event)" />
+        </div>
       </div>
 
       <dl class="grid grid-cols-1 gap-16 border-t border-hairline pt-16 sm:grid-cols-2">
@@ -134,7 +137,7 @@
         <h2 id="history-heading" class="text-body font-semibold text-ink">
           Historial de contacto ({{ timeline().length }})
         </h2>
-        <app-button variant="primary" (clicked)="openActivity()">Registrar contacto</app-button>
+        <app-button variant="secondary" (clicked)="openActivity()">Registrar contacto</app-button>
       </div>
       @if (historyLoading() && timeline().length === 0) {
         <div class="space-y-12 p-16" aria-busy="true" aria-label="Cargando historial">

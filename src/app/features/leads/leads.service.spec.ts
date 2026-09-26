@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { ApiClient } from '@core/api/api-client';
-import { LeadActivityResponse, LeadResponse } from './lead-models';
+import { ConvertLeadResponse, LeadActivityResponse, LeadResponse } from './lead-models';
 import { BOARD_PAGE_SIZE, LeadsService, isPlanGateError } from './leads.service';
 
 const MOCK_LEAD: LeadResponse = {
@@ -74,6 +74,27 @@ describe('LeadsService', () => {
       notes: 'Interesada en ortodoncia',
     });
     expect(result).toEqual(activity);
+  });
+
+  it('should post the conversion with patient data', async () => {
+    const response: ConvertLeadResponse = {
+      leadId: 'lead-1',
+      patientId: 'patient-9',
+      alreadyConverted: false,
+    };
+    vi.spyOn(api, 'post').mockReturnValue(of(response));
+
+    let result: ConvertLeadResponse | undefined;
+    service
+      .convertLead('lead-1', { firstName: 'Ana', lastName: 'Torres' })
+      .subscribe((res) => {
+        result = res;
+      });
+
+    expect(api.post).toHaveBeenCalledWith('/api/v1/leads/lead-1/convert', {
+      patient: { firstName: 'Ana', lastName: 'Torres' },
+    });
+    expect(result?.patientId).toBe('patient-9');
   });
 });
 

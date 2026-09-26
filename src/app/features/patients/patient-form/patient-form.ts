@@ -12,9 +12,10 @@ import {
 } from '@features/patients/patients.service';
 
 // Mirrors the backend PHONE_REGEXP (source of truth: CreatePatientRequest).
-const PHONE_PATTERN = /^[+]?[0-9()\- ]{7,20}$/;
+// Exported for the lead conversion form, which collects the same data.
+export const PHONE_PATTERN = /^[+]?[0-9()\- ]{7,20}$/;
 
-const DOCUMENT_TYPES: ReadonlyArray<SelectOption> = [
+export const DOCUMENT_TYPES: ReadonlyArray<SelectOption> = [
   { value: 'CC', label: 'CC' },
   { value: 'TI', label: 'TI' },
   { value: 'CE', label: 'CE' },

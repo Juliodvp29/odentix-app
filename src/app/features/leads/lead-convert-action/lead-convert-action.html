@@ -1,0 +1,11 @@
+@if (canConvert()) {
+  <app-button variant="primary" (clicked)="open()">Convertir en paciente</app-button>
+}
+
+<ng-template #convertTemplate>
+  <app-lead-convert-form
+    [lead]="lead()"
+    (converted)="onConverted($event)"
+    (cancelled)="onCancelled()"
+  />
+</ng-template>

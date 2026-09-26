@@ -3,6 +3,8 @@ import { Injectable, Signal, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
 import {
+  ConvertLeadPatientData,
+  ConvertLeadResponse,
   CreateLeadActivityRequest,
   LeadActivityResponse,
   LeadResponse,
@@ -65,6 +67,19 @@ export class LeadsService {
   ): Observable<LeadActivityResponse> {
     return this.api.post<CreateLeadActivityRequest, LeadActivityResponse>(
       `/api/v1/leads/${id}/activities`,
+      body,
+    );
+  }
+
+  // Converts a lead into a patient. The response carries the resulting
+  // patient id and whether it already existed (idempotent backend).
+  convertLead(
+    id: string,
+    patient?: ConvertLeadPatientData,
+  ): Observable<ConvertLeadResponse> {
+    const body = patient ? { patient } : {};
+    return this.api.post<{ patient?: ConvertLeadPatientData }, ConvertLeadResponse>(
+      `/api/v1/leads/${id}/convert`,
       body,
     );
   }

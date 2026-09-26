@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, signal, TemplateRef, viewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { formatCop } from '@features/treatment-plans/treatment-plan-models';
 import { Button } from '@shared/button/button';
 import { Icon } from '@shared/icon/icon';
@@ -8,6 +8,7 @@ import { formatDateEs } from '@shared/table/table-models';
 import { ModalHandle, ModalService } from '@shared/modal/modal.service';
 import { ToastService } from '@shared/toast/toast.service';
 import {
+  ConvertLeadResponse,
   LEAD_ACTIVITY_TYPE_META,
   LEAD_STAGE_META,
   LeadActivityResponse,
@@ -16,12 +17,13 @@ import {
   LeadStatus,
 } from '../lead-models';
 import { LeadActivityForm } from '../lead-activity-form/lead-activity-form';
+import { LeadConvertAction } from '../lead-convert-action/lead-convert-action';
 import { LeadStageSelect } from '../lead-stage-select/lead-stage-select';
 import { LeadsService } from '../leads.service';
 
 @Component({
   selector: 'app-lead-detail',
-  imports: [Button, Icon, LeadActivityForm, LeadStageSelect, RouterLink, Skeleton],
+  imports: [Button, Icon, LeadActivityForm, LeadConvertAction, LeadStageSelect, RouterLink, Skeleton],
   templateUrl: './lead-detail.html',
   host: {
     class: 'block mx-auto max-w-5xl',
@@ -31,6 +33,7 @@ export class LeadDetail {
   readonly id = input.required<string>();
 
   private readonly leads = inject(LeadsService);
+  private readonly router = inject(Router);
   private readonly modals = inject(ModalService);
   private readonly toasts = inject(ToastService);
   private readonly activityTemplate = viewChild.required<TemplateRef<unknown>>('activityTemplate');
@@ -85,6 +88,12 @@ export class LeadDetail {
 
   onStageMoved(): void {
     this.detail.reload();
+  }
+
+  goToPatient(response: ConvertLeadResponse): void {
+    if (response.patientId) {
+      void this.router.navigate(['/patients', response.patientId]);
+    }
   }
 
   openActivity(): void {

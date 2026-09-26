@@ -8,6 +8,7 @@ import {
   assigneeInitials,
   emptyLeadsByStage,
   groupLeadsByStage,
+  splitLeadName,
 } from './lead-models';
 
 function lead(id: string, status: LeadResponse['status']): LeadResponse {
@@ -74,8 +75,19 @@ describe('assigneeInitials', () => {
   });
 });
 
-describe('lead activity types', () => {
-  it('should cover every backend activity type with a Spanish label', () => {
+describe('splitLeadName', () => {
+  it('should split the first token from the rest like the backend', () => {
+    expect(splitLeadName('Ana Torres')).toEqual({ firstName: 'Ana', lastName: 'Torres' });
+    expect(splitLeadName('Carlos Pérez Gómez')).toEqual({
+      firstName: 'Carlos',
+      lastName: 'Pérez Gómez',
+    });
+    expect(splitLeadName('Madonna')).toEqual({ firstName: 'Madonna', lastName: '' });
+    expect(splitLeadName(null)).toEqual({ firstName: '', lastName: '' });
+  });
+});
+
+describe('lead activity types', () => {  it('should cover every backend activity type with a Spanish label', () => {
     expect([...LEAD_ACTIVITY_TYPES]).toEqual(['llamada', 'whatsapp', 'email', 'nota']);
     expect(LEAD_ACTIVITY_TYPE_META.llamada.label).toBe('Llamada');
     expect(LEAD_ACTIVITY_TYPE_META.whatsapp.label).toBe('WhatsApp');

@@ -5,6 +5,9 @@ export type PageLeadResponse = components['schemas']['PageLeadResponse'];
 export type UpdateLeadStatusRequest = components['schemas']['UpdateLeadStatusRequest'];
 export type CreateLeadActivityRequest = components['schemas']['CreateLeadActivityRequest'];
 export type LeadActivityResponse = components['schemas']['LeadActivityResponse'];
+export type ConvertLeadRequest = components['schemas']['ConvertLeadRequest'];
+export type ConvertLeadPatientData = components['schemas']['ConvertLeadPatientData'];
+export type ConvertLeadResponse = components['schemas']['ConvertLeadResponse'];
 
 export type LeadStatus = NonNullable<LeadResponse['status']>;
 export type LeadActivityType = NonNullable<CreateLeadActivityRequest['activityType']>;
@@ -156,4 +159,23 @@ export function assigneeInitials(name: string | null | undefined): string {
     return parts[0].slice(0, 2).toUpperCase();
   }
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+export interface SplitName {
+  readonly firstName: string;
+  readonly lastName: string;
+}
+
+// Mirrors the backend's name inference: first token is the given name,
+// everything else is the family name.
+export function splitLeadName(fullName: string | null | undefined): SplitName {
+  const clean = (fullName ?? '').trim();
+  const firstSpace = clean.indexOf(' ');
+  if (firstSpace > 0) {
+    return {
+      firstName: clean.substring(0, firstSpace).trim(),
+      lastName: clean.substring(firstSpace + 1).trim(),
+    };
+  }
+  return { firstName: clean, lastName: '' };
 }
