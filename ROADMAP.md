@@ -809,11 +809,11 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Same pattern as FASE4-03, applied to `TreatmentPlan` states.
+- [x] Same pattern as FASE4-03, applied to `TreatmentPlan` states.
 
 **Acceptance criteria:**
 
-- [ ] Invalid transitions aren't selectable; valid ones update the UI
+- [x] Invalid transitions aren't selectable; valid ones update the UI
       immediately on confirmation.
 
 ---

@@ -10,11 +10,12 @@ import {
   formatCop,
 } from '../treatment-plan-models';
 import { TreatmentPlanStatusPill } from '../treatment-plan-status-pill/treatment-plan-status-pill';
+import { TreatmentPlanStatusActions } from '../treatment-plan-status-actions/treatment-plan-status-actions';
 import { TreatmentPlansService } from '../treatment-plans.service';
 
 @Component({
   selector: 'app-treatment-plan-detail',
-  imports: [Button, Icon, RouterLink, Skeleton, TreatmentPlanStatusPill],
+  imports: [Button, Icon, RouterLink, Skeleton, TreatmentPlanStatusActions, TreatmentPlanStatusPill],
   templateUrl: './treatment-plan-detail.html',
   host: {
     class: 'block mx-auto max-w-5xl',
@@ -41,6 +42,10 @@ export class TreatmentPlanDetail {
   }
 
   retry(): void {
+    this.detail.reload();
+  }
+
+  onPlanUpdated(): void {
     this.detail.reload();
   }
 }

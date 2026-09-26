@@ -2,12 +2,16 @@ import { HttpParams, HttpResourceRef, httpResource } from '@angular/common/http'
 import { Injectable, Signal, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
+import { components } from '@core/api/schema';
 import {
   CreateTreatmentPlanRequest,
   TreatmentPlanResponse,
   TreatmentPlanStatus,
   UpdateTreatmentPlanRequest,
 } from './treatment-plan-models';
+
+export type UpdateTreatmentPlanStatusRequest =
+  components['schemas']['UpdateTreatmentPlanStatusRequest'];
 
 @Injectable({ providedIn: 'root' })
 export class TreatmentPlansService {
@@ -48,6 +52,15 @@ export class TreatmentPlansService {
   ): Observable<TreatmentPlanResponse> {
     return this.api.patch<UpdateTreatmentPlanRequest, TreatmentPlanResponse>(
       `/api/v1/treatment-plans/${id}`,
+      body,
+    );
+  }
+
+  // Advances the plan through its lifecycle via PATCH /{id}/status.
+  updateStatus(id: string, status: TreatmentPlanStatus): Observable<TreatmentPlanResponse> {
+    const body: UpdateTreatmentPlanStatusRequest = { status };
+    return this.api.patch<UpdateTreatmentPlanStatusRequest, TreatmentPlanResponse>(
+      `/api/v1/treatment-plans/${id}/status`,
       body,
     );
   }

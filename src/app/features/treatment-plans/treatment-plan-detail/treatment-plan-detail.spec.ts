@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
+import { By } from '@angular/platform-browser';
 import { describe, expect, it, vi } from 'vitest';
 import { TreatmentPlansService } from '../treatment-plans.service';
 import { TreatmentPlanResponse } from '../treatment-plan-models';
+import { TreatmentPlanStatusActions } from '../treatment-plan-status-actions/treatment-plan-status-actions';
 import { TreatmentPlanDetail } from './treatment-plan-detail';
 
 const MOCK_PLAN: TreatmentPlanResponse = {
@@ -28,6 +30,7 @@ const MOCK_PLAN: TreatmentPlanResponse = {
 
 describe('TreatmentPlanDetail', () => {
   let fixture: ComponentFixture<TreatmentPlanDetail>;
+  let reload: ReturnType<typeof vi.fn>;
 
   function setup(plan: TreatmentPlanResponse | null = MOCK_PLAN, loading = false, error = false) {
     const mockDetail = {
@@ -36,6 +39,7 @@ describe('TreatmentPlanDetail', () => {
       error: signal(error ? new Error('fail') : undefined),
       reload: vi.fn(),
     };
+    reload = mockDetail.reload;
 
     TestBed.configureTestingModule({
       imports: [TreatmentPlanDetail],
@@ -79,5 +83,25 @@ describe('TreatmentPlanDetail', () => {
     const loading = fixture.nativeElement.querySelector('[data-testid="detail-loading"]');
     expect(loading).not.toBeNull();
     expect(loading.getAttribute('aria-busy')).toBe('true');
+  });
+
+  it('should render the status actions for the current plan', () => {
+    setup();
+    fixture.detectChanges();
+
+    const actions = fixture.debugElement.query(By.directive(TreatmentPlanStatusActions));
+    expect(actions).not.toBeNull();
+    expect(actions.componentInstance.plan().status).toBe('borrador');
+    expect(fixture.nativeElement.textContent).toContain('CAMBIAR ESTADO');
+  });
+
+  it('should reload the detail when the status actions emit an update', () => {
+    setup();
+    fixture.detectChanges();
+
+    const actions = fixture.debugElement.query(By.directive(TreatmentPlanStatusActions));
+    actions.componentInstance.planUpdated.emit({ ...MOCK_PLAN, status: 'presentado' });
+
+    expect(reload).toHaveBeenCalled();
   });
 });

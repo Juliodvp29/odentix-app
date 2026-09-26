@@ -50,6 +50,8 @@
         </div>
       </div>
 
+      <app-treatment-plan-status-actions [plan]="plan()!" (planUpdated)="onPlanUpdated()" />
+
       <div class="grid grid-cols-1 gap-16 border-t border-hairline pt-16 sm:grid-cols-2">
         <div>
           <span class="block text-caption font-medium tracking-caption text-ink-soft"
