@@ -7,7 +7,9 @@ import {
   ConvertLeadResponse,
   CreateLeadActivityRequest,
   LeadActivityResponse,
+  LeadConversionMetricsResponse,
   LeadResponse,
+  LeadResponseTimeMetricsResponse,
   LeadStatus,
   PageLeadResponse,
   UpdateLeadStatusRequest,
@@ -82,5 +84,27 @@ export class LeadsService {
       `/api/v1/leads/${id}/convert`,
       body,
     );
+  }
+
+  // Reactive resource for conversion metrics in a date range.
+  conversionMetrics(
+    from: Signal<string>,
+    to: Signal<string>,
+  ): HttpResourceRef<LeadConversionMetricsResponse | undefined> {
+    return httpResource<LeadConversionMetricsResponse>(() => ({
+      url: this.api.url('/api/v1/leads/metrics/conversion'),
+      params: { from: from(), to: to() },
+    }));
+  }
+
+  // Reactive resource for response-time metrics in a date range.
+  responseTimeMetrics(
+    from: Signal<string>,
+    to: Signal<string>,
+  ): HttpResourceRef<LeadResponseTimeMetricsResponse | undefined> {
+    return httpResource<LeadResponseTimeMetricsResponse>(() => ({
+      url: this.api.url('/api/v1/leads/metrics/response-time'),
+      params: { from: from(), to: to() },
+    }));
   }
 }

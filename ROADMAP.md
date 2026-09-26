@@ -921,12 +921,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Charts/summary for conversion by source/campaign and average
+- [x] Charts/summary for conversion by source/campaign and average
       response time, backed by the corresponding backend endpoints.
 
 **Acceptance criteria:**
 
-- [ ] Numbers shown match what the backend endpoints return for the
+- [x] Numbers shown match what the backend endpoints return for the
       same date range, spot-checked manually.
 
 ---

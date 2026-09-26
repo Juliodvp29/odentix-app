@@ -67,6 +67,15 @@ describe('LeadsBoard', () => {
     expect(text).toContain('Lead 2');
   });
 
+  it('should link to the metrics dashboard', () => {
+    setup();
+    const link = fixture.nativeElement.querySelector(
+      'a[href="/leads/metrics"]',
+    ) as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    expect(link.textContent).toContain('Ver métricas');
+  });
+
   it('should show an empty state for stages without leads', () => {
     setup([lead('1', 'nuevo')]);
     const empties = fixture.nativeElement.querySelectorAll('section p');

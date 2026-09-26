@@ -8,6 +8,13 @@ const routes: Routes = [
     data: { title: 'Prospectos' },
   },
   {
+    // Before ':id': otherwise "metrics" would match the detail route.
+    path: 'metrics',
+    loadComponent: () =>
+      import('./lead-metrics/lead-metrics').then((m) => m.LeadMetrics),
+    data: { title: 'Métricas de prospectos' },
+  },
+  {
     path: ':id',
     loadComponent: () =>
       import('./lead-detail/lead-detail').then((m) => m.LeadDetail),

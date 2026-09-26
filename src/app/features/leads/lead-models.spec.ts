@@ -6,8 +6,13 @@ import {
   LEAD_STAGE_META,
   LeadResponse,
   assigneeInitials,
+  defaultMetricsRange,
   emptyLeadsByStage,
+  formatPercent,
+  formatResponseTime,
   groupLeadsByStage,
+  rangeBounds,
+  rateBarWidth,
   splitLeadName,
 } from './lead-models';
 
@@ -97,5 +102,41 @@ describe('lead activity types', () => {  it('should cover every backend activity
       expect(LEAD_ACTIVITY_TYPE_META[type].bgClass).toBeTruthy();
       expect(LEAD_ACTIVITY_TYPE_META[type].textClass).toBeTruthy();
     }
+  });
+});
+
+describe('metrics formatting', () => {
+  it('should format rates as Spanish percentages', () => {
+    expect(formatPercent(42.5)).toContain('42,5');
+    expect(formatPercent(100)).toContain('100');
+    expect(formatPercent(null)).toContain('0');
+  });
+
+  it('should format response times as Spanish durations', () => {
+    expect(formatResponseTime(45)).toBe('45 min');
+    expect(formatResponseTime(120)).toBe('2 h');
+    expect(formatResponseTime(150)).toBe('2 h 30 min');
+    expect(formatResponseTime(null)).toBe('—');
+  });
+
+  it('should clamp bar widths to valid percentages', () => {
+    expect(rateBarWidth(42.5)).toBe('42.5%');
+    expect(rateBarWidth(150)).toBe('100%');
+    expect(rateBarWidth(-5)).toBe('0%');
+    expect(rateBarWidth(null)).toBe('0%');
+  });
+});
+
+describe('metrics range', () => {
+  it('should default to the last 30 days including today', () => {
+    const range = defaultMetricsRange(new Date(2026, 8, 26));
+    expect(range).toEqual({ from: '2026-08-28', to: '2026-09-26' });
+  });
+
+  it('should bound days as Bogota instants like the agenda', () => {
+    expect(rangeBounds({ from: '2026-09-01', to: '2026-09-26' })).toEqual({
+      from: '2026-09-01T00:00:00-05:00',
+      to: '2026-09-26T23:59:59-05:00',
+    });
   });
 });

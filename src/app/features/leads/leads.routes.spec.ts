@@ -10,13 +10,17 @@ describe('leads routes', () => {
     expect(route?.loadChildren).toBeInstanceOf(Function);
   });
 
-  it('should configure the board and the detail placeholder routes', () => {
-    expect(leadsRoutes).toHaveLength(2);
+  it('should configure the board, metrics, and detail routes in order', () => {
+    expect(leadsRoutes).toHaveLength(3);
 
     expect(leadsRoutes[0]?.path).toBe('');
     expect(leadsRoutes[0]?.loadComponent).toBeInstanceOf(Function);
 
-    expect(leadsRoutes[1]?.path).toBe(':id');
+    // Metrics before ':id' so the static segment wins over the param.
+    expect(leadsRoutes[1]?.path).toBe('metrics');
     expect(leadsRoutes[1]?.loadComponent).toBeInstanceOf(Function);
+
+    expect(leadsRoutes[2]?.path).toBe(':id');
+    expect(leadsRoutes[2]?.loadComponent).toBeInstanceOf(Function);
   });
 });

@@ -1,0 +1,138 @@
+<div class="flex flex-col gap-8 sm:flex-row sm:items-baseline sm:justify-between">
+  <h1 class="text-heading font-semibold text-ink">Métricas de prospectos</h1>
+  <a
+    routerLink="/leads"
+    class="inline-flex items-center gap-4 text-caption font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+  >
+    <app-icon name="chevron-left" />
+    Volver a prospectos
+  </a>
+</div>
+
+<form
+  class="flex flex-col gap-12 rounded-card border border-hairline bg-paper p-16 shadow-resting sm:flex-row sm:items-end"
+  aria-label="Rango de fechas"
+>
+  <app-form-field label="Desde" [field]="rangeForm.from" class="sm:max-w-160">
+    <app-text-input inputId="metrics-from" type="date" [field]="rangeForm.from" />
+  </app-form-field>
+  <app-form-field label="Hasta" [field]="rangeForm.to" class="sm:max-w-160">
+    <app-text-input inputId="metrics-to" type="date" [field]="rangeForm.to" />
+  </app-form-field>
+  @if (!rangeValid()) {
+    <p class="text-caption text-danger-deep sm:pb-8" role="alert">
+      La fecha inicial no puede ser posterior a la final.
+    </p>
+  }
+</form>
+
+@if (loading()) {
+  <div
+    class="grid grid-cols-2 gap-16 lg:grid-cols-5"
+    aria-busy="true"
+    aria-label="Cargando métricas"
+    data-testid="metrics-loading"
+  >
+    @for (index of [0, 1, 2, 3, 4]; track index) {
+      <div class="h-112"><app-skeleton variant="block" /></div>
+    }
+  </div>
+} @else if (planGated()) {
+  <div class="mx-auto max-w-5xl rounded-card border border-hairline bg-paper p-32 text-center shadow-resting">
+    <app-icon name="lock" class="text-mid-gray" />
+    <p class="mt-12 text-subheading text-ink">Las métricas no están incluidas en tu plan</p>
+    <p class="mt-4 text-body text-mid-gray">
+      Las métricas del embudo son una funcionalidad de planes superiores. Los datos están
+      intactos: esta vista se activará sola al ampliar el plan.
+    </p>
+  </div>
+} @else if (loadFailed()) {
+  <div
+    class="rounded-card border border-danger bg-danger-soft p-24 text-center text-body text-danger-deep"
+    role="alert"
+  >
+    <p class="font-medium">No fue posible cargar las métricas.</p>
+    <app-button class="mt-12" type="button" variant="secondary" (clicked)="retry()">
+      Reintentar
+    </app-button>
+  </div>
+} @else {
+  <section class="grid grid-cols-2 gap-16 lg:grid-cols-5" aria-label="Indicadores">
+    @for (card of statCards(); track card.label) {
+      <div class="rounded-card bg-paper p-20 shadow-resting">
+        <p class="text-caption font-medium uppercase tracking-caption text-mid-gray">
+          {{ card.label }}
+        </p>
+        <p class="mt-8 text-display font-semibold text-ink" data-testid="stat-value">
+          {{ card.value }}
+        </p>
+      </div>
+    }
+  </section>
+
+  <div class="grid grid-cols-1 gap-24 lg:grid-cols-2">
+    <section
+      class="rounded-card border border-hairline bg-paper p-20 shadow-resting"
+      aria-labelledby="by-source-heading"
+    >
+      <h2 id="by-source-heading" class="text-subheading font-medium text-ink">
+        Conversión por origen
+      </h2>
+      @if (sourceRows().length === 0) {
+        <p class="mt-12 text-body text-mid-gray">Sin datos para este rango.</p>
+      } @else {
+        <ul class="mt-16 space-y-16">
+          @for (row of sourceRows(); track row.label) {
+            <li>
+              <div class="flex items-baseline justify-between gap-12 text-body">
+                <span class="font-medium text-ink">{{ row.label }}</span>
+                <span class="shrink-0 text-caption text-mid-gray">
+                  {{ row.detail }} · {{ row.rate }}
+                </span>
+              </div>
+              <div
+                class="mt-4 h-8 overflow-hidden rounded-pill bg-surface-alt"
+                role="img"
+                [attr.aria-label]="row.label + ': ' + row.rate + ' de conversión'"
+              >
+                <div class="h-full rounded-pill bg-teal" [style.width]="row.width"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section
+      class="rounded-card border border-hairline bg-paper p-20 shadow-resting"
+      aria-labelledby="by-campaign-heading"
+    >
+      <h2 id="by-campaign-heading" class="text-subheading font-medium text-ink">
+        Conversión por campaña
+      </h2>
+      @if (campaignRows().length === 0) {
+        <p class="mt-12 text-body text-mid-gray">Sin datos para este rango.</p>
+      } @else {
+        <ul class="mt-16 space-y-16">
+          @for (row of campaignRows(); track row.label) {
+            <li>
+              <div class="flex items-baseline justify-between gap-12 text-body">
+                <span class="font-medium text-ink">{{ row.label }}</span>
+                <span class="shrink-0 text-caption text-mid-gray">
+                  {{ row.detail }} · {{ row.rate }}
+                </span>
+              </div>
+              <div
+                class="mt-4 h-8 overflow-hidden rounded-pill bg-surface-alt"
+                role="img"
+                [attr.aria-label]="row.label + ': ' + row.rate + ' de conversión'"
+              >
+                <div class="h-full rounded-pill bg-teal" [style.width]="row.width"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+}

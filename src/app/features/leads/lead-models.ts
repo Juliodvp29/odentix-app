@@ -8,6 +8,11 @@ export type LeadActivityResponse = components['schemas']['LeadActivityResponse']
 export type ConvertLeadRequest = components['schemas']['ConvertLeadRequest'];
 export type ConvertLeadPatientData = components['schemas']['ConvertLeadPatientData'];
 export type ConvertLeadResponse = components['schemas']['ConvertLeadResponse'];
+export type LeadConversionMetricsResponse =
+  components['schemas']['LeadConversionMetricsResponse'];
+export type LeadResponseTimeMetricsResponse =
+  components['schemas']['LeadResponseTimeMetricsResponse'];
+export type ConversionMetricItem = components['schemas']['ConversionMetricItem'];
 
 export type LeadStatus = NonNullable<LeadResponse['status']>;
 export type LeadActivityType = NonNullable<CreateLeadActivityRequest['activityType']>;
@@ -178,4 +183,64 @@ export function splitLeadName(fullName: string | null | undefined): SplitName {
     };
   }
   return { firstName: clean, lastName: '' };
+}
+
+const percentFormatter = new Intl.NumberFormat('es-CO', {
+  style: 'percent',
+  maximumFractionDigits: 1,
+});
+
+// Backend rates arrive as 0-100 percentages; Intl wants 0-1 fractions.
+export function formatPercent(rate: number | null | undefined): string {
+  const safe = Number(rate ?? 0);
+  return percentFormatter.format(Number.isFinite(safe) ? safe / 100 : 0);
+}
+
+// Average response time in minutes rendered as Spanish duration text.
+export function formatResponseTime(minutes: number | null | undefined): string {
+  if (minutes === null || minutes === undefined || !Number.isFinite(minutes)) {
+    return '—';
+  }
+  const total = Math.max(0, Math.round(minutes));
+  if (total < 60) {
+    return `${total} min`;
+  }
+  const hours = Math.floor(total / 60);
+  const rest = total % 60;
+  return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
+}
+
+// Bar width for a 0-100 rate, clamped so bad data never breaks layout.
+export function rateBarWidth(rate: number | null | undefined): string {
+  const safe = Number(rate ?? 0);
+  const clamped = Math.min(100, Math.max(0, Number.isFinite(safe) ? safe : 0));
+  return `${clamped}%`;
+}
+
+export interface MetricsDateRange {
+  readonly from: string;
+  readonly to: string;
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function formatIsoDay(date: Date): string {
+  const pad = (value: number): string => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+// Default dashboard window: the last 30 days including today.
+export function defaultMetricsRange(now: Date = new Date()): MetricsDateRange {
+  const to = formatIsoDay(now);
+  const from = formatIsoDay(new Date(now.getTime() - 29 * DAY_MS));
+  return { from, to };
+}
+
+// Day bounds as backend instants in Bogota time (no daylight saving),
+// matching the agenda's day-limit convention.
+export function rangeBounds(range: MetricsDateRange): { from: string; to: string } {
+  return {
+    from: `${range.from}T00:00:00-05:00`,
+    to: `${range.to}T23:59:59-05:00`,
+  };
 }

@@ -1,14 +1,23 @@
 <div class="flex flex-col gap-8 sm:flex-row sm:items-baseline sm:justify-between">
   <h1 class="text-heading font-semibold text-ink">Prospectos</h1>
-  @if (!loading() && !planGated() && !loadFailed()) {
-    <p class="text-body text-mid-gray" role="status">
-      @if (truncated()) {
-        Mostrando {{ fetched() }} de {{ total() }} prospectos
-      } @else {
-        {{ total() }} prospectos en el embudo
-      }
-    </p>
-  }
+  <div class="flex flex-wrap items-center gap-x-16 gap-y-8">
+    @if (!loading() && !planGated() && !loadFailed()) {
+      <p class="text-body text-mid-gray" role="status">
+        @if (truncated()) {
+          Mostrando {{ fetched() }} de {{ total() }} prospectos
+        } @else {
+          {{ total() }} prospectos en el embudo
+        }
+      </p>
+    }
+    <a
+      routerLink="/leads/metrics"
+      class="inline-flex items-center gap-4 text-caption font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+    >
+      Ver métricas
+      <app-icon name="chevron-right" />
+    </a>
+  </div>
 </div>
 
 @if (loading()) {

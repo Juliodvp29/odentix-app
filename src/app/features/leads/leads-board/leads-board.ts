@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Button } from '@shared/button/button';
 import { Icon } from '@shared/icon/icon';
 import { Skeleton } from '@shared/skeleton/skeleton';
@@ -13,7 +14,7 @@ import { LeadCard } from './lead-card';
 
 @Component({
   selector: 'app-leads-board',
-  imports: [Button, Icon, LeadCard, Skeleton],
+  imports: [Button, Icon, LeadCard, RouterLink, Skeleton],
   templateUrl: './leads-board.html',
   host: { class: 'block space-y-24' },
 })
