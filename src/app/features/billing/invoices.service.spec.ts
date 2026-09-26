@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { ApiClient } from '@core/api/api-client';
-import { InvoiceResponse } from './billing-models';
+import { InvoiceResponse, PaymentResponse } from './billing-models';
 import { InvoicesService } from './invoices.service';
 
 const MOCK_INVOICE: InvoiceResponse = {
@@ -80,5 +80,29 @@ describe('InvoicesService', () => {
 
     expect(api.get).toHaveBeenCalledWith('/api/v1/invoices/inv-1');
     expect(result).toEqual(MOCK_INVOICE);
+  });
+
+  it('should post a payment against an invoice', async () => {
+    const payment: PaymentResponse = {
+      id: 'pay-1',
+      invoiceId: 'inv-1',
+      amountCop: 520000,
+      method: 'efectivo',
+      invoiceStatus: 'pagada',
+    };
+    vi.spyOn(api, 'post').mockReturnValue(of(payment));
+
+    let result: PaymentResponse | undefined;
+    service
+      .registerPayment('inv-1', { amountCop: 520000, method: 'efectivo' })
+      .subscribe((res) => {
+        result = res;
+      });
+
+    expect(api.post).toHaveBeenCalledWith('/api/v1/invoices/inv-1/payments', {
+      amountCop: 520000,
+      method: 'efectivo',
+    });
+    expect(result?.invoiceStatus).toBe('pagada');
   });
 });

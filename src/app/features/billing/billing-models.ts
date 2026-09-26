@@ -4,8 +4,23 @@ import type { TreatmentPlanItemResponse } from '@features/treatment-plans/treatm
 export type InvoiceResponse = components['schemas']['InvoiceResponse'];
 export type InvoiceItemResponse = components['schemas']['InvoiceItemResponse'];
 export type CreateInvoiceRequest = components['schemas']['CreateInvoiceRequest'];
+export type CreatePaymentRequest = components['schemas']['CreatePaymentRequest'];
+export type PaymentResponse = components['schemas']['PaymentResponse'];
 
 export type InvoiceStatus = NonNullable<InvoiceResponse['status']>;
+export type PaymentMethod = NonNullable<CreatePaymentRequest['method']>;
+
+export interface PaymentMethodOption {
+  readonly value: PaymentMethod;
+  readonly label: string;
+}
+
+export const PAYMENT_METHOD_OPTIONS: ReadonlyArray<PaymentMethodOption> = [
+  { value: 'efectivo', label: 'Efectivo' },
+  { value: 'tarjeta', label: 'Tarjeta' },
+  { value: 'transferencia', label: 'Transferencia' },
+  { value: 'otro', label: 'Otro' },
+];
 
 export interface InvoiceStatusMeta {
   readonly label: string;

@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
+import { By } from '@angular/platform-browser';
 import { describe, expect, it, vi } from 'vitest';
 import { InvoiceResponse } from '../billing-models';
 import { InvoicesService } from '../invoices.service';
+import { PaymentCreateAction } from '../payment-create/payment-create-action';
 import { InvoiceDetail } from './invoice-detail';
 
 const MOCK_INVOICE: InvoiceResponse = {
@@ -36,6 +38,7 @@ const MOCK_INVOICE: InvoiceResponse = {
 
 describe('InvoiceDetail', () => {
   let fixture: ComponentFixture<InvoiceDetail>;
+  let reload: ReturnType<typeof vi.fn>;
 
   function setup(invoice: InvoiceResponse | null = MOCK_INVOICE, loading = false, error = false) {
     const mockDetail = {
@@ -44,6 +47,7 @@ describe('InvoiceDetail', () => {
       error: signal(error ? new Error('fail') : undefined),
       reload: vi.fn(),
     };
+    reload = mockDetail.reload;
 
     TestBed.configureTestingModule({
       imports: [InvoiceDetail],
@@ -96,5 +100,25 @@ describe('InvoiceDetail', () => {
     const loading = fixture.nativeElement.querySelector('[data-testid="detail-loading"]');
     expect(loading).not.toBeNull();
     expect(loading.getAttribute('aria-busy')).toBe('true');
+  });
+
+  it('should render the payment action for the current invoice', () => {
+    setup();
+    fixture.detectChanges();
+
+    const action = fixture.debugElement.query(By.directive(PaymentCreateAction));
+    expect(action).not.toBeNull();
+    expect(action.componentInstance.invoice().id).toBe('inv-1');
+    expect(fixture.nativeElement.textContent).toContain('Registrar pago');
+  });
+
+  it('should reload the detail when a payment is registered', () => {
+    setup();
+    fixture.detectChanges();
+
+    const action = fixture.debugElement.query(By.directive(PaymentCreateAction));
+    action.componentInstance.paid.emit({ id: 'pay-1', invoiceStatus: 'pagada' });
+
+    expect(reload).toHaveBeenCalled();
   });
 });

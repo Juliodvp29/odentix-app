@@ -12,11 +12,12 @@ import {
   sumLines,
 } from '../billing-models';
 import { InvoiceStatusPill } from '../invoice-status-pill/invoice-status-pill';
+import { PaymentCreateAction } from '../payment-create/payment-create-action';
 import { InvoicesService } from '../invoices.service';
 
 @Component({
   selector: 'app-invoice-detail',
-  imports: [Button, Icon, InvoiceStatusPill, RouterLink, Skeleton],
+  imports: [Button, Icon, InvoiceStatusPill, PaymentCreateAction, RouterLink, Skeleton],
   templateUrl: './invoice-detail.html',
   host: {
     class: 'block mx-auto max-w-5xl',
@@ -49,6 +50,10 @@ export class InvoiceDetail {
   }
 
   retry(): void {
+    this.detail.reload();
+  }
+
+  onPaid(): void {
     this.detail.reload();
   }
 }

@@ -844,12 +844,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Register a payment against an invoice; invoice status
+- [x] Register a payment against an invoice; invoice status
       (pending/partial/paid) updates immediately in the UI.
 
 **Acceptance criteria:**
 
-- [ ] Registering a payment that completes the invoice visibly updates
+- [x] Registering a payment that completes the invoice visibly updates
       its status without requiring a manual refresh.
 
 ---

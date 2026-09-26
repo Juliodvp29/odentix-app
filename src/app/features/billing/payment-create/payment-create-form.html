@@ -1,0 +1,36 @@
+<form class="space-y-16" (submit)="submitPayment(); $event.preventDefault()">
+  <app-form-field label="Monto (COP)" [field]="paymentForm.amountCop">
+    <app-text-input inputId="payment-amount" type="number" [field]="paymentForm.amountCop" />
+  </app-form-field>
+  @if (amountError(); as message) {
+    <p class="-mt-8 text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <app-form-field label="Medio de pago" [field]="paymentForm.method">
+    <app-select
+      inputId="payment-method"
+      placeholder="Seleccionar"
+      [options]="methodOptions"
+      [field]="paymentForm.method"
+    />
+  </app-form-field>
+
+  <app-form-field label="Referencia (opcional)" [field]="paymentForm.reference">
+    <app-text-input
+      inputId="payment-reference"
+      placeholder="N.º de transacción o recibo"
+      [field]="paymentForm.reference"
+    />
+  </app-form-field>
+
+  @if (serverError(); as message) {
+    <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex justify-end gap-8 pt-8">
+    <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [loading]="saving()">
+      Registrar pago
+    </app-button>
+  </div>
+</form>

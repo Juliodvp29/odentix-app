@@ -184,6 +184,9 @@
             </span>
           </div>
           <p class="text-right text-caption text-ink-soft">Moneda legal: pesos colombianos (COP)</p>
+          <div class="border-t border-hairline pt-16">
+            <app-payment-create-action [invoice]="invoice()!" (paid)="onPaid()" />
+          </div>
         </div>
       </aside>
     </div>

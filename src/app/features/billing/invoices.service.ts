@@ -2,7 +2,7 @@ import { HttpResourceRef, httpResource } from '@angular/common/http';
 import { Injectable, Signal, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
-import { CreateInvoiceRequest, InvoiceResponse } from './billing-models';
+import { CreateInvoiceRequest, CreatePaymentRequest, InvoiceResponse, PaymentResponse } from './billing-models';
 
 @Injectable({ providedIn: 'root' })
 export class InvoicesService {
@@ -21,6 +21,18 @@ export class InvoicesService {
   // Fetches a single invoice with its line items.
   getInvoice(id: string): Observable<InvoiceResponse> {
     return this.api.get<InvoiceResponse>(`/api/v1/invoices/${id}`);
+  }
+
+  // Registers a partial or full payment against an invoice. The response
+  // carries the recalculated invoice status.
+  registerPayment(
+    invoiceId: string,
+    body: CreatePaymentRequest,
+  ): Observable<PaymentResponse> {
+    return this.api.post<CreatePaymentRequest, PaymentResponse>(
+      `/api/v1/invoices/${invoiceId}/payments`,
+      body,
+    );
   }
 
   // Reactive resource for a single invoice detail.

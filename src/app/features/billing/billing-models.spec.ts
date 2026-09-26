@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   INVOICE_STATUS_META,
   InvoiceResponse,
+  PAYMENT_METHOD_OPTIONS,
   defaultDiscountFromPlan,
   describePlanItem,
   invoiceComputedTotal,
@@ -28,6 +29,17 @@ describe('invoice status meta', () => {
     expect(INVOICE_STATUS_META.parcial.label).toBe('Parcial');
     expect(INVOICE_STATUS_META.pagada.label).toBe('Pagada');
     expect(INVOICE_STATUS_META.anulada.label).toBe('Anulada');
+  });
+});
+
+describe('payment methods', () => {
+  it('should cover every backend payment method with a Spanish label', () => {
+    expect(PAYMENT_METHOD_OPTIONS.map((option) => option.value).sort()).toEqual(
+      ['efectivo', 'otro', 'tarjeta', 'transferencia'].sort(),
+    );
+    for (const option of PAYMENT_METHOD_OPTIONS) {
+      expect(option.label).toBeTruthy();
+    }
   });
 });
 

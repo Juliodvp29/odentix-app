@@ -1,0 +1,11 @@
+@if (canRegister()) {
+  @if (canPay()) {
+    <app-button variant="primary" (clicked)="open()">Registrar pago</app-button>
+  } @else {
+    <p class="text-caption text-mid-gray">{{ finalNote() }}</p>
+  }
+}
+
+<ng-template #createTemplate>
+  <app-payment-create-form [invoice]="invoice()" (paid)="onPaid($event)" (cancelled)="onCancelled()" />
+</ng-template>
