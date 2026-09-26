@@ -1,5 +1,7 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { InvoiceCreateAction } from '@features/billing/invoice-create/invoice-create-action';
+import type { InvoiceResponse } from '@features/billing/billing-models';
 import { Button } from '@shared/button/button';
 import { Icon } from '@shared/icon/icon';
 import { Skeleton } from '@shared/skeleton/skeleton';
@@ -15,7 +17,15 @@ import { TreatmentPlansService } from '../treatment-plans.service';
 
 @Component({
   selector: 'app-treatment-plan-detail',
-  imports: [Button, Icon, RouterLink, Skeleton, TreatmentPlanStatusActions, TreatmentPlanStatusPill],
+  imports: [
+    Button,
+    Icon,
+    InvoiceCreateAction,
+    RouterLink,
+    Skeleton,
+    TreatmentPlanStatusActions,
+    TreatmentPlanStatusPill,
+  ],
   templateUrl: './treatment-plan-detail.html',
   host: {
     class: 'block mx-auto max-w-5xl',
@@ -25,6 +35,7 @@ export class TreatmentPlanDetail {
   readonly id = input.required<string>();
 
   private readonly plansService = inject(TreatmentPlansService);
+  private readonly router = inject(Router);
 
   readonly detail = this.plansService.detail(this.id);
   readonly plan = computed<TreatmentPlanResponse | null>(() => this.detail.value() ?? null);
@@ -47,5 +58,11 @@ export class TreatmentPlanDetail {
 
   onPlanUpdated(): void {
     this.detail.reload();
+  }
+
+  goToInvoice(invoice: InvoiceResponse): void {
+    if (invoice.id) {
+      void this.router.navigate(['/billing', invoice.id]);
+    }
   }
 }

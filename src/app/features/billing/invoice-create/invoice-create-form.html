@@ -1,0 +1,62 @@
+<div class="space-y-16">
+  <div
+    class="overflow-hidden rounded-card border border-hairline"
+    role="region"
+    aria-label="Vista previa de la factura"
+  >
+    <div class="border-b border-hairline bg-surface-alt px-16 py-12">
+      <h3 class="text-body font-semibold text-ink">Vista previa ({{ lines().length }} líneas)</h3>
+    </div>
+    <ul class="divide-y divide-hairline">
+      @for (line of lines(); track line.description) {
+        <li class="flex items-baseline justify-between gap-12 px-16 py-12 text-body">
+          <span class="font-medium text-ink">{{ line.description }}</span>
+          <span class="text-ink-soft">{{ formatPrice(line.totalCop) }}</span>
+        </li>
+      }
+    </ul>
+    <div class="flex items-baseline justify-between gap-12 border-t border-hairline px-16 py-12 text-body">
+      <span class="text-ink-soft">Subtotal</span>
+      <span class="font-semibold text-ink">{{ formatPrice(subtotal()) }}</span>
+    </div>
+  </div>
+
+  <form class="space-y-16" (submit)="submitInvoice(); $event.preventDefault()">
+    <app-form-field label="Descuento (COP, opcional)" [field]="discountForm.discountCop">
+      <app-text-input
+        inputId="invoice-discount"
+        type="number"
+        [field]="discountForm.discountCop"
+      />
+    </app-form-field>
+    <p class="-mt-8 text-caption text-mid-gray">
+      Por defecto se aplica la suma de descuentos del plan. Vaciar equivale a sin descuento.
+    </p>
+
+    @if (discountError(); as message) {
+      <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+    }
+    @if (serverError(); as message) {
+      <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+    }
+
+    <div
+      class="flex items-baseline justify-between gap-12 border-t border-hairline pt-16"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <span class="text-body font-semibold text-ink">Total a facturar:</span>
+      <span class="text-heading-sm font-semibold tracking-heading-sm text-teal-deep">
+        {{ formatPrice(liveTotal()) }}
+      </span>
+    </div>
+
+    <div class="flex justify-end gap-8 pt-8">
+      <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+      <app-button type="submit" variant="primary" [loading]="saving()">
+        Generar factura
+      </app-button>
+    </div>
+  </form>
+</div>

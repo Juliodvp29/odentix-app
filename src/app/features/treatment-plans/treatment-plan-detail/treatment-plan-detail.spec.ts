@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { describe, expect, it, vi } from 'vitest';
+import { InvoiceCreateAction } from '@features/billing/invoice-create/invoice-create-action';
 import { TreatmentPlansService } from '../treatment-plans.service';
 import { TreatmentPlanResponse } from '../treatment-plan-models';
 import { TreatmentPlanStatusActions } from '../treatment-plan-status-actions/treatment-plan-status-actions';
@@ -103,5 +104,27 @@ describe('TreatmentPlanDetail', () => {
     actions.componentInstance.planUpdated.emit({ ...MOCK_PLAN, status: 'presentado' });
 
     expect(reload).toHaveBeenCalled();
+  });
+
+  it('should render the invoice action for the current plan', () => {
+    setup();
+    fixture.detectChanges();
+
+    const action = fixture.debugElement.query(By.directive(InvoiceCreateAction));
+    expect(action).not.toBeNull();
+    expect(action.componentInstance.plan().id).toBe('plan-100');
+    expect(fixture.nativeElement.textContent).toContain('Generar factura');
+  });
+
+  it('should navigate to the invoice detail when an invoice is created', () => {
+    setup();
+    fixture.detectChanges();
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const action = fixture.debugElement.query(By.directive(InvoiceCreateAction));
+    action.componentInstance.created.emit({ id: 'inv-1', invoiceNumber: 'FAC-000001' });
+
+    expect(navigate).toHaveBeenCalledWith(['/billing', 'inv-1']);
   });
 });

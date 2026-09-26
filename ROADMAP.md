@@ -826,12 +826,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Generate an invoice from a treatment plan; view invoice detail
+- [x] Generate an invoice from a treatment plan; view invoice detail
       with its line items.
 
 **Acceptance criteria:**
 
-- [ ] An invoice's total always matches the sum of its visible line
+- [x] An invoice's total always matches the sum of its visible line
       items — no discrepancy the user has to trust blindly.
 
 ---

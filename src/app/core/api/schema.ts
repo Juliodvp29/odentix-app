@@ -347,7 +347,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Listar facturas
+         * @description Consulta paginada de facturas del tenant con filtros opcionales por paciente y estado.
+         */
+        get: operations["listInvoices"];
         put?: never;
         /**
          * Generar factura
@@ -988,6 +992,26 @@ export interface paths {
          * @description Devuelve indicadores de conversión comercial globales y desglosados por canal y por campaña para un rango de fechas opcional.
          */
         get: operations["getConversionMetrics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/invoices/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Consultar factura por ID
+         * @description Obtiene el detalle de una factura con sus ítems. Devuelve 404 si pertenece a otro tenant.
+         */
+        get: operations["getInvoiceById"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1995,6 +2019,24 @@ export interface components {
             bySource?: components["schemas"]["ConversionMetricItem"][];
             byCampaign?: components["schemas"]["ConversionMetricItem"][];
         };
+        PageInvoiceResponse: {
+            /** Format: int32 */
+            totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            size?: number;
+            content?: components["schemas"]["InvoiceResponse"][];
+            /** Format: int32 */
+            number?: number;
+            sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            first?: boolean;
+            last?: boolean;
+            empty?: boolean;
+        };
         SubscriptionResponse: {
             /** Format: uuid */
             id?: string;
@@ -2768,6 +2810,30 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["LeadActivityResponse"];
+                };
+            };
+        };
+    };
+    listInvoices: {
+        parameters: {
+            query: {
+                patientId?: string;
+                status?: "pendiente" | "parcial" | "pagada" | "anulada";
+                pageable: components["schemas"]["Pageable"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageInvoiceResponse"];
                 };
             };
         };
@@ -3851,6 +3917,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["LeadConversionMetricsResponse"];
+                };
+            };
+        };
+    };
+    getInvoiceById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["InvoiceResponse"];
                 };
             };
         };
