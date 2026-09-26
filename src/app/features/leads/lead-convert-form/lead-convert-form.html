@@ -1,0 +1,75 @@
+<p class="text-body text-mid-gray">
+  Prospecto:
+  <span class="font-medium text-ink">{{ lead().fullName || 'Sin nombre' }}</span>
+</p>
+
+<form (submit)="submitConversion(); $event.preventDefault()" class="grid gap-16 sm:grid-cols-2">
+  <app-form-field label="Nombres" [field]="convertForm.firstName">
+    <app-text-input [field]="convertForm.firstName" placeholder="María" autocomplete="given-name" />
+  </app-form-field>
+  <app-form-field label="Apellidos" [field]="convertForm.lastName">
+    <app-text-input
+      [field]="convertForm.lastName"
+      placeholder="García"
+      autocomplete="family-name"
+    />
+  </app-form-field>
+  <app-form-field label="Tipo de documento" [field]="convertForm.documentType">
+    <app-select
+      [field]="convertForm.documentType"
+      placeholder="Seleccionar"
+      [options]="documentTypes"
+    />
+  </app-form-field>
+  <app-form-field label="Número de documento" [field]="convertForm.documentNumber">
+    <app-text-input [field]="convertForm.documentNumber" placeholder="1012345678" />
+  </app-form-field>
+  <app-form-field label="Fecha de nacimiento" [field]="convertForm.birthDate">
+    <app-text-input [field]="convertForm.birthDate" type="date" autocomplete="bday" />
+  </app-form-field>
+  <app-form-field label="Teléfono" [field]="convertForm.phone">
+    <app-text-input
+      [field]="convertForm.phone"
+      type="tel"
+      autocomplete="tel"
+      placeholder="3104567890"
+    />
+  </app-form-field>
+  <app-form-field label="Correo electrónico" [field]="convertForm.email">
+    <app-text-input
+      [field]="convertForm.email"
+      type="email"
+      autocomplete="email"
+      placeholder="tucorreo@ejemplo.com"
+    />
+  </app-form-field>
+  <app-form-field label="Dirección" [field]="convertForm.address" class="sm:col-span-2">
+    <app-text-input
+      [field]="convertForm.address"
+      placeholder="Calle 123 #45-67"
+      autocomplete="street-address"
+    />
+  </app-form-field>
+  <app-form-field label="Contacto de emergencia" [field]="convertForm.emergencyContactName">
+    <app-text-input [field]="convertForm.emergencyContactName" placeholder="Nombre del contacto" />
+  </app-form-field>
+  <app-form-field label="Teléfono de emergencia" [field]="convertForm.emergencyContactPhone">
+    <app-text-input
+      [field]="convertForm.emergencyContactPhone"
+      type="tel"
+      placeholder="3104567890"
+    />
+  </app-form-field>
+  @if (serverError(); as message) {
+    <p
+      role="alert"
+      class="rounded-control bg-danger-soft px-12 py-8 text-body text-danger-deep sm:col-span-2"
+    >
+      {{ message }}
+    </p>
+  }
+  <div class="flex justify-end gap-8 sm:col-span-2">
+    <app-button variant="ghost" type="button" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" [loading]="saving()">Convertir en paciente</app-button>
+  </div>
+</form>

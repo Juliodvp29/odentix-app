@@ -1,0 +1,196 @@
+<div class="space-y-24">
+  <a
+    routerLink="/leads"
+    class="inline-flex items-center gap-4 text-caption font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+  >
+    <app-icon name="chevron-left" />
+    Volver a prospectos
+  </a>
+
+  @if (loading()) {
+    <section
+      class="space-y-16"
+      aria-busy="true"
+      aria-label="Cargando prospecto"
+      data-testid="detail-loading"
+    >
+      <div class="h-64"><app-skeleton variant="block" /></div>
+      <div class="h-160"><app-skeleton variant="block" /></div>
+    </section>
+  } @else if (error() || !lead()) {
+    <div
+      class="rounded-card border border-danger bg-danger-soft p-24 text-center text-body text-danger-deep"
+      role="alert"
+    >
+      <p class="font-medium">No fue posible cargar el prospecto.</p>
+      <app-button class="mt-12" type="button" variant="secondary" (clicked)="retry()">
+        Reintentar
+      </app-button>
+    </div>
+  } @else {
+    <section
+      class="space-y-16 rounded-card border border-hairline bg-paper p-20 shadow-resting"
+      aria-labelledby="lead-title"
+    >
+      <div class="flex flex-col gap-16 sm:flex-row sm:items-start sm:justify-between">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-12">
+            <h1 id="lead-title" class="text-heading font-semibold text-ink" data-testid="lead-title">
+              {{ lead()!.fullName || 'Sin nombre' }}
+            </h1>
+            <span
+              class="rounded-pill px-10 py-2 text-caption font-medium"
+              [class]="stageMeta().bgClass + ' ' + stageMeta().textClass"
+              data-testid="lead-stage"
+            >
+              {{ stageMeta().label }}
+            </span>
+            @if (lead()!.convertedPatientId) {
+              <a
+                [routerLink]="['/patients', lead()!.convertedPatientId]"
+                class="rounded-pill bg-success-soft px-10 py-2 text-caption font-medium text-success-deep"
+              >
+                Convertido
+              </a>
+            }
+          </div>
+          <p class="mt-4 text-body text-ink-soft">
+            {{ lead()!.source || 'Origen desconocido' }}
+            @if (lead()!.campaign) {
+              · {{ lead()!.campaign }}
+            }
+          </p>
+        </div>
+        <div class="flex shrink-0 flex-col gap-8 sm:items-end">
+          <app-lead-stage-select
+            class="w-40"
+            [leadId]="lead()!.id"
+            [status]="lead()!.status"
+            [leadName]="lead()!.fullName"
+            (moved)="onStageMoved()"
+          />
+          <app-lead-convert-action [lead]="lead()!" (converted)="goToPatient($event)" />
+        </div>
+      </div>
+
+      <dl class="grid grid-cols-1 gap-16 border-t border-hairline pt-16 sm:grid-cols-2">
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">Teléfono</dt>
+          <dd class="mt-4 text-body font-medium text-ink">{{ lead()!.phone || '—' }}</dd>
+        </div>
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">Correo</dt>
+          <dd class="mt-4 text-body font-medium text-ink">{{ lead()!.email || '—' }}</dd>
+        </div>
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">
+            Procedimiento de interés
+          </dt>
+          <dd class="mt-4 text-body font-medium text-ink">
+            {{ lead()!.procedureOfInterest || '—' }}
+          </dd>
+        </div>
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">
+            Valor estimado
+          </dt>
+          <dd class="mt-4 text-body font-medium text-ink">
+            {{ lead()!.estimatedValueCop ? formatPrice(lead()!.estimatedValueCop) : '—' }}
+          </dd>
+        </div>
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">Responsable</dt>
+          <dd class="mt-4 text-body font-medium text-ink">
+            {{ lead()!.assignedToName || 'Sin asignar' }}
+          </dd>
+        </div>
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">
+            Último contacto
+          </dt>
+          <dd class="mt-4 text-body font-medium text-ink">
+            {{ formatDate(lead()!.lastContactAt) }}
+          </dd>
+        </div>
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">
+            Próxima acción
+          </dt>
+          <dd class="mt-4 text-body font-medium text-ink">
+            {{ formatDate(lead()!.nextActionAt) }}
+          </dd>
+        </div>
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">Registrado</dt>
+          <dd class="mt-4 text-body font-medium text-ink">{{ formatDate(lead()!.createdAt) }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section
+      class="overflow-hidden rounded-card border border-hairline bg-paper shadow-resting"
+      aria-labelledby="history-heading"
+    >
+      <div
+        class="flex flex-col gap-12 border-b border-hairline bg-surface-alt px-16 py-12 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <h2 id="history-heading" class="text-body font-semibold text-ink">
+          Historial de contacto ({{ timeline().length }})
+        </h2>
+        <app-button variant="secondary" (clicked)="openActivity()">Registrar contacto</app-button>
+      </div>
+      @if (historyLoading() && timeline().length === 0) {
+        <div class="space-y-12 p-16" aria-busy="true" aria-label="Cargando historial">
+          <div class="h-64"><app-skeleton variant="block" /></div>
+          <div class="h-64"><app-skeleton variant="block" /></div>
+        </div>
+      } @else if (historyError() && timeline().length === 0) {
+        <div class="p-24 text-center">
+          <p class="text-body text-danger-deep" role="alert">
+            No fue posible cargar el historial.
+          </p>
+          <app-button class="mt-12" type="button" variant="secondary" (clicked)="retryHistory()">
+            Reintentar
+          </app-button>
+        </div>
+      } @else if (timeline().length === 0) {
+        <div class="p-24 text-center">
+          <p class="text-subheading text-ink">Sin actividades registradas</p>
+          <p class="mt-4 text-body text-ink-soft">
+            Registra el primer contacto con este prospecto.
+          </p>
+        </div>
+      } @else {
+        <ol class="divide-y divide-hairline">
+          @for (activity of timeline(); track activity.id) {
+            <li class="flex flex-col gap-8 px-16 py-16 sm:flex-row sm:items-start sm:justify-between">
+              <div class="min-w-0 space-y-4">
+                <span
+                  class="inline-block rounded-pill px-10 py-2 text-caption font-medium"
+                  [class]="activityMeta(activity.activityType).pill"
+                >
+                  {{ activityMeta(activity.activityType).label }}
+                </span>
+                @if (activity.notes) {
+                  <p class="text-body text-ink">{{ activity.notes }}</p>
+                }
+                <p class="text-caption text-mid-gray">{{ activity.userName || 'Sistema' }}</p>
+              </div>
+              <time class="shrink-0 text-caption text-mid-gray">
+                {{ formatDate(activity.createdAt) }}
+              </time>
+            </li>
+          }
+        </ol>
+      }
+    </section>
+  }
+</div>
+
+<ng-template #activityTemplate>
+  <app-lead-activity-form
+    [leadId]="id()"
+    (logged)="onActivityLogged($event)"
+    (cancelled)="onActivityCancelled()"
+  />
+</ng-template>

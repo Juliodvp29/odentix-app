@@ -1,0 +1,29 @@
+<form class="space-y-16" (submit)="submitActivity(); $event.preventDefault()">
+  <app-form-field label="Tipo de contacto" [field]="activityForm.activityType">
+    <app-select
+      inputId="lead-activity-type"
+      placeholder="Seleccionar"
+      [options]="typeOptions"
+      [field]="activityForm.activityType"
+    />
+  </app-form-field>
+
+  <app-form-field label="Notas (opcional)" [field]="activityForm.notes">
+    <app-text-input
+      inputId="lead-activity-notes"
+      placeholder="Resumen del contacto"
+      [field]="activityForm.notes"
+    />
+  </app-form-field>
+
+  @if (serverError(); as message) {
+    <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex justify-end gap-8 pt-8">
+    <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [loading]="saving()">
+      Registrar contacto
+    </app-button>
+  </div>
+</form>

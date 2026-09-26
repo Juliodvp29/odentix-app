@@ -868,11 +868,11 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Kanban-style or list view of leads by pipeline stage.
+- [x] Kanban-style or list view of leads by pipeline stage.
 
 **Acceptance criteria:**
 
-- [ ] The view clearly communicates how many leads are in each stage
+- [x] The view clearly communicates how many leads are in each stage
       at a glance.
 
 ---
@@ -885,12 +885,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Detail view with contact history (`LeadActivity`) and a way to
+- [x] Detail view with contact history (`LeadActivity`) and a way to
       log a new contact attempt.
 
 **Acceptance criteria:**
 
-- [ ] Logging a new activity appears in the timeline immediately.
+- [x] Logging a new activity appears in the timeline immediately.
 
 ---
 
@@ -902,13 +902,13 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] UI action to convert a qualified lead, reusing the patient
+- [x] UI action to convert a qualified lead, reusing the patient
       creation flow's components where sensible instead of duplicating
       them.
 
 **Acceptance criteria:**
 
-- [ ] Converting a lead navigates to the resulting patient record
+- [x] Converting a lead navigates to the resulting patient record
       directly, closing the loop visibly.
 
 ---
@@ -921,12 +921,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Charts/summary for conversion by source/campaign and average
+- [x] Charts/summary for conversion by source/campaign and average
       response time, backed by the corresponding backend endpoints.
 
 **Acceptance criteria:**
 
-- [ ] Numbers shown match what the backend endpoints return for the
+- [x] Numbers shown match what the backend endpoints return for the
       same date range, spot-checked manually.
 
 ---
