@@ -885,12 +885,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Detail view with contact history (`LeadActivity`) and a way to
+- [x] Detail view with contact history (`LeadActivity`) and a way to
       log a new contact attempt.
 
 **Acceptance criteria:**
 
-- [ ] Logging a new activity appears in the timeline immediately.
+- [x] Logging a new activity appears in the timeline immediately.
 
 ---
 

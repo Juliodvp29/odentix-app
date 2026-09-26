@@ -82,7 +82,7 @@ describe('LeadsBoard', () => {
   it('should regroup instantly when a card reports a move', () => {
     setup([lead('1', 'nuevo')]);
     expect(fixture.componentInstance.grouped().contactado).toHaveLength(0);
-    fixture.componentInstance.onMoved({ ...lead('1', 'nuevo'), status: 'contactado' });
+    fixture.componentInstance.onMoved({ id: '1', status: 'contactado' });
     fixture.detectChanges();
     expect(fixture.componentInstance.grouped().nuevo).toHaveLength(0);
     expect(fixture.componentInstance.grouped().contactado.map((item) => item.id)).toEqual(['1']);

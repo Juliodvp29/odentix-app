@@ -52,14 +52,12 @@
     <span class="min-w-0 flex-1 truncate text-caption text-ink-soft">
       {{ lead().assignedToName || 'Sin asignar' }}
     </span>
-    <label class="sr-only" [for]="'lead-stage-' + lead().id">Mover a etapa</label>
-    <app-select
+    <app-lead-stage-select
       class="w-40 shrink-0"
-      [inputId]="'lead-stage-' + lead().id"
-      [value]="lead().status ?? ''"
-      [options]="stageOptions()"
-      [disabled]="moving()"
-      (valueChange)="moveTo($event)"
+      [leadId]="lead().id"
+      [status]="lead().status"
+      [leadName]="lead().fullName"
+      (moved)="moved.emit($event)"
     />
   </div>
 </article>

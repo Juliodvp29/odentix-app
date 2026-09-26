@@ -3,8 +3,47 @@ import { components } from '@core/api/schema';
 export type LeadResponse = components['schemas']['LeadResponse'];
 export type PageLeadResponse = components['schemas']['PageLeadResponse'];
 export type UpdateLeadStatusRequest = components['schemas']['UpdateLeadStatusRequest'];
+export type CreateLeadActivityRequest = components['schemas']['CreateLeadActivityRequest'];
+export type LeadActivityResponse = components['schemas']['LeadActivityResponse'];
 
 export type LeadStatus = NonNullable<LeadResponse['status']>;
+export type LeadActivityType = NonNullable<CreateLeadActivityRequest['activityType']>;
+
+export interface LeadActivityTypeMeta {
+  readonly label: string;
+  readonly bgClass: string;
+  readonly textClass: string;
+}
+
+export const LEAD_ACTIVITY_TYPES: ReadonlyArray<LeadActivityType> = [
+  'llamada',
+  'whatsapp',
+  'email',
+  'nota',
+];
+
+export const LEAD_ACTIVITY_TYPE_META: Record<LeadActivityType, LeadActivityTypeMeta> = {
+  llamada: {
+    label: 'Llamada',
+    bgClass: 'bg-info-soft',
+    textClass: 'text-info-deep',
+  },
+  whatsapp: {
+    label: 'WhatsApp',
+    bgClass: 'bg-success-soft',
+    textClass: 'text-success-deep',
+  },
+  email: {
+    label: 'Correo',
+    bgClass: 'bg-teal-soft',
+    textClass: 'text-teal-deep',
+  },
+  nota: {
+    label: 'Nota',
+    bgClass: 'bg-surface-alt',
+    textClass: 'text-ink-soft',
+  },
+};
 
 export interface LeadStageMeta {
   readonly label: string;

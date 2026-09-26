@@ -1,8 +1,10 @@
 import { HttpErrorResponse, HttpResourceRef, httpResource } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Signal, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
 import {
+  CreateLeadActivityRequest,
+  LeadActivityResponse,
   LeadResponse,
   LeadStatus,
   PageLeadResponse,
@@ -36,6 +38,33 @@ export class LeadsService {
     const body: UpdateLeadStatusRequest = { status };
     return this.api.patch<UpdateLeadStatusRequest, LeadResponse>(
       `/api/v1/leads/${id}/status`,
+      body,
+    );
+  }
+
+  // Reactive resource for a single lead detail.
+  leadDetail(id: Signal<string>): HttpResourceRef<LeadResponse | undefined> {
+    return httpResource<LeadResponse>(() => {
+      const leadId = id();
+      return leadId ? { url: this.api.url(`/api/v1/leads/${leadId}`) } : undefined;
+    });
+  }
+
+  // Reactive resource for the contact history, newest first.
+  activities(id: Signal<string>): HttpResourceRef<LeadActivityResponse[] | undefined> {
+    return httpResource<LeadActivityResponse[]>(() => {
+      const leadId = id();
+      return leadId ? { url: this.api.url(`/api/v1/leads/${leadId}/activities`) } : undefined;
+    });
+  }
+
+  // Logs a contact attempt against a lead.
+  addActivity(
+    id: string,
+    body: CreateLeadActivityRequest,
+  ): Observable<LeadActivityResponse> {
+    return this.api.post<CreateLeadActivityRequest, LeadActivityResponse>(
+      `/api/v1/leads/${id}/activities`,
       body,
     );
   }

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  LEAD_ACTIVITY_TYPES,
+  LEAD_ACTIVITY_TYPE_META,
   LEAD_STAGES,
   LEAD_STAGE_META,
   LeadResponse,
@@ -62,7 +64,6 @@ describe('groupLeadsByStage', () => {
     expect(grouped.nuevo.map((item) => item.id)).toEqual(['9']);
   });
 });
-
 describe('assigneeInitials', () => {
   it('should build initials from first and last names', () => {
     expect(assigneeInitials('Ana Torres')).toBe('AT');
@@ -70,5 +71,19 @@ describe('assigneeInitials', () => {
     expect(assigneeInitials('Madonna')).toBe('MA');
     expect(assigneeInitials(null)).toBe('—');
     expect(assigneeInitials('')).toBe('—');
+  });
+});
+
+describe('lead activity types', () => {
+  it('should cover every backend activity type with a Spanish label', () => {
+    expect([...LEAD_ACTIVITY_TYPES]).toEqual(['llamada', 'whatsapp', 'email', 'nota']);
+    expect(LEAD_ACTIVITY_TYPE_META.llamada.label).toBe('Llamada');
+    expect(LEAD_ACTIVITY_TYPE_META.whatsapp.label).toBe('WhatsApp');
+    expect(LEAD_ACTIVITY_TYPE_META.email.label).toBe('Correo');
+    expect(LEAD_ACTIVITY_TYPE_META.nota.label).toBe('Nota');
+    for (const type of LEAD_ACTIVITY_TYPES) {
+      expect(LEAD_ACTIVITY_TYPE_META[type].bgClass).toBeTruthy();
+      expect(LEAD_ACTIVITY_TYPE_META[type].textClass).toBeTruthy();
+    }
   });
 });

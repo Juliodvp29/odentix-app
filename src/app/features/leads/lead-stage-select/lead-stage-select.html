@@ -1,0 +1,8 @@
+<label class="sr-only" [for]="'lead-stage-' + leadId()">Mover a etapa</label>
+<app-select
+  [inputId]="'lead-stage-' + leadId()"
+  [value]="status() ?? ''"
+  [options]="stageOptions()"
+  [disabled]="moving()"
+  (valueChange)="moveTo($event)"
+/>

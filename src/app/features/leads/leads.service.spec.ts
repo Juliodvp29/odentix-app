@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { ApiClient } from '@core/api/api-client';
-import { LeadResponse } from './lead-models';
+import { LeadActivityResponse, LeadResponse } from './lead-models';
 import { BOARD_PAGE_SIZE, LeadsService, isPlanGateError } from './leads.service';
 
 const MOCK_LEAD: LeadResponse = {
@@ -26,6 +26,7 @@ describe('LeadsService', () => {
             url: (path: string) => `http://localhost:8081${path}`,
             get: vi.fn(),
             patch: vi.fn(),
+            post: vi.fn(),
           },
         },
       ],
@@ -50,6 +51,29 @@ describe('LeadsService', () => {
       status: 'contactado',
     });
     expect(result?.status).toBe('contactado');
+  });
+
+  it('should post a contact activity against a lead', async () => {
+    const activity: LeadActivityResponse = {
+      id: 'act-1',
+      leadId: 'lead-1',
+      activityType: 'llamada',
+      notes: 'Interesada en ortodoncia',
+    };
+    vi.spyOn(api, 'post').mockReturnValue(of(activity));
+
+    let result: LeadActivityResponse | undefined;
+    service
+      .addActivity('lead-1', { activityType: 'llamada', notes: 'Interesada en ortodoncia' })
+      .subscribe((res) => {
+        result = res;
+      });
+
+    expect(api.post).toHaveBeenCalledWith('/api/v1/leads/lead-1/activities', {
+      activityType: 'llamada',
+      notes: 'Interesada en ortodoncia',
+    });
+    expect(result).toEqual(activity);
   });
 });
 

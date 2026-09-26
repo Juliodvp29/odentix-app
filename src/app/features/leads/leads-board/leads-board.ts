@@ -5,7 +5,6 @@ import { Skeleton } from '@shared/skeleton/skeleton';
 import {
   LEAD_STAGES,
   LEAD_STAGE_META,
-  LeadResponse,
   LeadStatus,
   groupLeadsByStage,
 } from '../lead-models';
@@ -51,10 +50,8 @@ export class LeadsBoard {
     })),
   );
 
-  onMoved(updated: LeadResponse): void {
-    if (updated.id && updated.status) {
-      this.overrides.update((current) => new Map(current).set(updated.id as string, updated.status as LeadStatus));
-    }
+  onMoved(updated: { id: string; status: LeadStatus }): void {
+    this.overrides.update((current) => new Map(current).set(updated.id, updated.status));
   }
 
   retry(): void {
