@@ -1,0 +1,12 @@
+@if (canInvoice()) {
+  <app-button variant="primary" [disabled]="!hasItems()" (clicked)="open()">
+    Generar factura
+  </app-button>
+  @if (!hasItems()) {
+    <p class="mt-8 text-caption text-mid-gray">El plan no tiene ítems para facturar.</p>
+  }
+}
+
+<ng-template #createTemplate>
+  <app-invoice-create-form [plan]="plan()" (created)="onCreated($event)" (cancelled)="onCancelled()" />
+</ng-template>

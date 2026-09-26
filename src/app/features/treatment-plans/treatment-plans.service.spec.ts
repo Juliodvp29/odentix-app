@@ -108,4 +108,18 @@ describe('TreatmentPlansService', () => {
     expect(api.patch).toHaveBeenCalledWith('/api/v1/treatment-plans/plan-123', updateReq);
     expect(result?.diagnosis).toBe('Nuevo diagnóstico');
   });
+
+  it('should patch the plan status through the status endpoint', async () => {
+    vi.spyOn(api, 'patch').mockReturnValue(of({ ...MOCK_PLAN, status: 'presentado' }));
+
+    let result: TreatmentPlanResponse | undefined;
+    service.updateStatus('plan-123', 'presentado').subscribe((res) => {
+      result = res;
+    });
+
+    expect(api.patch).toHaveBeenCalledWith('/api/v1/treatment-plans/plan-123/status', {
+      status: 'presentado',
+    });
+    expect(result?.status).toBe('presentado');
+  });
 });

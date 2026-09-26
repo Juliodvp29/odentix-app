@@ -809,11 +809,11 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Same pattern as FASE4-03, applied to `TreatmentPlan` states.
+- [x] Same pattern as FASE4-03, applied to `TreatmentPlan` states.
 
 **Acceptance criteria:**
 
-- [ ] Invalid transitions aren't selectable; valid ones update the UI
+- [x] Invalid transitions aren't selectable; valid ones update the UI
       immediately on confirmation.
 
 ---
@@ -826,12 +826,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Generate an invoice from a treatment plan; view invoice detail
+- [x] Generate an invoice from a treatment plan; view invoice detail
       with its line items.
 
 **Acceptance criteria:**
 
-- [ ] An invoice's total always matches the sum of its visible line
+- [x] An invoice's total always matches the sum of its visible line
       items — no discrepancy the user has to trust blindly.
 
 ---
@@ -844,12 +844,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Register a payment against an invoice; invoice status
+- [x] Register a payment against an invoice; invoice status
       (pending/partial/paid) updates immediately in the UI.
 
 **Acceptance criteria:**
 
-- [ ] Registering a payment that completes the invoice visibly updates
+- [x] Registering a payment that completes the invoice visibly updates
       its status without requiring a manual refresh.
 
 ---
