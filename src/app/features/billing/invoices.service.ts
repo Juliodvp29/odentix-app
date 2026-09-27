@@ -2,7 +2,7 @@ import { HttpResourceRef, httpResource } from '@angular/common/http';
 import { Injectable, Signal, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
-import { CreateInvoiceRequest, CreatePaymentRequest, InvoiceResponse, PaymentResponse } from './billing-models';
+import { CreateInvoiceRequest, CreatePaymentRequest, InvoiceResponse, PageInvoiceResponse, PaymentResponse } from './billing-models';
 
 @Injectable({ providedIn: 'root' })
 export class InvoicesService {
@@ -40,6 +40,19 @@ export class InvoicesService {
     return httpResource<InvoiceResponse>(() => {
       const invoiceId = id();
       return invoiceId ? { url: this.api.url(`/api/v1/invoices/${invoiceId}`) } : undefined;
+    });
+  }
+
+  // Reactive resource for a patient's invoices, newest first. Callers
+  // filter by treatment plan: the backend has no per-plan filter.
+  patientInvoices(patientId: Signal<string>): HttpResourceRef<PageInvoiceResponse | undefined> {
+    return httpResource<PageInvoiceResponse>(() => {
+      const pId = patientId();
+      if (!pId) return undefined;
+      return {
+        url: this.api.url('/api/v1/invoices'),
+        params: { patientId: pId, size: '100', sort: 'issuedAt,desc' },
+      };
     });
   }
 }

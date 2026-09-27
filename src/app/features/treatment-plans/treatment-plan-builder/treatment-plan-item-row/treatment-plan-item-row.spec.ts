@@ -32,6 +32,30 @@ describe('TreatmentPlanItemRow', () => {
     expect(fixture.nativeElement.textContent).toContain('120.000');
   });
 
+  it('should paint the model values into the price and discount inputs', () => {
+    const priceInput = fixture.nativeElement.querySelector(
+      'input[type="number"][placeholder="Precio"]',
+    ) as HTMLInputElement;
+    const discountInput = fixture.nativeElement.querySelector(
+      'input[placeholder="0"]',
+    ) as HTMLInputElement;
+    expect(priceInput.value).toBe('130000');
+    expect(discountInput.value).toBe('10000');
+  });
+
+  it('should keep the amount inputs within the design token spacing scale', () => {
+    // Regression: a non-token padding (e.g. pr-28 = 112px) collapses the
+    // text area in narrow grid columns and hides the typed value.
+    const inputs = Array.from(
+      fixture.nativeElement.querySelectorAll('input[type="number"]'),
+    ) as HTMLInputElement[];
+    expect(inputs.length).toBeGreaterThan(0);
+    for (const input of inputs) {
+      expect(input.className).toContain('pr-32');
+      expect(input.className).not.toContain('pr-28');
+    }
+  });
+
   it('should emit updated price and calculate net correctly', () => {
     const emitSpy = vi.spyOn(component.itemChange, 'emit');
     const priceInput = fixture.nativeElement.querySelector(

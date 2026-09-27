@@ -73,8 +73,7 @@ describe('TreatmentPlanBuilder', () => {
     expect(input.getAttribute('aria-controls')).toBe('patient-results');
   });
 
-  it('should initialize with initial patient and 1 default procedure with instant total', () => {
-    expect(component.items().length).toBe(1);
+  it('should initialize with initial patient and 1 default procedure with instant total', () => {    expect(component.items().length).toBe(1);
     expect(component.totals().net).toBe(90000);
     expect(fixture.nativeElement.textContent).toContain('Carlos Pérez');
     expect(fixture.nativeElement.textContent).toContain('90.000');
@@ -155,5 +154,20 @@ describe('TreatmentPlanBuilder', () => {
     expect(TestBed.inject(ToastService).success).toHaveBeenCalledWith(
       'Plan de tratamiento creado correctamente en estado borrador.',
     );
+  });
+
+  it('should keep typed values visible through the parent round-trip', () => {
+    const priceInput = fixture.nativeElement.querySelector(
+      'input[placeholder="Precio"]',
+    ) as HTMLInputElement;
+    expect(priceInput.value).toBe('90000');
+
+    priceInput.value = '120000';
+    priceInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(component.items()[0]?.priceCop).toBe(120000);
+    expect(priceInput.value).toBe('120000');
+    expect(fixture.nativeElement.textContent).toContain('120.000');
   });
 });

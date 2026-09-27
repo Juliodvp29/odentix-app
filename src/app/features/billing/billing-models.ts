@@ -4,6 +4,7 @@ import type { TreatmentPlanItemResponse } from '@features/treatment-plans/treatm
 export type InvoiceResponse = components['schemas']['InvoiceResponse'];
 export type InvoiceItemResponse = components['schemas']['InvoiceItemResponse'];
 export type CreateInvoiceRequest = components['schemas']['CreateInvoiceRequest'];
+export type PageInvoiceResponse = components['schemas']['PageInvoiceResponse'];
 export type CreatePaymentRequest = components['schemas']['CreatePaymentRequest'];
 export type PaymentResponse = components['schemas']['PaymentResponse'];
 

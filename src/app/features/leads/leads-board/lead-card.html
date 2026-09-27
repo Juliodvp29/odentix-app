@@ -52,12 +52,11 @@
     <span class="min-w-0 flex-1 truncate text-caption text-ink-soft">
       {{ lead().assignedToName || 'Sin asignar' }}
     </span>
-    <app-lead-stage-select
-      class="w-40 shrink-0"
-      [leadId]="lead().id"
-      [status]="lead().status"
-      [leadName]="lead().fullName"
-      (moved)="moved.emit($event)"
-    />
   </div>
+  <app-lead-stage-select
+    [leadId]="lead().id"
+    [status]="lead().status"
+    [leadName]="lead().fullName"
+    (moved)="moved.emit($event)"
+  />
 </article>
