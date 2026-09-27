@@ -15,6 +15,7 @@ import {
   lucideLock,
   lucideLogOut,
   lucidePencil,
+  lucidePackage,
   lucidePlus,
   lucideRefreshCw,
   lucideSearch,
@@ -39,6 +40,7 @@ export type IconName =
   | 'target'
   | 'refresh'
   | 'pencil'
+  | 'package'
   | 'plus'
   | 'trash-2'
   | 'download'
@@ -65,6 +67,7 @@ const ICON_NAMES: Record<IconName, string> = {
   target: 'lucideTarget',
   refresh: 'lucideRefreshCw',
   pencil: 'lucidePencil',
+  package: 'lucidePackage',
   plus: 'lucidePlus',
   'trash-2': 'lucideTrash2',
   download: 'lucideDownload',
@@ -99,6 +102,7 @@ const ICON_NAMES: Record<IconName, string> = {
       lucideLock,
       lucideLogOut,
       lucidePencil,
+      lucidePackage,
       lucidePlus,
       lucideRefreshCw,
       lucideSearch,

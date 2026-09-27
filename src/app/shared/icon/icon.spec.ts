@@ -13,6 +13,7 @@ const names: ReadonlyArray<IconName> = [
   'target',
   'refresh',
   'pencil',
+  'package',
   'plus',
   'trash-2',
   'download',

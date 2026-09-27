@@ -1003,13 +1003,13 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Inventory item list with current stock, and a form to register a
+- [x] Inventory item list with current stock, and a form to register a
       stock movement.
-- [ ] Visually flag items at or below their critical threshold.
+- [x] Visually flag items at or below their critical threshold.
 
 **Acceptance criteria:**
 
-- [ ] An item at/below threshold is visually distinct in the list
+- [x] An item at/below threshold is visually distinct in the list
       without needing to open it.
 
 ---
