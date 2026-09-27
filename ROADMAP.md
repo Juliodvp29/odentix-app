@@ -963,11 +963,11 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Summary view: total, overdue, upcoming, and current balances.
+- [x] Summary view: total, overdue, upcoming, and current balances.
 
 **Acceptance criteria:**
 
-- [ ] Totals match the backend's portfolio summary endpoint.
+- [x] Totals match the backend's portfolio summary endpoint.
 
 ---
 
