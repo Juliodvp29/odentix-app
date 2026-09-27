@@ -1,0 +1,145 @@
+<div class="space-y-24">
+  <a
+    [routerLink]="['/specialists', specialistId()]"
+    class="inline-flex items-center gap-4 text-caption font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+  >
+    <app-icon name="chevron-left" />
+    Volver al especialista
+  </a>
+
+  @if (loading()) {
+    <section
+      class="space-y-16"
+      aria-busy="true"
+      aria-label="Cargando liquidación"
+      data-testid="detail-loading"
+    >
+      <div class="h-64"><app-skeleton variant="block" /></div>
+      <div class="h-160"><app-skeleton variant="block" /></div>
+    </section>
+  } @else if (planGated()) {
+    <div class="mx-auto max-w-5xl rounded-card border border-hairline bg-paper p-32 text-center shadow-resting">
+      <app-icon name="lock" class="text-mid-gray" />
+      <p class="mt-12 text-subheading text-ink">Las liquidaciones no están incluidas en tu plan</p>
+      <p class="mt-4 text-body text-mid-gray">
+        Las liquidaciones de honorarios son una funcionalidad de planes superiores.
+      </p>
+    </div>
+  } @else if (loadFailed() || !settlement()) {
+    <div
+      class="rounded-card border border-danger bg-danger-soft p-24 text-center text-body text-danger-deep"
+      role="alert"
+    >
+      <p class="font-medium">No fue posible cargar la liquidación.</p>
+      <app-button class="mt-12" type="button" variant="secondary" (clicked)="retry()">
+        Reintentar
+      </app-button>
+    </div>
+  } @else {
+    <section
+      class="space-y-16 rounded-card border border-hairline bg-paper p-20 shadow-resting"
+      aria-labelledby="settlement-title"
+    >
+      <div class="flex flex-wrap items-center gap-12">
+        <h1 id="settlement-title" class="text-heading font-semibold text-ink" data-testid="settlement-title">
+          Liquidación {{ settlement()!.periodStart || '—' }} al {{ settlement()!.periodEnd || '—' }}
+        </h1>
+        <span
+          class="rounded-pill px-10 py-2 text-caption font-medium"
+          [class]="settlementMeta(settlement()!.status).pill"
+        >
+          {{ settlementMeta(settlement()!.status).label }}
+        </span>
+      </div>
+
+      <dl class="grid grid-cols-1 gap-16 border-t border-hairline pt-16 sm:grid-cols-3">
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">
+            Producción bruta
+          </dt>
+          <dd class="mt-4 text-heading-sm font-semibold text-ink" data-testid="settlement-gross">
+            {{ formatPrice(settlement()!.grossProductionCop) }}
+          </dd>
+        </div>
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">Honorarios</dt>
+          <dd class="mt-4 text-heading-sm font-semibold text-teal-deep">
+            {{ formatPrice(settlement()!.feeAmountCop) }}
+          </dd>
+        </div>
+        <div>
+          <dt class="block text-caption font-medium tracking-caption text-ink-soft">
+            Suma vigente de líneas
+          </dt>
+          <dd class="mt-4 text-heading-sm font-semibold text-ink">
+            {{ formatPrice(linesSubtotal()) }}
+          </dd>
+        </div>
+      </dl>
+      @if (drifted()) {
+        <p class="text-caption text-warning-deep" role="note">
+          Las facturas del periodo cambiaron después de generar la liquidación: la suma vigente
+          ya no coincide con el bruto liquidado.
+        </p>
+      }
+      <p class="text-caption text-mid-gray">
+        Honorarios = producción bruta × porcentaje pactado. Solo cuenta lo facturado en el
+        periodo vinculado a tratamientos del profesional, sin anuladas.
+      </p>
+    </section>
+
+    <section
+      class="overflow-hidden rounded-card border border-hairline bg-paper shadow-resting"
+      aria-labelledby="breakdown-heading"
+    >
+      <div class="border-b border-hairline bg-surface-alt px-16 py-12">
+        <h2 id="breakdown-heading" class="text-body font-semibold text-ink">
+          Facturas del periodo ({{ lines().length }})
+        </h2>
+      </div>
+      @if (lines().length === 0) {
+        <div class="p-24 text-center">
+          <p class="text-subheading text-ink">Sin facturas en el periodo</p>
+          <p class="mt-4 text-body text-ink-soft">
+            La producción bruta de este periodo fue cero.
+          </p>
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-body">
+            <caption class="sr-only">
+              Facturas que componen la producción bruta
+            </caption>
+            <thead
+              class="border-b border-hairline text-caption font-medium tracking-caption text-ink-soft"
+            >
+              <tr>
+                <th scope="col" class="px-16 py-12">Factura</th>
+                <th scope="col" class="px-16 py-12">Emitida</th>
+                <th scope="col" class="px-16 py-12 text-right">Total COP</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-hairline">
+              @for (line of lines(); track line.invoiceId) {
+                <tr>
+                  <td class="px-16 py-16 font-medium">
+                    <a
+                      [routerLink]="['/billing', line.invoiceId]"
+                      class="text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                    >
+                      {{ line.invoiceNumber || 'Factura' }}
+                    </a>
+                  </td>
+                  <td class="px-16 py-16 text-ink-soft">{{ formatDate(line.issuedAt) }}</td>
+                  <td class="px-16 py-16 text-right font-semibold text-ink">
+                    {{ formatPrice(line.totalCop) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</div>

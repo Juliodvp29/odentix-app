@@ -171,7 +171,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Listar liquidaciones
+         * @description Obtiene las liquidaciones de un especialista ordenadas por inicio de periodo. Devuelve 404 si el especialista pertenece a otro tenant.
+         */
+        get: operations["listarLiquidaciones"];
         put?: never;
         /**
          * Generar liquidación
@@ -862,6 +866,66 @@ export interface paths {
          * @description Tareas asignadas al usuario autenticado.
          */
         get: operations["misTareas"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/specialists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Listar especialistas
+         * @description Obtiene los especialistas externos del tenant con su porcentaje de honorarios.
+         */
+        get: operations["listarEspecialistas"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/specialists/{specialistId}/settlements/{settlementId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Consultar liquidación
+         * @description Obtiene el detalle de una liquidación. Devuelve 404 si pertenece a otro tenant o a otro especialista.
+         */
+        get: operations["obtenerLiquidacion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/specialists/{specialistId}/settlements/{settlementId}/breakdown": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Desglosar liquidación
+         * @description Obtiene las facturas que componen la producción bruta de la liquidación. Devuelve 404 si pertenece a otro tenant o a otro especialista.
+         */
+        get: operations["obtenerDesglose"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1907,6 +1971,45 @@ export interface components {
             sorted?: boolean;
             unsorted?: boolean;
         };
+        SpecialistResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            professionalId?: string;
+            fullName?: string;
+            specialty?: string;
+            feePercentage?: number;
+            paymentTerms?: string;
+        };
+        SettlementBreakdownLineResponse: {
+            /** Format: uuid */
+            invoiceId?: string;
+            invoiceNumber?: string;
+            /** Format: uuid */
+            patientId?: string;
+            /** Format: date-time */
+            issuedAt?: string;
+            /** @enum {string} */
+            status?: "pendiente" | "parcial" | "pagada" | "anulada";
+            totalCop?: number;
+        };
+        SettlementBreakdownResponse: {
+            /** Format: uuid */
+            settlementId?: string;
+            /** Format: uuid */
+            specialistId?: string;
+            /** Format: date */
+            periodStart?: string;
+            /** Format: date */
+            periodEnd?: string;
+            grossProductionCop?: number;
+            feeAmountCop?: number;
+            /** @enum {string} */
+            status?: "pendiente" | "pagada";
+            /** Format: int32 */
+            invoiceCount?: number;
+            invoices?: components["schemas"]["SettlementBreakdownLineResponse"][];
+        };
         PortfolioSummaryResponse: {
             totalAmountCop?: number;
             overdueAmountCop?: number;
@@ -2470,6 +2573,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["TaskResponse"];
+                };
+            };
+        };
+    };
+    listarLiquidaciones: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SettlementResponse"][];
                 };
             };
         };
@@ -3789,6 +3914,72 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["TaskResponse"][];
+                };
+            };
+        };
+    };
+    listarEspecialistas: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SpecialistResponse"][];
+                };
+            };
+        };
+    };
+    obtenerLiquidacion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                specialistId: string;
+                settlementId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SettlementResponse"];
+                };
+            };
+        };
+    };
+    obtenerDesglose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                specialistId: string;
+                settlementId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SettlementBreakdownResponse"];
                 };
             };
         };

@@ -1,0 +1,136 @@
+<div class="space-y-24">
+  <a
+    routerLink="/specialists"
+    class="inline-flex items-center gap-4 text-caption font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+  >
+    <app-icon name="chevron-left" />
+    Volver a especialistas
+  </a>
+
+  @if (loading()) {
+    <section
+      class="space-y-16"
+      aria-busy="true"
+      aria-label="Cargando especialista"
+      data-testid="detail-loading"
+    >
+      <div class="h-64"><app-skeleton variant="block" /></div>
+      <div class="h-160"><app-skeleton variant="block" /></div>
+    </section>
+  } @else if (planGated()) {
+    <div class="mx-auto max-w-5xl rounded-card border border-hairline bg-paper p-32 text-center shadow-resting">
+      <app-icon name="lock" class="text-mid-gray" />
+      <p class="mt-12 text-subheading text-ink">Los especialistas no están incluidos en tu plan</p>
+      <p class="mt-4 text-body text-mid-gray">
+        Las liquidaciones de honorarios son una funcionalidad de planes superiores.
+      </p>
+    </div>
+  } @else if (loadFailed() || !specialist()) {
+    <div
+      class="rounded-card border border-danger bg-danger-soft p-24 text-center text-body text-danger-deep"
+      role="alert"
+    >
+      <p class="font-medium">No fue posible cargar el especialista.</p>
+      <app-button class="mt-12" type="button" variant="secondary" (clicked)="retry()">
+        Reintentar
+      </app-button>
+    </div>
+  } @else {
+    <section
+      class="space-y-16 rounded-card border border-hairline bg-paper p-20 shadow-resting"
+      aria-labelledby="specialist-title"
+    >
+      <div class="flex flex-col gap-16 sm:flex-row sm:items-start sm:justify-between">
+        <div class="flex min-w-0 items-center gap-12">
+          <span
+            class="flex h-40 w-40 shrink-0 items-center justify-center rounded-pill bg-teal-soft text-body font-medium text-teal-deep"
+            aria-hidden="true"
+          >
+            {{ initials(specialist()!.fullName) }}
+          </span>
+          <div class="min-w-0">
+            <h1 id="specialist-title" class="text-heading font-semibold text-ink" data-testid="specialist-title">
+              {{ specialist()!.fullName || 'Sin nombre' }}
+            </h1>
+            <p class="mt-4 text-body text-ink-soft">
+              {{ specialist()!.specialty || 'Especialidad sin registrar' }} ·
+              {{ feeLabel(specialist()!.feePercentage) }} pactado
+            </p>
+          </div>
+        </div>
+        <app-button variant="primary" (clicked)="openGenerate()">Generar liquidación</app-button>
+      </div>
+      @if (specialist()!.paymentTerms) {
+        <p class="border-t border-hairline pt-16 text-body text-ink-soft">
+          Condiciones: {{ specialist()!.paymentTerms }}
+        </p>
+      }
+    </section>
+
+    <section
+      class="overflow-hidden rounded-card border border-hairline bg-paper shadow-resting"
+      aria-labelledby="settlements-heading"
+    >
+      <div class="border-b border-hairline bg-surface-alt px-16 py-12">
+        <h2 id="settlements-heading" class="text-body font-semibold text-ink">
+          Liquidaciones ({{ history().length }})
+        </h2>
+      </div>
+      @if (historyLoading() && history().length === 0) {
+        <div class="space-y-12 p-16" aria-busy="true" aria-label="Cargando liquidaciones">
+          <div class="h-64"><app-skeleton variant="block" /></div>
+        </div>
+      } @else if (historyFailed() && history().length === 0) {
+        <div class="p-24 text-center">
+          <p class="text-body text-danger-deep" role="alert">
+            No fue posible cargar las liquidaciones.
+          </p>
+          <app-button class="mt-12" type="button" variant="secondary" (clicked)="retryHistory()">
+            Reintentar
+          </app-button>
+        </div>
+      } @else if (history().length === 0) {
+        <div class="p-24 text-center">
+          <p class="text-subheading text-ink">Sin liquidaciones registradas</p>
+          <p class="mt-4 text-body text-ink-soft">
+            Genera la primera liquidación para el periodo correspondiente.
+          </p>
+        </div>
+      } @else {
+        <ul class="divide-y divide-hairline">
+          @for (settlement of history(); track settlement.id) {
+            <li class="flex flex-col gap-8 px-16 py-16 sm:flex-row sm:items-center sm:justify-between">
+              <div class="min-w-0">
+                <a
+                  [routerLink]="['/specialists', id(), 'settlements', settlement.id]"
+                  class="text-body font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                >
+                  {{ settlement.periodStart || '—' }} al {{ settlement.periodEnd || '—' }}
+                </a>
+                <p class="mt-4 text-caption text-mid-gray">
+                  Bruto {{ formatPrice(settlement.grossProductionCop) }} · Honorarios
+                  {{ formatPrice(settlement.feeAmountCop) }}
+                </p>
+              </div>
+              <span
+                class="inline-block w-fit shrink-0 rounded-pill px-10 py-2 text-caption font-medium"
+                [class]="settlementMeta(settlement.status).pill"
+              >
+                {{ settlementMeta(settlement.status).label }}
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</div>
+
+<ng-template #generateTemplate>
+  <app-settlement-generate-form
+    [specialistId]="id()"
+    (generated)="onGenerated($event)"
+    (alreadyExists)="onAlreadyExists()"
+    (cancelled)="onGenerateCancelled()"
+  />
+</ng-template>

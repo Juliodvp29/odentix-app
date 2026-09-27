@@ -15,9 +15,11 @@ import {
   lucideLock,
   lucideLogOut,
   lucidePencil,
+  lucidePackage,
   lucidePlus,
   lucideRefreshCw,
   lucideSearch,
+  lucideStethoscope,
   lucideTarget,
   lucideTrash2,
   lucideTriangleAlert,
@@ -34,9 +36,11 @@ export type IconName =
   | 'chevron-right'
   | 'chevron-up'
   | 'search'
+  | 'stethoscope'
   | 'target'
   | 'refresh'
   | 'pencil'
+  | 'package'
   | 'plus'
   | 'trash-2'
   | 'download'
@@ -59,9 +63,11 @@ const ICON_NAMES: Record<IconName, string> = {
   'chevron-right': 'lucideChevronRight',
   'chevron-up': 'lucideChevronUp',
   search: 'lucideSearch',
+  stethoscope: 'lucideStethoscope',
   target: 'lucideTarget',
   refresh: 'lucideRefreshCw',
   pencil: 'lucidePencil',
+  package: 'lucidePackage',
   plus: 'lucidePlus',
   'trash-2': 'lucideTrash2',
   download: 'lucideDownload',
@@ -96,9 +102,11 @@ const ICON_NAMES: Record<IconName, string> = {
       lucideLock,
       lucideLogOut,
       lucidePencil,
+      lucidePackage,
       lucidePlus,
       lucideRefreshCw,
       lucideSearch,
+      lucideStethoscope,
       lucideTarget,
       lucideTrash2,
       lucideTriangleAlert,

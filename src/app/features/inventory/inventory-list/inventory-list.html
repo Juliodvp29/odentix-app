@@ -1,0 +1,58 @@
+<div class="space-y-24">
+  <div class="flex flex-wrap items-center justify-between gap-16">
+    <div>
+      <h1 class="text-heading text-ink">Inventario</h1>
+      <p class="mt-4 text-body text-mid-gray">
+        Insumos con su stock actual y movimientos de entrada y salida.
+      </p>
+    </div>
+    <app-button variant="primary" icon="plus" (clicked)="openCreate()">Nuevo insumo</app-button>
+  </div>
+
+  @if (planGated()) {
+    <div class="mx-auto max-w-5xl rounded-card border border-hairline bg-paper p-32 text-center shadow-resting">
+      <app-icon name="lock" class="text-mid-gray" />
+      <p class="mt-12 text-subheading text-ink">El inventario no está incluido en tu plan</p>
+      <p class="mt-4 text-body text-mid-gray">
+        El control de stock es una funcionalidad de planes superiores. Los datos están
+        intactos: esta vista se activará sola al ampliar el plan.
+      </p>
+    </div>
+  } @else if (loadError()) {
+    <section class="rounded-card bg-paper p-24 text-center shadow-resting" role="alert">
+      <p class="text-body text-danger-deep">No pudimos cargar el inventario.</p>
+      <app-button class="mt-12" variant="secondary" (clicked)="retry()">Reintentar</app-button>
+    </section>
+  } @else {
+    <app-table
+      [columns]="columns"
+      [rows]="rows()"
+      [total]="total()"
+      [loading]="loading()"
+      [query]="query()"
+      [rowActions]="rowActions"
+      emptyMessage="No hay insumos para mostrar"
+      (queryChange)="onQueryChange($event)"
+    >
+      <ng-template #rowActions let-row>
+        <app-button variant="secondary" (clicked)="openMovement(item(row))">
+          Movimiento
+        </app-button>
+      </ng-template>
+    </app-table>
+  }
+
+  <ng-template #createTemplate>
+    <app-inventory-item-form (saved)="onItemSaved()" (cancelled)="onItemCancelled()" />
+  </ng-template>
+
+  <ng-template #movementTemplate>
+    @if (selectedItem(); as selected) {
+      <app-stock-movement-form
+        [item]="selected"
+        (moved)="onMovementSaved()"
+        (cancelled)="onMovementCancelled()"
+      />
+    }
+  </ng-template>
+</div>

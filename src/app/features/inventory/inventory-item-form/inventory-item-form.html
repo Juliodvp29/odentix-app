@@ -1,0 +1,38 @@
+<form class="space-y-16" (submit)="submitItem(); $event.preventDefault()">
+  <p class="text-body text-mid-gray">
+    El stock nace en cero: registra una entrada después de crear el insumo.
+  </p>
+
+  <app-form-field label="Nombre" [field]="itemForm.name">
+    <app-text-input
+      inputId="inventory-item-name"
+      placeholder="Guantes de nitrilo"
+      [field]="itemForm.name"
+    />
+  </app-form-field>
+
+  <app-form-field label="Unidad (opcional)" [field]="itemForm.unit">
+    <app-text-input
+      inputId="inventory-item-unit"
+      placeholder="cajas, unidades, ml..."
+      [field]="itemForm.unit"
+    />
+  </app-form-field>
+
+  <app-form-field label="Umbral mínimo" [field]="itemForm.minThreshold">
+    <app-text-input
+      inputId="inventory-item-threshold"
+      type="number"
+      [field]="itemForm.minThreshold"
+    />
+  </app-form-field>
+
+  @if (serverError(); as message) {
+    <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex justify-end gap-8 pt-8">
+    <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [loading]="saving()">Crear insumo</app-button>
+  </div>
+</form>

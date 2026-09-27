@@ -1,0 +1,41 @@
+<p class="text-body text-mid-gray">
+  Insumo:
+  <span class="font-medium text-ink">{{ item().name || 'Sin nombre' }}</span>
+  <span class="ml-8 text-caption">(stock actual: {{ item().quantity ?? 0 }})</span>
+</p>
+
+<form class="space-y-16" (submit)="submitMovement(); $event.preventDefault()">
+  <app-form-field label="Tipo de movimiento" [field]="movementForm.kind">
+    <app-select
+      inputId="movement-kind"
+      [options]="kindOptions"
+      [field]="movementForm.kind"
+    />
+  </app-form-field>
+
+  <app-form-field label="Cantidad" [field]="movementForm.quantity">
+    <app-text-input inputId="movement-quantity" type="number" [field]="movementForm.quantity" />
+  </app-form-field>
+  @if (movementError(); as message) {
+    <p class="-mt-8 text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <app-form-field label="Motivo (opcional)" [field]="movementForm.reason">
+    <app-text-input
+      inputId="movement-reason"
+      placeholder="Uso en consulta, compra, ajuste..."
+      [field]="movementForm.reason"
+    />
+  </app-form-field>
+
+  @if (serverError(); as message) {
+    <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex justify-end gap-8 pt-8">
+    <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [loading]="saving()">
+      Registrar movimiento
+    </app-button>
+  </div>
+</form>

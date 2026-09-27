@@ -985,12 +985,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] List of specialists, and a view to generate/review a settlement
+- [x] List of specialists, and a view to generate/review a settlement
       for a given period.
 
 **Acceptance criteria:**
 
-- [ ] Generating a settlement shows the computed amount clearly
+- [x] Generating a settlement shows the computed amount clearly
       attributed to the underlying appointments/treatments.
 
 ---
@@ -1003,13 +1003,13 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Inventory item list with current stock, and a form to register a
+- [x] Inventory item list with current stock, and a form to register a
       stock movement.
-- [ ] Visually flag items at or below their critical threshold.
+- [x] Visually flag items at or below their critical threshold.
 
 **Acceptance criteria:**
 
-- [ ] An item at/below threshold is visually distinct in the list
+- [x] An item at/below threshold is visually distinct in the list
       without needing to open it.
 
 ---
