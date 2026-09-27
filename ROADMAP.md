@@ -985,12 +985,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] List of specialists, and a view to generate/review a settlement
+- [x] List of specialists, and a view to generate/review a settlement
       for a given period.
 
 **Acceptance criteria:**
 
-- [ ] Generating a settlement shows the computed amount clearly
+- [x] Generating a settlement shows the computed amount clearly
       attributed to the underlying appointments/treatments.
 
 ---

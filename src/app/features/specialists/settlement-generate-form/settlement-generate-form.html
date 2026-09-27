@@ -1,0 +1,28 @@
+<form class="space-y-16" (submit)="submitSettlement(); $event.preventDefault()">
+  <p class="text-body text-mid-gray">
+    La producción bruta se calcula de lo facturado en el periodo y los honorarios aplican el
+    porcentaje pactado. Un mismo periodo solo se liquida una vez.
+  </p>
+
+  <div class="grid gap-16 sm:grid-cols-2">
+    <app-form-field label="Inicio del periodo" [field]="settlementForm.periodStart">
+      <app-text-input inputId="settlement-start" type="date" [field]="settlementForm.periodStart" />
+    </app-form-field>
+    <app-form-field label="Fin del periodo" [field]="settlementForm.periodEnd">
+      <app-text-input inputId="settlement-end" type="date" [field]="settlementForm.periodEnd" />
+    </app-form-field>
+  </div>
+  @if (rangeError(); as message) {
+    <p class="-mt-8 text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+  @if (serverError(); as message) {
+    <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex justify-end gap-8 pt-8">
+    <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [loading]="saving()">
+      Generar liquidación
+    </app-button>
+  </div>
+</form>

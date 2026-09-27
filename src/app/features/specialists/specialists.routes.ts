@@ -1,11 +1,23 @@
 import { Routes } from '@angular/router';
 
-// Temporary placeholder route. Replaced by the real specialists routes in Fase 8.
 const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('../placeholder/coming-soon').then((m) => m.ComingSoon),
+    loadComponent: () =>
+      import('./specialists-list/specialists-list').then((m) => m.SpecialistsList),
     data: { title: 'Especialistas' },
+  },
+  {
+    path: ':id',
+    loadComponent: () =>
+      import('./specialist-detail/specialist-detail').then((m) => m.SpecialistDetail),
+    data: { title: 'Detalle de especialista' },
+  },
+  {
+    path: ':id/settlements/:settlementId',
+    loadComponent: () =>
+      import('./settlement-detail/settlement-detail').then((m) => m.SettlementDetail),
+    data: { title: 'Detalle de liquidación' },
   },
 ];
 

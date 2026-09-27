@@ -63,6 +63,12 @@ export const NAV_ITEMS: ReadonlyArray<NavItem> = [
     icon: 'wallet',
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
   },
+  {
+    path: '/specialists',
+    label: 'Especialistas',
+    icon: 'stethoscope',
+    roles: ['propietario'],
+  },
 ];
 
 const ROLE_LABELS: Record<UserRole, string> = {

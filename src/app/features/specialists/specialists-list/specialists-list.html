@@ -1,0 +1,86 @@
+<h1 class="text-heading font-semibold text-ink">Especialistas</h1>
+
+@if (loading()) {
+  <div
+    class="grid grid-cols-1 gap-16 sm:grid-cols-2 lg:grid-cols-3"
+    aria-busy="true"
+    aria-label="Cargando especialistas"
+    data-testid="specialists-loading"
+  >
+    @for (index of [0, 1, 2]; track index) {
+      <div class="space-y-12">
+        <div class="h-64"><app-skeleton variant="block" /></div>
+        <div class="h-64"><app-skeleton variant="block" /></div>
+      </div>
+    }
+  </div>
+} @else if (planGated()) {
+  <div class="mx-auto max-w-5xl rounded-card border border-hairline bg-paper p-32 text-center shadow-resting">
+    <app-icon name="lock" class="text-mid-gray" />
+    <p class="mt-12 text-subheading text-ink">Los especialistas no están incluidos en tu plan</p>
+    <p class="mt-4 text-body text-mid-gray">
+      Las liquidaciones de honorarios son una funcionalidad de planes superiores. Los datos
+      están intactos: esta vista se activará sola al ampliar el plan.
+    </p>
+  </div>
+} @else if (loadFailed()) {
+  <div
+    class="rounded-card border border-danger bg-danger-soft p-24 text-center text-body text-danger-deep"
+    role="alert"
+  >
+    <p class="font-medium">No fue posible cargar los especialistas.</p>
+    <app-button class="mt-12" type="button" variant="secondary" (clicked)="retry()">
+      Reintentar
+    </app-button>
+  </div>
+} @else if (specialists().length === 0) {
+  <div class="mx-auto max-w-5xl rounded-card border border-dashed border-hairline p-32 text-center">
+    <p class="text-subheading text-ink">Sin especialistas registrados</p>
+    <p class="mt-4 text-body text-mid-gray">
+      Los especialistas externos con sus honorarios pactados aparecerán aquí.
+    </p>
+  </div>
+} @else {
+  <ul class="grid grid-cols-1 gap-16 sm:grid-cols-2 lg:grid-cols-3">
+    @for (specialist of specialists(); track specialist.id) {
+      <li>
+        <article
+          class="flex h-full flex-col gap-12 rounded-card border border-hairline bg-paper p-20 shadow-resting"
+          [attr.aria-label]="specialist.fullName || 'Especialista'"
+        >
+          <div class="flex items-center gap-12">
+            <span
+              class="flex h-40 w-40 shrink-0 items-center justify-center rounded-pill bg-teal-soft text-body font-medium text-teal-deep"
+              aria-hidden="true"
+            >
+              {{ initials(specialist.fullName) }}
+            </span>
+            <div class="min-w-0">
+              <a
+                [routerLink]="['/specialists', specialist.id]"
+                class="block truncate text-body font-semibold text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+              >
+                {{ specialist.fullName || 'Sin nombre' }}
+              </a>
+              <p class="truncate text-caption text-mid-gray">
+                {{ specialist.specialty || 'Especialidad sin registrar' }}
+              </p>
+            </div>
+          </div>
+          <dl class="space-y-4 text-caption">
+            <div class="flex items-baseline justify-between gap-8">
+              <dt class="text-mid-gray">Honorarios</dt>
+              <dd class="font-semibold text-ink">{{ feeLabel(specialist.feePercentage) }}</dd>
+            </div>
+            @if (specialist.paymentTerms) {
+              <div class="flex items-baseline justify-between gap-8">
+                <dt class="text-mid-gray">Condiciones</dt>
+                <dd class="text-right text-ink-soft">{{ specialist.paymentTerms }}</dd>
+              </div>
+            }
+          </dl>
+        </article>
+      </li>
+    }
+  </ul>
+}

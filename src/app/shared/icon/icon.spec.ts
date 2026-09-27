@@ -9,6 +9,7 @@ const names: ReadonlyArray<IconName> = [
   'chevron-right',
   'chevron-up',
   'search',
+  'stethoscope',
   'target',
   'refresh',
   'pencil',
