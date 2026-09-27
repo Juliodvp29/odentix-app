@@ -945,12 +945,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] UI to define a payment plan in installments and view each
+- [x] UI to define a payment plan in installments and view each
       installment's status.
 
 **Acceptance criteria:**
 
-- [ ] Marking an installment as paid updates its status and the
+- [x] Marking an installment as paid updates its status and the
       portfolio summary (FASE7-02) without a manual refresh.
 
 ---
@@ -963,11 +963,11 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Summary view: total, overdue, upcoming, and current balances.
+- [x] Summary view: total, overdue, upcoming, and current balances.
 
 **Acceptance criteria:**
 
-- [ ] Totals match the backend's portfolio summary endpoint.
+- [x] Totals match the backend's portfolio summary endpoint.
 
 ---
 

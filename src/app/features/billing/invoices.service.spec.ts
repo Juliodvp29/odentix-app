@@ -1,4 +1,7 @@
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { ApiClient } from '@core/api/api-client';
@@ -104,5 +107,31 @@ describe('InvoicesService', () => {
       method: 'efectivo',
     });
     expect(result?.invoiceStatus).toBe('pagada');
+  });
+});
+
+describe('InvoicesService patient invoices', () => {
+  let httpTesting: HttpTestingController;
+  let service: InvoicesService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [InvoicesService, provideHttpClient(), provideHttpClientTesting()],
+    });
+    httpTesting = TestBed.inject(HttpTestingController);
+    service = TestBed.inject(InvoicesService);
+  });
+
+  afterEach(() => {
+    httpTesting.verify();
+  });
+
+  it('should fetch the patient page newest first for plan filtering', () => {
+    TestBed.runInInjectionContext(() => service.patientInvoices(signal('patient-456')));
+    TestBed.tick();
+    const request = httpTesting.expectOne((call) => call.url.endsWith('/api/v1/invoices'));
+    expect(request.request.method).toBe('GET');
+    expect(request.request.params.get('patientId')).toBe('patient-456');
+    request.flush({ content: [MOCK_INVOICE], totalElements: 1 });
   });
 });

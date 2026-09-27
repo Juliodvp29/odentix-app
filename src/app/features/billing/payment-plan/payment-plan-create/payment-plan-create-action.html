@@ -1,0 +1,12 @@
+@if (canCreate()) {
+  <app-button variant="secondary" (clicked)="open()">Crear plan de pago</app-button>
+}
+
+<ng-template #createTemplate>
+  <app-payment-plan-create-form
+    [treatmentPlan]="treatmentPlan()"
+    (created)="onCreated($event)"
+    (alreadyExists)="onAlreadyExists()"
+    (cancelled)="onCancelled()"
+  />
+</ng-template>

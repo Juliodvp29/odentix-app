@@ -167,10 +167,36 @@
           </div>
           <p class="text-right text-caption text-ink-soft">Moneda legal: pesos colombianos (COP)</p>
           <div class="border-t border-hairline pt-16">
-            <app-invoice-create-action [plan]="plan()!" (created)="goToInvoice($event)" />
+            @if (invoicesLoading()) {
+              <div class="h-36" aria-busy="true" aria-label="Cargando facturación">
+                <app-skeleton variant="block" />
+              </div>
+            } @else if (alreadyInvoiced()) {
+              <p class="text-caption font-medium text-ink-soft">Facturación de este plan</p>
+              <ul class="mt-8 space-y-8">
+                @for (invoice of existingInvoices(); track invoice.id) {
+                  <li class="flex items-center justify-between gap-8 text-body">
+                    <a
+                      [routerLink]="['/billing', invoice.id]"
+                      class="font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                    >
+                      {{ invoice.invoiceNumber || 'Factura' }}
+                    </a>
+                    <app-invoice-status-pill [status]="invoice.status" />
+                  </li>
+                }
+              </ul>
+              <p class="mt-8 text-caption text-mid-gray">
+                Este plan ya está facturado. Para cobrar por partes usa un plan de pago.
+              </p>
+            } @else {
+              <app-invoice-create-action [plan]="plan()!" (created)="goToInvoice($event)" />
+            }
           </div>
         </div>
       </aside>
     </div>
+
+    <app-payment-plan-section [treatmentPlan]="plan()!" />
   }
 </div>

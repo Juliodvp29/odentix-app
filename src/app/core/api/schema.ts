@@ -103,7 +103,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Consultar plan de pago
+         * @description Obtiene el plan de pago de un plan de tratamiento con sus cuotas. Devuelve 404 si el tratamiento es de otro tenant o no tiene plan.
+         */
+        get: operations["getPaymentPlan"];
         put?: never;
         /**
          * Crear plan de pago
@@ -2352,6 +2356,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["TreatmentPlanResponse"];
+                };
+            };
+        };
+    };
+    getPaymentPlan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PaymentPlanResponse"];
                 };
             };
         };

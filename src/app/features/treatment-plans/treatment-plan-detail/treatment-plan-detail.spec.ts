@@ -2,8 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { HttpErrorResponse } from '@angular/common/http';
 import { describe, expect, it, vi } from 'vitest';
 import { InvoiceCreateAction } from '@features/billing/invoice-create/invoice-create-action';
+import type { InvoiceResponse } from '@features/billing/billing-models';
+import { InvoicesService } from '@features/billing/invoices.service';
+import { PaymentPlanSection } from '@features/billing/payment-plan/payment-plan-section/payment-plan-section';
+import { PaymentPlansService } from '@features/billing/payment-plan/payment-plans.service';
 import { TreatmentPlansService } from '../treatment-plans.service';
 import { TreatmentPlanResponse } from '../treatment-plan-models';
 import { TreatmentPlanStatusActions } from '../treatment-plan-status-actions/treatment-plan-status-actions';
@@ -33,7 +38,13 @@ describe('TreatmentPlanDetail', () => {
   let fixture: ComponentFixture<TreatmentPlanDetail>;
   let reload: ReturnType<typeof vi.fn>;
 
-  function setup(plan: TreatmentPlanResponse | null = MOCK_PLAN, loading = false, error = false) {
+  function setup(
+    plan: TreatmentPlanResponse | null = MOCK_PLAN,
+    loading = false,
+    error = false,
+    invoices: InvoiceResponse[] = [],
+    invoicesLoading = false,
+  ) {
     const mockDetail = {
       value: signal(plan),
       isLoading: signal(loading),
@@ -41,6 +52,12 @@ describe('TreatmentPlanDetail', () => {
       reload: vi.fn(),
     };
     reload = mockDetail.reload;
+    const mockInvoicesPage = {
+      value: signal({ content: invoices }),
+      isLoading: signal(invoicesLoading),
+      error: signal(undefined),
+      reload: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       imports: [TreatmentPlanDetail],
@@ -50,6 +67,23 @@ describe('TreatmentPlanDetail', () => {
           provide: TreatmentPlansService,
           useValue: {
             detail: () => mockDetail,
+          },
+        },
+        {
+          provide: InvoicesService,
+          useValue: {
+            patientInvoices: () => mockInvoicesPage,
+          },
+        },
+        {
+          provide: PaymentPlansService,
+          useValue: {
+            paymentPlan: () => ({
+              value: signal(null),
+              isLoading: signal(false),
+              error: signal(new HttpErrorResponse({ status: 404 })),
+              reload: vi.fn(),
+            }),
           },
         },
       ],
@@ -126,5 +160,46 @@ describe('TreatmentPlanDetail', () => {
     action.componentInstance.created.emit({ id: 'inv-1', invoiceNumber: 'FAC-000001' });
 
     expect(navigate).toHaveBeenCalledWith(['/billing', 'inv-1']);
+  });
+
+  it('should list the existing invoice instead of the create action when already invoiced', () => {
+    setup(MOCK_PLAN, false, false, [
+      {
+        id: 'inv-1',
+        treatmentPlanId: 'plan-100',
+        invoiceNumber: 'FAC-000001',
+        status: 'pagada',
+      },
+    ]);
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.directive(InvoiceCreateAction))).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('FAC-000001');
+    expect(fixture.nativeElement.textContent).toContain('Pagada');
+    const link = fixture.nativeElement.querySelector(
+      'a[href="/billing/inv-1"]',
+    ) as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+  });
+
+  it('should ignore other patients invoices when checking for duplicates', () => {
+    setup(MOCK_PLAN, false, false, [
+      { id: 'inv-9', treatmentPlanId: 'plan-999', invoiceNumber: 'FAC-000009', status: 'pagada' },
+    ]);
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.directive(InvoiceCreateAction))).not.toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('FAC-000009');
+  });
+
+  it('should render the payment plan section for the current plan', () => {
+    setup();
+    fixture.detectChanges();
+
+    const section = fixture.debugElement.query(By.directive(PaymentPlanSection));
+    expect(section).not.toBeNull();
+    expect(section.componentInstance.treatmentPlan().id).toBe('plan-100');
+    expect(fixture.nativeElement.textContent).toContain('Plan de pago');
+    expect(fixture.nativeElement.textContent).toContain('Crear plan de pago');
   });
 });

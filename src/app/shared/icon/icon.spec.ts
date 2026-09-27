@@ -24,6 +24,7 @@ const names: ReadonlyArray<IconName> = [
   'lock',
   'log-out',
   'users',
+  'wallet',
 ];
 
 describe('Icon', () => {
