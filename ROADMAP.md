@@ -1070,15 +1070,15 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] List/board of open opportunities, sorted by priority, grouped by
+- [x] List/board of open opportunities, sorted by priority, grouped by
       type.
-- [ ] Make this view the post-login landing: redirect `/` here and list
+- [x] Make this view the post-login landing: redirect `/` here and list
       it first in the shell nav (replacing the temporary `/patients`
       landing).
 
 **Acceptance criteria:**
 
-- [ ] The highest-priority, highest-value opportunities are visually
+- [x] The highest-priority, highest-value opportunities are visually
       the most prominent — this view exists specifically to make acting
       on them effortless, design it with that in mind.
 
@@ -1092,12 +1092,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] UI to review and execute (or edit before executing) an
+- [x] UI to review and execute (or edit before executing) an
       opportunity's suggested action.
 
 **Acceptance criteria:**
 
-- [ ] Executing an action gives immediate, clear feedback that it
+- [x] Executing an action gives immediate, clear feedback that it
       happened (toast + the opportunity updating state), never a
       silent success.
 
@@ -1111,11 +1111,11 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Summary of recovered value by category over a period.
+- [x] Summary of recovered value by category over a period.
 
 **Acceptance criteria:**
 
-- [ ] Numbers match the backend's recovered-value endpoint.
+- [x] Numbers match the backend's recovered-value endpoint.
 
 ---
 

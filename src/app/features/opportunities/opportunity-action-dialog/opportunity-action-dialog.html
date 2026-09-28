@@ -1,0 +1,25 @@
+<p class="text-body text-mid-gray">
+  Acción sugerida:
+  <span class="font-medium text-ink">{{ typeLabel() }}</span>
+</p>
+
+<h3 class="mt-8 text-subheading text-ink">{{ title() }}</h3>
+
+@if (message(); as text) {
+  <p class="mt-8 whitespace-pre-line rounded-control bg-surface-alt p-12 text-body text-ink">
+    {{ text }}
+  </p>
+}
+
+<p class="mt-8 text-caption text-mid-gray">{{ channelHint() }}</p>
+
+@if (serverError(); as message) {
+  <p class="mt-8 text-caption text-danger-deep" role="alert">{{ message }}</p>
+}
+
+<div class="flex justify-end gap-8 pt-16">
+  <app-button variant="ghost" [disabled]="executing()" (clicked)="cancel()">Cancelar</app-button>
+  <app-button variant="primary" [loading]="executing()" (clicked)="confirm()">
+    Confirmar y ejecutar
+  </app-button>
+</div>

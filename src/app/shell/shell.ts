@@ -28,6 +28,12 @@ export const NAV_ITEMS: ReadonlyArray<NavItem> = [
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar', 'especialista_externo'],
   },
   {
+    path: '/opportunities',
+    label: 'Oportunidades',
+    icon: 'target',
+    roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
+  },
+  {
     path: '/patients',
     label: 'Pacientes',
     icon: 'users',
