@@ -4,6 +4,13 @@
     <p class="mt-4 text-body text-mid-gray">
       Lo que la clínica está a punto de perder — y cómo recuperarlo.
     </p>
+    <a
+      routerLink="/opportunities/recuperado"
+      class="mt-4 inline-flex items-center gap-4 text-caption font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+    >
+      Ver valor recuperado
+      <app-icon name="chevron-right" />
+    </a>
   </div>
   @if (!planGated() && !loadError()) {
     <div class="rounded-card bg-paper p-20 shadow-resting">

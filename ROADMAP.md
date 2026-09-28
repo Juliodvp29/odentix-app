@@ -1111,11 +1111,11 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] Summary of recovered value by category over a period.
+- [x] Summary of recovered value by category over a period.
 
 **Acceptance criteria:**
 
-- [ ] Numbers match the backend's recovered-value endpoint.
+- [x] Numbers match the backend's recovered-value endpoint.
 
 ---
 

@@ -11,10 +11,15 @@ describe('opportunities routes', () => {
   });
 
   it('should configure the opportunities board route', () => {
-    expect(opportunitiesRoutes).toHaveLength(1);
+    expect(opportunitiesRoutes).toHaveLength(2);
 
     expect(opportunitiesRoutes[0]?.path).toBe('');
     expect(opportunitiesRoutes[0]?.loadComponent).toBeInstanceOf(Function);
+  });
+
+  it('should configure the recovered value route', () => {
+    expect(opportunitiesRoutes[1]?.path).toBe('recuperado');
+    expect(opportunitiesRoutes[1]?.loadComponent).toBeInstanceOf(Function);
   });
 
   it('should land on opportunities after login and on unknown routes', () => {

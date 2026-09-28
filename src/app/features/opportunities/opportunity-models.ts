@@ -9,6 +9,7 @@ export type UpdateOpportunityStatusRequest =
 export type OpportunityType = NonNullable<OpportunityResponse['type']>;
 export type OpportunityStatus = NonNullable<OpportunityResponse['status']>;
 export type OpportunityActionType = NonNullable<OpportunityActionResponse['actionType']>;
+export type RecoveredValueResponse = components['schemas']['RecoveredValueResponse'];
 
 export type PriorityTier = 'high' | 'medium' | 'low';
 export type OpportunitySegment = 'activas' | 'resuelta' | 'descartada';
@@ -138,4 +139,75 @@ export function groupOpportunities(
 
 export function totalValue(opportunities: ReadonlyArray<OpportunityResponse>): number {
   return opportunities.reduce((sum, item) => sum + opportunityValue(item), 0);
+}
+
+export interface MetricsDateRange {
+  readonly from: string;
+  readonly to: string;
+}
+
+export interface RecoveryCategoryRow {
+  readonly label: string;
+  readonly detail: string;
+  readonly amount: string;
+  readonly width: string;
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function formatIsoDay(date: Date): string {
+  const pad = (value: number): string => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+// Default dashboard window: the last 30 days including today.
+export function defaultMetricsRange(now: Date = new Date()): MetricsDateRange {
+  const to = formatIsoDay(now);
+  const from = formatIsoDay(new Date(now.getTime() - 29 * DAY_MS));
+  return { from, to };
+}
+
+// Day bounds as backend instants in Bogota time (no daylight saving).
+export function rangeBounds(range: MetricsDateRange): { from: string; to: string } {
+  return {
+    from: `${range.from}T00:00:00-05:00`,
+    to: `${range.to}T23:59:59-05:00`,
+  };
+}
+
+export function recoveredTotals(items: ReadonlyArray<RecoveredValueResponse>): {
+  total: number;
+  count: number;
+} {
+  return items.reduce<{ total: number; count: number }>(
+    (acc, item) => ({
+      total: acc.total + Number(item.totalAmountCop ?? 0),
+      count: acc.count + Number(item.count ?? 0),
+    }),
+    { total: 0, count: 0 },
+  );
+}
+
+// One row per category with a bar proportional to the largest amount,
+// so the biggest recovery reads as the most prominent.
+export function recoveryCategoryRows(
+  items: ReadonlyArray<RecoveredValueResponse>,
+): ReadonlyArray<RecoveryCategoryRow> {
+  const parsed = (items ?? []).map((item) => {
+    const type = item.type;
+    return {
+      label: (type && OPPORTUNITY_TYPE_META[type]?.label) || type || 'Sin categoría',
+      count: Number(item.count ?? 0),
+      amount: Number(item.totalAmountCop ?? 0),
+    };
+  });
+  const max = Math.max(0, ...parsed.map((row) => row.amount));
+  return parsed
+    .sort((a, b) => b.amount - a.amount)
+    .map((row) => ({
+      label: row.label,
+      detail: `${row.count} recuperada${row.count === 1 ? '' : 's'}`,
+      amount: valueLabel(row.amount),
+      width: `${max > 0 ? Math.round((row.amount / max) * 100) : 0}%`,
+    }));
 }

@@ -1,4 +1,5 @@
 import { Component, TemplateRef, computed, inject, signal, viewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Button } from '@shared/button/button';
 import { Icon } from '@shared/icon/icon';
 import { Skeleton } from '@shared/skeleton/skeleton';
@@ -46,7 +47,7 @@ const TIER_TEXT_CLASS: Record<PriorityTier, string> = {
 
 @Component({
   selector: 'app-opportunities-board',
-  imports: [Button, Icon, OpportunityActionDialog, Skeleton],
+  imports: [Button, Icon, OpportunityActionDialog, RouterLink, Skeleton],
   templateUrl: './opportunities-board.html',
   host: { class: 'block space-y-24' },
 })

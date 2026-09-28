@@ -1,8 +1,12 @@
 import { HttpErrorResponse, HttpResourceRef, httpResource } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Signal, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
-import { OpportunityActionResponse, OpportunityResponse } from './opportunity-models';
+import {
+  OpportunityActionResponse,
+  OpportunityResponse,
+  RecoveredValueResponse,
+} from './opportunity-models';
 
 // The opportunities engine is a gated plan feature: a tenant without it
 // gets 403 instead of data (explained in the UI, never a dead end).
@@ -30,5 +34,25 @@ export class OpportunitiesService {
       `/api/v1/opportunities/${opportunityId}/actions/${actionId}/execute`,
       {},
     );
+  }
+
+  // Reactive resource for the recovered value per category in a range.
+  // Numbers come straight from the backend endpoint: the view never
+  // recomputes attribution client-side. Empty bounds skip the request.
+  recoveredValue(
+    from: Signal<string>,
+    to: Signal<string>,
+  ): HttpResourceRef<RecoveredValueResponse[] | undefined> {
+    return httpResource<RecoveredValueResponse[]>(() => {
+      const fromValue = from();
+      const toValue = to();
+      if (!fromValue || !toValue) {
+        return undefined;
+      }
+      return {
+        url: this.api.url('/api/v1/opportunities/recovered-value'),
+        params: { from: fromValue, to: toValue },
+      };
+    });
   }
 }

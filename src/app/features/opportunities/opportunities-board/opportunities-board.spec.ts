@@ -133,6 +133,15 @@ describe('OpportunitiesBoard', () => {
     expect(reload).toHaveBeenCalled();
   });
 
+  it('should link to the recovered value view', () => {
+    setup();
+    const link = fixture.nativeElement.querySelector(
+      'a[href="/opportunities/recuperado"]',
+    ) as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    expect(link.textContent).toContain('Ver valor recuperado');
+  });
+
   it('should show the empty state without opportunities', () => {
     setup([]);
     expect(fixture.nativeElement.textContent).toContain('No hay oportunidades aquí');

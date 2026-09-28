@@ -1,14 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import {
   actionTypeLabel,
+  defaultMetricsRange,
   groupOpportunities,
   opportunityTitle,
   opportunityValue,
   priorityTier,
+  rangeBounds,
+  recoveredTotals,
+  recoveryCategoryRows,
   totalValue,
   valueLabel,
 } from './opportunity-models';
 import { OpportunityResponse } from './opportunity-models';
+import { RecoveredValueResponse } from './opportunity-models';
 
 const LEAD: OpportunityResponse = {
   id: 'o-1',
@@ -91,5 +96,37 @@ describe('groupOpportunities', () => {
 
   it('should skip empty types', () => {
     expect(groupOpportunities([])).toEqual([]);
+  });
+});
+
+describe('defaultMetricsRange and rangeBounds', () => {
+  it('should cover the last 30 days as Bogota day bounds', () => {
+    const range = defaultMetricsRange(new Date(2026, 8, 28));
+    expect(range).toEqual({ from: '2026-08-30', to: '2026-09-28' });
+    expect(rangeBounds(range)).toEqual({
+      from: '2026-08-30T00:00:00-05:00',
+      to: '2026-09-28T23:59:59-05:00',
+    });
+  });
+});
+
+describe('recoveredTotals and recoveryCategoryRows', () => {
+  const items: RecoveredValueResponse[] = [
+    { type: 'saldo_vencido', totalAmountCop: 150000, count: 2 },
+    { type: 'lead_sin_respuesta', totalAmountCop: 300000, count: 1 },
+  ];
+
+  it('should total amounts and counts', () => {
+    expect(recoveredTotals(items)).toEqual({ total: 450000, count: 3 });
+    expect(recoveredTotals([])).toEqual({ total: 0, count: 0 });
+  });
+
+  it('should sort categories by amount with proportional bars', () => {
+    const rows = recoveryCategoryRows(items);
+    expect(rows.map((row) => row.label)).toEqual(['Lead sin respuesta', 'Saldo vencido']);
+    expect(rows[0]?.amount).toContain('300.000');
+    expect(rows[0]?.width).toBe('100%');
+    expect(rows[1]?.width).toBe('50%');
+    expect(rows[1]?.detail).toBe('2 recuperadas');
   });
 });
