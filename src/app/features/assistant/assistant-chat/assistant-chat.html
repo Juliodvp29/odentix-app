@@ -1,0 +1,99 @@
+<div>
+  <h1 class="text-heading text-ink">Asistente</h1>
+  <p class="mt-4 text-body text-mid-gray">
+    Pregunta por la operación de la clínica en lenguaje natural.
+  </p>
+</div>
+
+@if (planGated()) {
+  <div class="rounded-card border border-hairline bg-paper p-32 text-center shadow-resting">
+    <app-icon name="lock" class="text-mid-gray" />
+    <p class="mt-12 text-subheading text-ink">El asistente no está incluido en tu plan</p>
+    <p class="mt-4 text-body text-mid-gray">
+      El asistente con IA es una funcionalidad de planes superiores. Esta vista se activará sola al
+      ampliar el plan.
+    </p>
+  </div>
+} @else {
+  @if (messages().length === 0 && !thinking()) {
+    <div class="py-16 text-center">
+      <app-icon name="search" class="text-faint-gray" />
+      <p class="mt-12 text-subheading text-ink">¿Por dónde empezamos?</p>
+      <div class="mx-auto mt-16 flex max-w-xl flex-col gap-8">
+        @for (example of examples; track example) {
+          <app-button variant="secondary" (clicked)="useExample(example)">
+            {{ example }}
+          </app-button>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="space-y-16" aria-live="polite" aria-label="Conversación">
+      @for (message of messages(); track $index) {
+        @if (message.role === 'user') {
+          <div class="flex justify-end">
+            <p
+              class="max-w-[85%] rounded-card rounded-br-sm bg-teal-soft px-16 py-12 text-body text-ink"
+            >
+              {{ message.text }}
+            </p>
+          </div>
+        } @else {
+          <div class="flex justify-start">
+            <div class="max-w-[85%] rounded-card rounded-bl-sm bg-paper px-16 py-12 shadow-resting">
+              <p class="whitespace-pre-line text-body text-ink">{{ message.text }}</p>
+              @if (message.fallback) {
+                <p class="mt-8 text-caption text-mid-gray">
+                  Respuesta de respaldo: verifica los datos antes de actuar.
+                </p>
+              }
+            </div>
+          </div>
+        }
+      }
+      @if (thinking()) {
+        <div class="flex justify-start" data-testid="assistant-thinking">
+          <div
+            class="w-full max-w-[85%] animate-pulse rounded-card rounded-bl-sm bg-paper px-16 py-12 shadow-resting"
+            role="status"
+          >
+            <p class="text-body text-mid-gray">El asistente está pensando…</p>
+            <div class="mt-8 space-y-8" aria-hidden="true">
+              <app-skeleton variant="line" />
+              <app-skeleton variant="line" />
+            </div>
+          </div>
+        </div>
+      }
+      @if (sendError(); as error) {
+        <div class="flex justify-start">
+          <div
+            class="max-w-[85%] rounded-card rounded-bl-sm border border-danger bg-danger-soft px-16 py-12"
+            role="alert"
+          >
+            <p class="text-body text-danger-deep">{{ error }}</p>
+            <app-button class="mt-8" variant="ghost" (clicked)="retry()"> Reintentar </app-button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <form
+    class="space-y-16 rounded-card border border-hairline bg-paper p-16 shadow-resting"
+    aria-label="Preguntar al asistente"
+    (submit)="send(); $event.preventDefault()"
+  >
+    <app-form-field label="Pregunta" [field]="chatForm.question">
+      <app-text-input
+        inputId="assistant-question"
+        placeholder="¿Qué quieres saber de tu clínica?"
+        [field]="chatForm.question"
+      />
+    </app-form-field>
+
+    <div class="flex justify-end">
+      <app-button type="submit" variant="primary" [loading]="thinking()">Preguntar</app-button>
+    </div>
+  </form>
+}
