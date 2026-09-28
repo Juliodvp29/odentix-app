@@ -7,7 +7,7 @@ import { Select, SelectOption } from '@shared/select/select';
 import { Skeleton } from '@shared/skeleton/skeleton';
 import { ToastService } from '@shared/toast/toast.service';
 import { PatientResponse, PatientsService } from '@features/patients/patients.service';
-import { AppointmentsService } from '@features/appointments/appointments.service';
+import { ProfessionalsService } from '@features/appointments/professionals.service';
 import {
   CreateTreatmentPlanItemRequest,
   CreateTreatmentPlanRequest,
@@ -52,11 +52,11 @@ export class TreatmentPlanBuilder {
 
   private readonly plansService = inject(TreatmentPlansService);
   private readonly patientsService = inject(PatientsService);
-  private readonly appointmentsService = inject(AppointmentsService);
+  private readonly directory = inject(ProfessionalsService);
   private readonly toasts = inject(ToastService);
 
   readonly professionalSelectOptions = computed<ReadonlyArray<SelectOption>>(() =>
-    this.appointmentsService.professionalOptions().map((p) => ({ value: p.id, label: p.name })),
+    this.directory.professionalOptions().map((p) => ({ value: p.id, label: p.name })),
   );
 
   readonly patientSearch = signal('');
@@ -101,7 +101,7 @@ export class TreatmentPlanBuilder {
   );
 
   readonly professionalId = signal<string>('');
-  readonly professionalOptions = computed(() => this.appointmentsService.professionalOptions());
+  readonly professionalOptions = computed(() => this.directory.professionalOptions());
 
   readonly diagnosis = signal<string>('');
   readonly items = signal<TreatmentPlanItemDraft[]>([createDraftItem()]);

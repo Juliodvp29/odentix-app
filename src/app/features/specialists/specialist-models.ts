@@ -1,6 +1,7 @@
 import { components } from '@core/api/schema';
 
 export type SpecialistResponse = components['schemas']['SpecialistResponse'];
+export type CreateSpecialistRequest = components['schemas']['CreateSpecialistRequest'];
 export type SettlementResponse = components['schemas']['SettlementResponse'];
 export type SettlementBreakdownResponse =
   components['schemas']['SettlementBreakdownResponse'];

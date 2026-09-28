@@ -5,7 +5,7 @@ import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { ApiClient } from '@core/api/api-client';
-import { SettlementResponse } from './specialist-models';
+import { SettlementResponse, SpecialistResponse } from './specialist-models';
 import { SettlementsService, isPlanGateError } from './settlements.service';
 
 const MOCK_SETTLEMENT: SettlementResponse = {
@@ -82,6 +82,24 @@ describe('SettlementsService', () => {
       periodEnd: '2026-09-30',
     });
     expect(result).toEqual(MOCK_SETTLEMENT);
+  });
+
+  it('should post a specialist profile for a professional', async () => {
+    const profile: SpecialistResponse = { id: 'spec-9', professionalId: 'prof-9' };
+    vi.spyOn(api, 'post').mockReturnValue(of(profile));
+
+    let result: SpecialistResponse | undefined;
+    service
+      .createSpecialist({ professionalId: 'prof-9', feePercentage: 30 })
+      .subscribe((res) => {
+        result = res;
+      });
+
+    expect(api.post).toHaveBeenCalledWith('/api/v1/specialists', {
+      professionalId: 'prof-9',
+      feePercentage: 30,
+    });
+    expect(result).toEqual(profile);
   });
 });
 

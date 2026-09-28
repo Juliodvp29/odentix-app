@@ -1079,6 +1079,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Listar notificaciones
+         * @description Historial paginado de intentos de envío del tenant activo, ordenado por fecha descendente, con su estado y detalle de error.
+         */
+        get: operations["listarNotificaciones"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -2164,6 +2184,41 @@ export interface components {
             totalAmountCop?: number;
             /** Format: int64 */
             count?: number;
+        };
+        NotificationResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            patientId?: string;
+            /** @enum {string} */
+            channel?: "email" | "whatsapp" | "sms";
+            recipient?: string;
+            templateKey?: string;
+            /** @enum {string} */
+            status?: "pendiente" | "enviada" | "fallida";
+            /** Format: date-time */
+            sentAt?: string;
+            errorDetail?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        PageNotificationResponse: {
+            /** Format: int32 */
+            totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            size?: number;
+            content?: components["schemas"]["NotificationResponse"][];
+            /** Format: int32 */
+            number?: number;
+            sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            first?: boolean;
+            last?: boolean;
+            empty?: boolean;
         };
         PageLeadResponse: {
             /** Format: int32 */
@@ -4274,6 +4329,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["RecoveredValueResponse"][];
+                };
+            };
+        };
+    };
+    listarNotificaciones: {
+        parameters: {
+            query: {
+                pageable: components["schemas"]["Pageable"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageNotificationResponse"];
                 };
             };
         };

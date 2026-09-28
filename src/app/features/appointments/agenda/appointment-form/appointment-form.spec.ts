@@ -1,6 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, expect, it, vi } from 'vitest';
+import { ProfessionalsService } from '../../professionals.service';
 import { AppointmentForm } from './appointment-form';
 
 async function flushEffects(): Promise<void> {
@@ -14,11 +16,28 @@ async function flushDebounce(): Promise<void> {
 describe('AppointmentForm', () => {
   let fixture: ComponentFixture<AppointmentForm>;
   let httpTesting: HttpTestingController;
+  let retryDirectory: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
+    retryDirectory = vi.fn();
     await TestBed.configureTestingModule({
       imports: [AppointmentForm],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: ProfessionalsService,
+          useValue: {
+            professionalOptions: () => [{ id: 'prof-1', name: 'Dra. Ríos' }],
+            roomOptions: () => [{ id: 'room-1', name: 'Box 1' }],
+            professionalsLoading: () => false,
+            roomsLoading: () => false,
+            professionalsError: () => undefined,
+            roomsError: () => undefined,
+            retry: retryDirectory,
+          },
+        },
+      ],
     }).compileComponents();
     fixture = TestBed.createComponent(AppointmentForm);
     httpTesting = TestBed.inject(HttpTestingController);
@@ -134,5 +153,14 @@ describe('AppointmentForm', () => {
     clickButton('Cancelar');
     expect(cancelled).toBe(true);
     httpTesting.expectNone((call) => call.method === 'POST');
+  });
+
+  it('should list directory professionals including external ones', () => {
+    expect(fixture.componentInstance.professionalSelectOptions()).toEqual([
+      { value: 'prof-1', label: 'Dra. Ríos' },
+    ]);
+    expect(fixture.componentInstance.roomSelectOptions()).toEqual([
+      { value: 'room-1', label: 'Box 1' },
+    ]);
   });
 });

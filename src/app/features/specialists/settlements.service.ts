@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ApiClient } from '@core/api/api-client';
 import {
   CreateSettlementRequest,
+  CreateSpecialistRequest,
   SettlementBreakdownResponse,
   SettlementResponse,
   SpecialistResponse,
@@ -72,6 +73,15 @@ export class SettlementsService {
   ): Observable<SettlementResponse> {
     return this.api.post<CreateSettlementRequest, SettlementResponse>(
       `/api/v1/specialists/${specialistId}/settlements`,
+      body,
+    );
+  }
+
+  // Creates the financial profile for an external professional.
+  // A professional with a profile already answers 409.
+  createSpecialist(body: CreateSpecialistRequest): Observable<SpecialistResponse> {
+    return this.api.post<CreateSpecialistRequest, SpecialistResponse>(
+      '/api/v1/specialists',
       body,
     );
   }

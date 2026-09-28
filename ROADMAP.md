@@ -1055,7 +1055,7 @@ backend adjustments summary).
       backend log access.
 
 ---
-
+      
 # FASE 10 — Opportunities dashboard
 
 **Suggested labels:** `frontend`, `fase-10`

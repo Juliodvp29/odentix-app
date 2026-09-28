@@ -186,6 +186,9 @@ describe('AgendaPage', () => {
     await flushEffects();
     fixture.detectChanges();
     httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    // AppointmentForm loads the professionals/rooms directory when opened.
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/professionals')).flush([]);
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/rooms')).flush([]);
     const dialogForm = document.body.querySelector(
       '.modal-pane app-appointment-form',
     ) as HTMLElement;
@@ -328,6 +331,8 @@ describe('AgendaPage', () => {
     fixture.detectChanges();
     // AppointmentForm fires an initial patients search when opened — flush it.
     httpTesting.expectOne((call) => call.url.endsWith('/api/v1/patients')).flush({ content: [] });
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/professionals')).flush([]);
+    httpTesting.expectOne((call) => call.url.endsWith('/api/v1/rooms')).flush([]);
     expect(document.body.querySelector('.modal-pane app-appointment-form')).not.toBeNull();
   });
 });
