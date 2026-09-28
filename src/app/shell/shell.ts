@@ -81,6 +81,12 @@ export const NAV_ITEMS: ReadonlyArray<NavItem> = [
     icon: 'check',
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
   },
+  {
+    path: '/notifications',
+    label: 'Notificaciones',
+    icon: 'eye',
+    roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
+  },
 ];
 
 const ROLE_LABELS: Record<UserRole, string> = {
