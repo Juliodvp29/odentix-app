@@ -1133,14 +1133,14 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] A simple interface to ask the backend's assistant endpoint a
+- [x] A simple interface to ask the backend's assistant endpoint a
       question and display the answer, with a clear loading state
       (this is a network call to an LLM provider — it will not be
       instant, design the wait accordingly).
 
 **Acceptance criteria:**
 
-- [ ] The loading state makes it obvious the assistant is "thinking,"
+- [x] The loading state makes it obvious the assistant is "thinking,"
       not that the app is frozen.
 
 ---
