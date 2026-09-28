@@ -1070,15 +1070,15 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] List/board of open opportunities, sorted by priority, grouped by
+- [x] List/board of open opportunities, sorted by priority, grouped by
       type.
-- [ ] Make this view the post-login landing: redirect `/` here and list
+- [x] Make this view the post-login landing: redirect `/` here and list
       it first in the shell nav (replacing the temporary `/patients`
       landing).
 
 **Acceptance criteria:**
 
-- [ ] The highest-priority, highest-value opportunities are visually
+- [x] The highest-priority, highest-value opportunities are visually
       the most prominent — this view exists specifically to make acting
       on them effortless, design it with that in mind.
 

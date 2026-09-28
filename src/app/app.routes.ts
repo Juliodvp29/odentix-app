@@ -8,7 +8,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./shell/shell').then((m) => m.Shell),
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'patients' },
+      { path: '', pathMatch: 'full', redirectTo: 'opportunities' },
       // One lazy route file per feature module (Fases 3–12). Each file is a
       // placeholder today and grows into the real feature routes in its phase.
       { path: 'patients', loadChildren: () => import('./features/patients/patients.routes') },
@@ -50,5 +50,5 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: () => import('./features/auth/login-page/login-page').then((m) => m.LoginPage),
   },
-  { path: '**', redirectTo: 'patients' },
+  { path: '**', redirectTo: 'opportunities' },
 ];

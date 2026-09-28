@@ -1,0 +1,111 @@
+<div class="flex flex-wrap items-end justify-between gap-16">
+  <div>
+    <h1 class="text-heading text-ink">Oportunidades</h1>
+    <p class="mt-4 text-body text-mid-gray">
+      Lo que la clínica está a punto de perder — y cómo recuperarlo.
+    </p>
+  </div>
+  @if (!planGated() && !loadError()) {
+    <div class="rounded-card bg-paper p-20 shadow-resting">
+      <p class="text-caption uppercase text-mid-gray">Valor en juego</p>
+      <p class="text-display text-ink">{{ totalLabel() }}</p>
+      <p class="mt-4 text-caption text-mid-gray">{{ activeCount() }} activas</p>
+    </div>
+  }
+</div>
+
+@if (planGated()) {
+  <div
+    class="mx-auto max-w-5xl rounded-card border border-hairline bg-paper p-32 text-center shadow-resting"
+  >
+    <app-icon name="lock" class="text-mid-gray" />
+    <p class="mt-12 text-subheading text-ink">Las oportunidades no están incluidas en tu plan</p>
+    <p class="mt-4 text-body text-mid-gray">
+      La detección automática de oportunidades es una funcionalidad de planes superiores. Esta vista
+      se activará sola al ampliar el plan.
+    </p>
+  </div>
+} @else if (loadError()) {
+  <section class="rounded-card bg-paper p-24 text-center shadow-resting" role="alert">
+    <p class="text-body text-danger-deep">No pudimos cargar las oportunidades.</p>
+    <app-button class="mt-12" variant="secondary" (clicked)="retry()">Reintentar</app-button>
+  </section>
+} @else {
+  <div class="flex gap-16 border-b border-hairline" role="tablist" aria-label="Estados">
+    @for (option of segments; track option.value) {
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="segment() === option.value"
+        [class]="
+          segment() === option.value
+            ? 'border-b-2 border-teal pb-8 text-body font-medium text-ink'
+            : 'pb-8 text-body text-mid-gray'
+        "
+        (click)="showSegment(option.value)"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="space-y-24" aria-busy="true" data-testid="opportunities-loading">
+      @for (index of [0, 1, 2]; track index) {
+        <section class="rounded-card bg-paper p-20 shadow-resting">
+          <app-skeleton variant="line" />
+          <div class="mt-12 space-y-8">
+            <app-skeleton variant="line" />
+            <app-skeleton variant="line" />
+          </div>
+        </section>
+      }
+    </div>
+  } @else if (groups().length === 0) {
+    <div class="mx-auto max-w-5xl py-32 text-center">
+      <app-icon name="target" class="text-faint-gray" />
+      <p class="mt-12 text-subheading text-ink">No hay oportunidades aquí</p>
+      <p class="mt-4 text-body text-mid-gray">
+        Cuando el sistema detecte una, aparecerá en esta vista lista para actuar.
+      </p>
+    </div>
+  } @else {
+    <div class="space-y-32">
+      @for (group of groups(); track group.type) {
+        <section [attr.aria-label]="group.label">
+          <div class="flex flex-wrap items-baseline justify-between gap-8">
+            <div>
+              <h2 class="text-heading-sm text-ink">{{ group.label }}</h2>
+              <p class="text-caption text-mid-gray">{{ group.hint }}</p>
+            </div>
+            <p class="text-body text-mid-gray">
+              {{ group.items.length }} · {{ amount({ estimatedValueCop: group.groupValue }) }}
+            </p>
+          </div>
+          <div class="mt-12 grid gap-16 md:grid-cols-2 xl:grid-cols-3">
+            @for (opportunity of group.items; track opportunity.id) {
+              <article
+                class="rounded-card border bg-paper p-20 shadow-resting"
+                [class]="tierCardClass(opportunity)"
+              >
+                <div class="flex items-start justify-between gap-12">
+                  <h3 class="text-body font-medium text-ink">{{ title(opportunity) }}</h3>
+                  <p class="shrink-0 text-body font-semibold text-ink">
+                    {{ amount(opportunity) }}
+                  </p>
+                </div>
+                <p class="mt-4 text-caption text-mid-gray">
+                  Detectada {{ detectedLabel(opportunity) }} ·
+                  {{ suggestedActionLabel(opportunity) }}
+                </p>
+                <p class="mt-12 text-caption font-medium" [class]="tierTextClass(opportunity)">
+                  {{ tierLabel(opportunity) }}
+                </p>
+              </article>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  }
+}
