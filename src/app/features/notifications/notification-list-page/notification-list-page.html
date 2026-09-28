@@ -1,0 +1,41 @@
+<div class="space-y-24">
+  <div>
+    <h1 class="text-heading text-ink">Notificaciones</h1>
+    <p class="mt-4 text-body text-mid-gray">
+      Historial de envíos de WhatsApp y correo, con su estado y errores de entrega.
+    </p>
+  </div>
+
+  @if (loadError()) {
+    <section class="rounded-card bg-paper p-24 text-center shadow-resting" role="alert">
+      <p class="text-body text-danger-deep">No pudimos cargar las notificaciones.</p>
+      <app-button class="mt-12" variant="secondary" (clicked)="retry()">Reintentar</app-button>
+    </section>
+  } @else {
+    @if (truncated()) {
+      <p class="text-caption text-mid-gray">
+        Mostrando los intentos más recientes ({{ totalCount() }} en total).
+      </p>
+    }
+    <app-table
+      [columns]="columns"
+      [rows]="rows()"
+      [total]="total()"
+      [loading]="loading()"
+      [query]="query()"
+      [rowActions]="rowActions"
+      emptyMessage="No hay intentos de notificación para mostrar"
+      (queryChange)="onQueryChange($event)"
+    >
+      <ng-template #rowActions let-row>
+        <app-button variant="ghost" (clicked)="openDetail(attempt(row))"> Ver detalle </app-button>
+      </ng-template>
+    </app-table>
+  }
+
+  <ng-template #detailTemplate>
+    @if (selected(); as current) {
+      <app-notification-detail [notification]="current" (closed)="onDetailClosed()" />
+    }
+  </ng-template>
+</div>

@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { ToastService } from '@shared/toast/toast.service';
 import { PatientsService } from '@features/patients/patients.service';
-import { AppointmentsService } from '@features/appointments/appointments.service';
+import { ProfessionalsService } from '@features/appointments/professionals.service';
 import { TreatmentPlansService } from '../treatment-plans.service';
 import { TreatmentPlanResponse } from '../treatment-plan-models';
 import { TreatmentPlanBuilder } from './treatment-plan-builder';
@@ -40,7 +40,7 @@ describe('TreatmentPlanBuilder', () => {
           },
         },
         {
-          provide: AppointmentsService,
+          provide: ProfessionalsService,
           useValue: {
             professionalOptions: () => [{ id: 'prof-1', name: 'Dr. Mario Bros' }],
           },

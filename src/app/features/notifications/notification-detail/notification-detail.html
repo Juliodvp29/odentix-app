@@ -1,0 +1,37 @@
+<dl class="space-y-12 text-body">
+  <div class="flex justify-between gap-16">
+    <dt class="text-mid-gray">Fecha</dt>
+    <dd class="text-right text-ink">{{ createdLabel() }}</dd>
+  </div>
+  <div class="flex justify-between gap-16">
+    <dt class="text-mid-gray">Canal</dt>
+    <dd class="text-right text-ink">{{ channelLabel() }}</dd>
+  </div>
+  <div class="flex justify-between gap-16">
+    <dt class="text-mid-gray">Destinatario</dt>
+    <dd class="text-right text-ink">{{ notification().recipient || '—' }}</dd>
+  </div>
+  <div class="flex justify-between gap-16">
+    <dt class="text-mid-gray">Plantilla</dt>
+    <dd class="text-right text-ink">{{ notification().templateKey || '—' }}</dd>
+  </div>
+  <div class="flex justify-between gap-16">
+    <dt class="text-mid-gray">Estado</dt>
+    <dd class="text-right font-medium text-ink">{{ statusLabel() }}</dd>
+  </div>
+  <div class="flex justify-between gap-16">
+    <dt class="text-mid-gray">Enviada</dt>
+    <dd class="text-right text-ink">{{ sentLabel() }}</dd>
+  </div>
+</dl>
+
+@if (notification().errorDetail) {
+  <div class="mt-16 rounded-control border border-danger bg-danger-soft p-12">
+    <p class="text-caption font-medium text-danger-deep">Detalle del error</p>
+    <p class="mt-4 text-body text-danger-deep">{{ notification().errorDetail }}</p>
+  </div>
+}
+
+<div class="mt-16 flex justify-end">
+  <app-button variant="ghost" (clicked)="close()">Cerrar</app-button>
+</div>

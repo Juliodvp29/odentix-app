@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
+import { ToastService } from '@shared/toast/toast.service';
 import { SpecialistResponse } from '../specialist-models';
 import { SettlementsService } from '../settlements.service';
 import { SpecialistsList } from './specialists-list';
@@ -91,6 +92,30 @@ describe('SpecialistsList', () => {
     );
     const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
     button.click();
+    expect(reload).toHaveBeenCalled();
+  });
+
+  it('should open the creation modal from the header', () => {
+    setup();
+    const buttons = Array.from(
+      fixture.nativeElement.querySelectorAll('button'),
+    ) as HTMLButtonElement[];
+    const create = buttons.find((button) => button.textContent?.includes('Nuevo especialista'));
+    expect(create).toBeTruthy();
+    create?.click();
+    fixture.detectChanges();
+    expect(document.querySelector('.cdk-overlay-pane')?.textContent).toContain(
+      'Nombre completo',
+    );
+    document.querySelectorAll('.cdk-overlay-container').forEach((element) => element.remove());
+    document.documentElement.classList.remove('cdk-global-scrollblock');
+  });
+
+  it('should toast and reload after a specialist is created', () => {
+    setup();
+    const toasts = TestBed.inject(ToastService);
+    fixture.componentInstance.onCreated();
+    expect(toasts.toasts().map((toast) => toast.message)).toContain('Especialista creado.');
     expect(reload).toHaveBeenCalled();
   });
 });

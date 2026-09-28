@@ -1,4 +1,11 @@
-<h1 class="text-heading font-semibold text-ink">Especialistas</h1>
+<div class="flex flex-col gap-8 sm:flex-row sm:items-baseline sm:justify-between">
+  <h1 class="text-heading font-semibold text-ink">Especialistas</h1>
+  @if (!loading() && !planGated() && !loadFailed()) {
+    <app-button variant="primary" icon="plus" (clicked)="openCreate()">
+      Nuevo especialista
+    </app-button>
+  }
+</div>
 
 @if (loading()) {
   <div
@@ -84,3 +91,7 @@
     }
   </ul>
 }
+
+<ng-template #createTemplate>
+  <app-specialist-create-form (created)="onCreated()" (cancelled)="onCreateCancelled()" />
+</ng-template>

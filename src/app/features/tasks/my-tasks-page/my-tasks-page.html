@@ -1,0 +1,88 @@
+<div class="space-y-24">
+  <div>
+    <h1 class="text-heading text-ink">Tareas</h1>
+    <p class="mt-4 text-body text-mid-gray">
+      Tareas operativas activas: complétalas o reasígnalas sin salir de esta vista.
+    </p>
+  </div>
+
+  <div class="flex gap-16 border-b border-hairline" role="tablist" aria-label="Listas de tareas">
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="tab() === 'mine'"
+      [class]="
+        tab() === 'mine'
+          ? 'border-b-2 border-teal pb-8 text-body font-medium text-ink'
+          : 'pb-8 text-body text-mid-gray'
+      "
+      (click)="showTab('mine')"
+    >
+      Mis tareas
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="tab() === 'all'"
+      [class]="
+        tab() === 'all'
+          ? 'border-b-2 border-teal pb-8 text-body font-medium text-ink'
+          : 'pb-8 text-body text-mid-gray'
+      "
+      (click)="showTab('all')"
+    >
+      Todas
+    </button>
+  </div>
+
+  @if (loadError()) {
+    <section class="rounded-card bg-paper p-24 text-center shadow-resting" role="alert">
+      <p class="text-body text-danger-deep">No pudimos cargar las tareas.</p>
+      <app-button class="mt-12" variant="secondary" (clicked)="retry()">Reintentar</app-button>
+    </section>
+  } @else {
+    <app-table
+      [columns]="columns"
+      [rows]="rows()"
+      [total]="total()"
+      [loading]="loading()"
+      [query]="query()"
+      [rowActions]="rowActions"
+      [emptyMessage]="emptyMessage()"
+      (queryChange)="onQueryChange($event)"
+    >
+      <ng-template #rowActions let-row>
+        <div class="flex gap-8">
+          <app-button
+            variant="secondary"
+            [loading]="isCompleting(task(row))"
+            (clicked)="complete(task(row))"
+          >
+            Completar
+          </app-button>
+          <app-button variant="ghost" (clicked)="openReassign(task(row))"> Reasignar </app-button>
+        </div>
+      </ng-template>
+    </app-table>
+  }
+
+  <ng-template #reassignTemplate>
+    @if (selectedTask(); as selected) {
+      @if (membersError()) {
+        <p class="text-body text-danger-deep" role="alert">
+          No pudimos cargar los miembros de la clínica. Cierra e intenta de nuevo.
+        </p>
+        <div class="mt-16 flex justify-end">
+          <app-button variant="ghost" (clicked)="onReassignCancelled()">Cerrar</app-button>
+        </div>
+      } @else {
+        <app-task-reassign-form
+          [task]="selected"
+          [members]="members()"
+          (reassigned)="onReassigned($event)"
+          (cancelled)="onReassignCancelled()"
+        />
+      }
+    }
+  </ng-template>
+</div>

@@ -1,0 +1,59 @@
+<form class="space-y-16" (submit)="submitSpecialist(); $event.preventDefault()">
+  <p class="text-body text-mid-gray">
+    Se crea el profesional como externo y se pacta su porcentaje de honorarios en el mismo paso.
+  </p>
+
+  <app-form-field label="Nombre completo" [field]="specialistForm.fullName">
+    <app-text-input
+      inputId="specialist-name"
+      placeholder="Dra. María Gómez"
+      autocomplete="name"
+      [field]="specialistForm.fullName"
+    />
+  </app-form-field>
+
+  <div class="grid gap-16 sm:grid-cols-2">
+    <app-form-field label="Especialidad (opcional)" [field]="specialistForm.specialty">
+      <app-text-input
+        inputId="specialist-specialty"
+        placeholder="Endodoncia"
+        [field]="specialistForm.specialty"
+      />
+    </app-form-field>
+    <app-form-field label="Matrícula (opcional)" [field]="specialistForm.licenseNumber">
+      <app-text-input
+        inputId="specialist-license"
+        placeholder="END-1023"
+        [field]="specialistForm.licenseNumber"
+      />
+    </app-form-field>
+  </div>
+
+  <div class="grid gap-16 sm:grid-cols-2">
+    <app-form-field label="Honorarios (%)" [field]="specialistForm.feePercentage">
+      <app-text-input
+        inputId="specialist-fee"
+        type="number"
+        [field]="specialistForm.feePercentage"
+      />
+    </app-form-field>
+    <app-form-field label="Condiciones (opcional)" [field]="specialistForm.paymentTerms">
+      <app-text-input
+        inputId="specialist-terms"
+        placeholder="Neto 15 días"
+        [field]="specialistForm.paymentTerms"
+      />
+    </app-form-field>
+  </div>
+
+  @if (serverError(); as message) {
+    <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex justify-end gap-8 pt-8">
+    <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [loading]="saving()">
+      Crear especialista
+    </app-button>
+  </div>
+</form>

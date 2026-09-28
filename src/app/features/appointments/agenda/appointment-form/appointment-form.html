@@ -54,6 +54,20 @@
       />
     </app-form-field>
   </div>
+  @if (directoryLoading()) {
+    <p class="text-caption text-mid-gray" role="status">Cargando profesionales y consultorios…</p>
+  } @else if (directoryError()) {
+    <p class="text-caption text-danger-deep" role="alert">
+      No pudimos cargar profesionales y consultorios.
+      <button
+        type="button"
+        class="font-medium text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+        (click)="retryDirectory()"
+      >
+        Reintentar
+      </button>
+    </p>
+  }
 
   <div class="grid gap-16 sm:grid-cols-2">
     <app-form-field label="Inicio" [field]="appointmentForm.startsAt">

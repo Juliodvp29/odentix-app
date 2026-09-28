@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { ToastService } from '@shared/toast/toast.service';
 import { PatientsService } from '@features/patients/patients.service';
-import { AppointmentsService } from '@features/appointments/appointments.service';
+import { ProfessionalsService } from '@features/appointments/professionals.service';
 import { TreatmentPlansService } from '../treatment-plans.service';
 import { TreatmentPlanBuilderPage } from './treatment-plan-builder-page';
 
@@ -35,7 +35,7 @@ describe('TreatmentPlanBuilderPage', () => {
           },
         },
         {
-          provide: AppointmentsService,
+          provide: ProfessionalsService,
           useValue: {
             professionalOptions: () => [],
           },

@@ -12,6 +12,7 @@ import {
   AppointmentsService,
   CreateAppointmentRequest,
 } from '../../appointments.service';
+import { ProfessionalsService } from '../../professionals.service';
 import { toBackendInstant } from '../../agenda-dates';
 import { PatientResponse, PatientsService } from '@features/patients/patients.service';
 
@@ -33,6 +34,7 @@ export class AppointmentForm {
   readonly cancelled = output<void>();
 
   private readonly agenda = inject(AppointmentsService);
+  private readonly directory = inject(ProfessionalsService);
   private readonly patients = inject(PatientsService);
 
   readonly patientSearch = signal('');
@@ -62,18 +64,30 @@ export class AppointmentForm {
   });
 
   readonly professionalSelectOptions = computed<SelectOption[]>(() =>
-    this.agenda
+    this.directory
       .professionalOptions()
       .map((professional) => ({ value: professional.id, label: professional.name })),
   );
   readonly roomSelectOptions = computed<SelectOption[]>(() =>
-    this.agenda.roomOptions().map((room) => ({ value: room.id, label: room.name })),
+    this.directory.roomOptions().map((room) => ({ value: room.id, label: room.name })),
+  );
+  readonly directoryLoading = computed(
+    () => this.directory.professionalsLoading() || this.directory.roomsLoading(),
+  );
+  readonly directoryError = computed(
+    () =>
+      this.directory.professionalsError() !== undefined ||
+      this.directory.roomsError() !== undefined,
   );
   readonly riskSelectOptions = RISK_OPTIONS;
 
   readonly saving = signal(false);
   readonly serverError = signal<string | null>(null);
   readonly rangeError = signal<string | null>(null);
+
+  retryDirectory(): void {
+    this.directory.retry();
+  }
 
   onPatientSearch(event: Event): void {
     this.patientSearch.set((event.target as HTMLInputElement).value);

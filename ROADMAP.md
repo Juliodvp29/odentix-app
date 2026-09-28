@@ -1028,12 +1028,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] List of tasks assigned to the current user, with the ability to
+- [x] List of tasks assigned to the current user, with the ability to
       complete/reassign.
 
 **Acceptance criteria:**
 
-- [ ] Completing a task removes it from the active list immediately.
+- [x] Completing a task removes it from the active list immediately.
 
 ---
 
@@ -1045,17 +1045,17 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] A view (likely admin-facing) showing recent notification attempts
+- [x] A view (likely admin-facing) showing recent notification attempts
       and their status (sent/failed), useful for debugging WhatsApp/
       email delivery issues without touching the backend directly.
 
 **Acceptance criteria:**
 
-- [ ] A failed notification's error detail is visible without needing
+- [x] A failed notification's error detail is visible without needing
       backend log access.
 
 ---
-
+      
 # FASE 10 — Opportunities dashboard
 
 **Suggested labels:** `frontend`, `fase-10`

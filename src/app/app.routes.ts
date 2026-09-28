@@ -35,6 +35,10 @@ export const routes: Routes = [
       { path: 'inventory', loadChildren: () => import('./features/inventory/inventory.routes') },
       { path: 'tasks', loadChildren: () => import('./features/tasks/tasks.routes') },
       {
+        path: 'notifications',
+        loadChildren: () => import('./features/notifications/notifications.routes'),
+      },
+      {
         path: 'opportunities',
         loadChildren: () => import('./features/opportunities/opportunities.routes'),
       },
