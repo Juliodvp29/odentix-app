@@ -2,10 +2,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
+import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { OpportunitiesBoard } from './opportunities-board';
 import { OpportunityResponse } from '../opportunity-models';
 import { OpportunitiesService } from '../opportunities.service';
+import { ModalService } from '@shared/modal/modal.service';
+import { ToastService } from '@shared/toast/toast.service';
 
 const OPEN: OpportunityResponse[] = [
   {
@@ -16,7 +19,11 @@ const OPEN: OpportunityResponse[] = [
     status: 'abierta',
     detectedAt: '2026-09-20T10:00:00Z',
     actions: [
-      { actionType: 'crear_tarea', suggestedMessage: 'Llamar a Ana\nInterés en ortodoncia.' },
+      {
+        id: 'a-1',
+        actionType: 'crear_tarea',
+        suggestedMessage: 'Llamar a Ana\nInterés en ortodoncia.',
+      },
     ],
   },
   {
@@ -26,6 +33,7 @@ const OPEN: OpportunityResponse[] = [
     estimatedValueCop: 500000,
     status: 'en_progreso',
     detectedAt: '2026-09-21T10:00:00Z',
+    actions: [{ id: 'a-2', actionType: 'crear_tarea', executed: true }],
   },
   {
     id: 'o-3',
@@ -40,6 +48,8 @@ const OPEN: OpportunityResponse[] = [
 describe('OpportunitiesBoard', () => {
   let fixture: ComponentFixture<OpportunitiesBoard>;
   let reload: ReturnType<typeof vi.fn>;
+  let modalOpen: ReturnType<typeof vi.fn>;
+  let toastSuccess: ReturnType<typeof vi.fn>;
 
   function setup(
     opportunities: OpportunityResponse[] | null = OPEN,
@@ -53,12 +63,16 @@ describe('OpportunitiesBoard', () => {
       reload: vi.fn(),
     };
     reload = mockResource.reload;
+    modalOpen = vi.fn(() => ({ close: vi.fn(), closed: of(null) }));
+    toastSuccess = vi.fn();
 
     TestBed.configureTestingModule({
       imports: [OpportunitiesBoard],
       providers: [
         provideRouter([]),
         { provide: OpportunitiesService, useValue: { open: () => mockResource } },
+        { provide: ModalService, useValue: { open: modalOpen } },
+        { provide: ToastService, useValue: { success: toastSuccess, error: vi.fn() } },
       ],
     }).compileComponents();
 
@@ -122,5 +136,43 @@ describe('OpportunitiesBoard', () => {
   it('should show the empty state without opportunities', () => {
     setup([]);
     expect(fixture.nativeElement.textContent).toContain('No hay oportunidades aquí');
+  });
+
+  it('should mark executed actions without an execute button', () => {
+    setup();
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Ejecutada');
+    expect(text).toContain('Revisar y ejecutar');
+  });
+
+  it('should open the review dialog for a pending action', () => {
+    setup();
+    const execute = Array.from(fixture.nativeElement.querySelectorAll('button')).find((button) =>
+      (button as HTMLButtonElement).textContent?.includes('Revisar y ejecutar'),
+    ) as HTMLButtonElement;
+    execute.click();
+    expect(modalOpen).toHaveBeenCalled();
+    expect(fixture.componentInstance.selectedOpportunity()?.id).toBe('o-1');
+  });
+
+  it('should toast and reload after executing an action', () => {
+    setup();
+    fixture.componentInstance.onActionExecuted({
+      opportunity: OPEN[0] as OpportunityResponse,
+      action: { actionType: 'crear_tarea', executed: true },
+    });
+    expect(toastSuccess).toHaveBeenCalledWith('Tarea creada para "Llamar a Ana".');
+    expect(reload).toHaveBeenCalled();
+    expect(fixture.componentInstance.selectedOpportunity()).toBeNull();
+  });
+
+  it('should confirm message delivery after executing a message action', () => {
+    setup();
+    fixture.componentInstance.onActionExecuted({
+      opportunity: OPEN[0] as OpportunityResponse,
+      action: { actionType: 'enviar_mensaje', executed: true },
+    });
+    expect(toastSuccess).toHaveBeenCalledWith('Mensaje enviado al contacto registrado.');
+    expect(reload).toHaveBeenCalled();
   });
 });

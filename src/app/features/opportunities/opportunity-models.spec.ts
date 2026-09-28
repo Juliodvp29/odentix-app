@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  actionTypeLabel,
   groupOpportunities,
   opportunityTitle,
   opportunityValue,
@@ -65,6 +66,18 @@ describe('opportunityValue and totalValue', () => {
 
   it('should format values as COP', () => {
     expect(valueLabel(300000)).toContain('300.000');
+  });
+});
+
+describe('actionTypeLabel', () => {
+  it('should label every known action type in Spanish', () => {
+    expect(actionTypeLabel('crear_tarea')).toBe('Crear tarea');
+    expect(actionTypeLabel('enviar_mensaje')).toBe('Enviar mensaje');
+  });
+
+  it('should fall back without an action type', () => {
+    expect(actionTypeLabel(null)).toBe('Sin acción sugerida');
+    expect(actionTypeLabel(undefined)).toBe('Sin acción sugerida');
   });
 });
 

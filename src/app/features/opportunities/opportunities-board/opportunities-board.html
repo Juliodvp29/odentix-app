@@ -101,6 +101,17 @@
                 <p class="mt-12 text-caption font-medium" [class]="tierTextClass(opportunity)">
                   {{ tierLabel(opportunity) }}
                 </p>
+                @if (pendingAction(opportunity)) {
+                  <div class="mt-12">
+                    <app-button variant="secondary" (clicked)="openExecute(opportunity)">
+                      Revisar y ejecutar
+                    </app-button>
+                  </div>
+                } @else {
+                  @if (opportunity.actions?.length) {
+                    <p class="mt-12 text-caption font-medium text-success-deep">Ejecutada</p>
+                  }
+                }
               </article>
             }
           </div>
@@ -109,3 +120,13 @@
     </div>
   }
 }
+
+<ng-template #executeTemplate>
+  @if (selectedOpportunity(); as selected) {
+    <app-opportunity-action-dialog
+      [opportunity]="selected"
+      (executed)="onActionExecuted($event)"
+      (cancelled)="onExecuteCancelled()"
+    />
+  }
+</ng-template>

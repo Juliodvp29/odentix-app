@@ -1092,12 +1092,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] UI to review and execute (or edit before executing) an
+- [x] UI to review and execute (or edit before executing) an
       opportunity's suggested action.
 
 **Acceptance criteria:**
 
-- [ ] Executing an action gives immediate, clear feedback that it
+- [x] Executing an action gives immediate, clear feedback that it
       happened (toast + the opportunity updating state), never a
       silent success.
 

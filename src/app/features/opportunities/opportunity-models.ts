@@ -8,6 +8,7 @@ export type UpdateOpportunityStatusRequest =
 
 export type OpportunityType = NonNullable<OpportunityResponse['type']>;
 export type OpportunityStatus = NonNullable<OpportunityResponse['status']>;
+export type OpportunityActionType = NonNullable<OpportunityActionResponse['actionType']>;
 
 export type PriorityTier = 'high' | 'medium' | 'low';
 export type OpportunitySegment = 'activas' | 'resuelta' | 'descartada';
@@ -98,6 +99,16 @@ export function opportunityValue(
 
 export function valueLabel(value: number | null | undefined): string {
   return formatCurrencyCop(Number(value ?? 0));
+}
+
+export function actionTypeLabel(actionType: OpportunityActionType | null | undefined): string {
+  if (actionType === 'crear_tarea') {
+    return 'Crear tarea';
+  }
+  if (actionType === 'enviar_mensaje') {
+    return 'Enviar mensaje';
+  }
+  return 'Sin acción sugerida';
 }
 
 function compareOpportunities(a: OpportunityResponse, b: OpportunityResponse): number {
