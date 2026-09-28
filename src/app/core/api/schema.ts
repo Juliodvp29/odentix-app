@@ -164,6 +164,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/specialists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Listar especialistas
+         * @description Obtiene los especialistas externos del tenant con su porcentaje de honorarios.
+         */
+        get: operations["listarEspecialistas"];
+        put?: never;
+        /**
+         * Crear ficha de especialista
+         * @description Pacta el porcentaje de honorarios de un profesional externo. Devuelve 409 si el profesional ya tiene ficha y 400 si no es externo.
+         */
+        post: operations["crearEspecialista"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/specialists/{id}/settlements": {
         parameters: {
             query?: never;
@@ -182,6 +206,30 @@ export interface paths {
          * @description Calcula la producción bruta facturada del especialista en el periodo y genera su liquidación de honorarios. Devuelve 409 si el periodo ya fue liquidado.
          */
         post: operations["generarLiquidacion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/professionals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Listar profesionales
+         * @description Obtiene los profesionales del tenant ordenados por nombre, con filtros opcionales por activos y externos.
+         */
+        get: operations["listarProfesionales"];
+        put?: never;
+        /**
+         * Crear profesional
+         * @description Crea un profesional (de planta o externo) en el tenant activo.
+         */
+        post: operations["crearProfesional"];
         delete?: never;
         options?: never;
         head?: never;
@@ -854,6 +902,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Listar usuarios
+         * @description Obtiene los miembros del tenant activo ordenados por nombre.
+         */
+        get: operations["listarUsuarios"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tasks/mine": {
         parameters: {
             query?: never;
@@ -866,26 +934,6 @@ export interface paths {
          * @description Tareas asignadas al usuario autenticado.
          */
         get: operations["misTareas"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/specialists": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Listar especialistas
-         * @description Obtiene los especialistas externos del tenant con su porcentaje de honorarios.
-         */
-        get: operations["listarEspecialistas"];
         put?: never;
         post?: never;
         delete?: never;
@@ -926,6 +974,26 @@ export interface paths {
          * @description Obtiene las facturas que componen la producción bruta de la liquidación. Devuelve 404 si pertenece a otro tenant o a otro especialista.
          */
         get: operations["obtenerDesglose"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rooms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Listar consultorios
+         * @description Obtiene los consultorios del tenant ordenados por nombre.
+         */
+        get: operations["listarConsultorios"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1417,6 +1485,22 @@ export interface components {
             /** @enum {string} */
             status?: "pendiente" | "en_progreso" | "completada" | "cancelada";
         };
+        CreateSpecialistRequest: {
+            /** Format: uuid */
+            professionalId: string;
+            feePercentage: number;
+            paymentTerms?: string;
+        };
+        SpecialistResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            professionalId?: string;
+            fullName?: string;
+            specialty?: string;
+            feePercentage?: number;
+            paymentTerms?: string;
+        };
         CreateSettlementRequest: {
             /** Format: date */
             periodStart: string;
@@ -1436,6 +1520,21 @@ export interface components {
             feeAmountCop?: number;
             /** @enum {string} */
             status?: "pendiente" | "pagada";
+        };
+        CreateProfessionalRequest: {
+            fullName: string;
+            specialty?: string;
+            licenseNumber?: string;
+            isExternal?: boolean;
+        };
+        ProfessionalResponse: {
+            /** Format: uuid */
+            id?: string;
+            fullName?: string;
+            specialty?: string;
+            licenseNumber?: string;
+            isExternal?: boolean;
+            isActive?: boolean;
         };
         CreatePatientRequest: {
             firstName: string;
@@ -1971,16 +2070,6 @@ export interface components {
             sorted?: boolean;
             unsorted?: boolean;
         };
-        SpecialistResponse: {
-            /** Format: uuid */
-            id?: string;
-            /** Format: uuid */
-            professionalId?: string;
-            fullName?: string;
-            specialty?: string;
-            feePercentage?: number;
-            paymentTerms?: string;
-        };
         SettlementBreakdownLineResponse: {
             /** Format: uuid */
             invoiceId?: string;
@@ -2009,6 +2098,12 @@ export interface components {
             /** Format: int32 */
             invoiceCount?: number;
             invoices?: components["schemas"]["SettlementBreakdownLineResponse"][];
+        };
+        RoomResponse: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+            isActive?: boolean;
         };
         PortfolioSummaryResponse: {
             totalAmountCop?: number;
@@ -2577,6 +2672,50 @@ export interface operations {
             };
         };
     };
+    listarEspecialistas: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SpecialistResponse"][];
+                };
+            };
+        };
+    };
+    crearEspecialista: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSpecialistRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SpecialistResponse"];
+                };
+            };
+        };
+    };
     listarLiquidaciones: {
         parameters: {
             query?: never;
@@ -2621,6 +2760,53 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["SettlementResponse"];
+                };
+            };
+        };
+    };
+    listarProfesionales: {
+        parameters: {
+            query?: {
+                onlyActive?: boolean;
+                externalOnly?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ProfessionalResponse"][];
+                };
+            };
+        };
+    };
+    crearProfesional: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateProfessionalRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ProfessionalResponse"];
                 };
             };
         };
@@ -3898,6 +4084,26 @@ export interface operations {
             };
         };
     };
+    listarUsuarios: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["UserSummaryDto"][];
+                };
+            };
+        };
+    };
     misTareas: {
         parameters: {
             query?: never;
@@ -3914,26 +4120,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["TaskResponse"][];
-                };
-            };
-        };
-    };
-    listarEspecialistas: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SpecialistResponse"][];
                 };
             };
         };
@@ -3980,6 +4166,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["SettlementBreakdownResponse"];
+                };
+            };
+        };
+    };
+    listarConsultorios: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RoomResponse"][];
                 };
             };
         };

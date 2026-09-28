@@ -1028,12 +1028,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] List of tasks assigned to the current user, with the ability to
+- [x] List of tasks assigned to the current user, with the ability to
       complete/reassign.
 
 **Acceptance criteria:**
 
-- [ ] Completing a task removes it from the active list immediately.
+- [x] Completing a task removes it from the active list immediately.
 
 ---
 

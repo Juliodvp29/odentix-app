@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
 
-// Temporary placeholder route. Replaced by the real tasks routes in Fase 9.
 const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('../placeholder/coming-soon').then((m) => m.ComingSoon),
+    loadComponent: () => import('./my-tasks-page/my-tasks-page').then((m) => m.MyTasksPage),
     data: { title: 'Tareas' },
   },
 ];

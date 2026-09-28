@@ -1,0 +1,24 @@
+<p class="text-body text-mid-gray">
+  Tarea:
+  <span class="font-medium text-ink">{{ task().title || 'Sin título' }}</span>
+</p>
+
+<form class="space-y-16" (submit)="submitReassign(); $event.preventDefault()">
+  <app-form-field label="Responsable" [field]="reassignForm.assignedTo">
+    <app-select
+      inputId="task-assignee"
+      placeholder="Elige un miembro"
+      [options]="memberOptions()"
+      [field]="reassignForm.assignedTo"
+    />
+  </app-form-field>
+
+  @if (serverError(); as message) {
+    <p class="text-caption text-danger-deep" role="alert">{{ message }}</p>
+  }
+
+  <div class="flex justify-end gap-8 pt-8">
+    <app-button variant="ghost" [disabled]="saving()" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [loading]="saving()"> Reasignar tarea </app-button>
+  </div>
+</form>
