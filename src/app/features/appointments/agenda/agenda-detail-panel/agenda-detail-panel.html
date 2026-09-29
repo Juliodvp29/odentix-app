@@ -83,6 +83,10 @@
       (converted)="converted.emit($event)"
     />
 
+    <app-button class="mt-16" variant="secondary" (clicked)="openCompose()">
+      Sugerir mensaje
+    </app-button>
+
     <!-- Patient record link -->
     @if (patientRoute(); as route) {
       <app-link [route]="route" class="mt-16 block"> Ficha clínica → </app-link>
@@ -91,3 +95,13 @@
     <p class="text-body text-mid-gray">Selecciona una cita para ver su detalle.</p>
   }
 </div>
+
+<ng-template #composeTemplate>
+  @if (composingAppointmentId(); as appointmentId) {
+    <app-message-compose-dialog
+      [appointmentId]="appointmentId"
+      (sent)="onMessageSent($event)"
+      (cancelled)="onComposeCancelled()"
+    />
+  }
+</ng-template>

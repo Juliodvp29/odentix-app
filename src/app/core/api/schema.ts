@@ -328,6 +328,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Enviar mensaje revisado
+         * @description Envía por el canal indicado el mensaje ya revisado para una cita. El destinatario sale del paciente de la cita.
+         */
+        post: operations["enviarMensajeRevisado"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/leads": {
         parameters: {
             query?: never;
@@ -1687,6 +1707,31 @@ export interface components {
             /** Format: uuid */
             notificationId?: string;
         };
+        SendMessageRequest: {
+            /** Format: uuid */
+            appointmentId: string;
+            /** @enum {string} */
+            channel: "email" | "whatsapp" | "sms";
+            subject?: string;
+            body: string;
+        };
+        NotificationResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            patientId?: string;
+            /** @enum {string} */
+            channel?: "email" | "whatsapp" | "sms";
+            recipient?: string;
+            templateKey?: string;
+            /** @enum {string} */
+            status?: "pendiente" | "enviada" | "fallida";
+            /** Format: date-time */
+            sentAt?: string;
+            errorDetail?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
         CreateLeadRequest: {
             fullName: string;
             phone?: string;
@@ -2184,23 +2229,6 @@ export interface components {
             totalAmountCop?: number;
             /** Format: int64 */
             count?: number;
-        };
-        NotificationResponse: {
-            /** Format: uuid */
-            id?: string;
-            /** Format: uuid */
-            patientId?: string;
-            /** @enum {string} */
-            channel?: "email" | "whatsapp" | "sms";
-            recipient?: string;
-            templateKey?: string;
-            /** @enum {string} */
-            status?: "pendiente" | "enviada" | "fallida";
-            /** Format: date-time */
-            sentAt?: string;
-            errorDetail?: string;
-            /** Format: date-time */
-            createdAt?: string;
         };
         PageNotificationResponse: {
             /** Format: int32 */
@@ -3079,6 +3107,30 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["OpportunityActionResponse"];
+                };
+            };
+        };
+    };
+    enviarMensajeRevisado: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendMessageRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["NotificationResponse"];
                 };
             };
         };
