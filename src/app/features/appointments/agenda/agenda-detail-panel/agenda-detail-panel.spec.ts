@@ -21,7 +21,7 @@ describe('AgendaDetailPanel', () => {
         provideRouter([]),
         { provide: SessionService, useValue: { currentUser } },
         { provide: ModalService, useValue: { open } },
-        { provide: ToastService, useValue: { success: vi.fn() } },
+        { provide: ToastService, useValue: { success: vi.fn(), error: vi.fn() } },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(AgendaDetailPanel);
@@ -89,5 +89,29 @@ describe('AgendaDetailPanel', () => {
     expect(text).toContain('CAMBIAR ESTADO');
     expect(text).toContain('Confirmar');
     expect(text).toContain('Cancelar');
+  });
+
+  it('should open the message composer for the selected appointment', () => {
+    fixture.componentRef.setInput('appointment', { id: 'appointment-1' });
+    fixture.detectChanges();
+    const suggest = Array.from(fixture.nativeElement.querySelectorAll('button')).find((button) =>
+      (button as HTMLButtonElement).textContent?.includes('Sugerir mensaje'),
+    ) as HTMLButtonElement;
+    suggest.click();
+    expect(open).toHaveBeenCalled();
+    expect(fixture.componentInstance.composingAppointmentId()).toBe('appointment-1');
+  });
+
+  it('should confirm delivery after sending the reviewed message', () => {
+    const toasts = TestBed.inject(ToastService);
+    fixture.componentInstance.onMessageSent({ status: 'enviada', channel: 'whatsapp' });
+    expect(toasts.success).toHaveBeenCalledWith('Mensaje enviado por WhatsApp.');
+    expect(fixture.componentInstance.composingAppointmentId()).toBeNull();
+  });
+
+  it('should explain delivery failures without silence', () => {
+    const toasts = TestBed.inject(ToastService);
+    fixture.componentInstance.onMessageSent({ status: 'fallida', errorDetail: 'Timeout' });
+    expect(toasts.error).toHaveBeenCalledWith('No se pudo entregar el mensaje: Timeout.');
   });
 });

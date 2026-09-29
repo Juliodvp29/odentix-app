@@ -1,0 +1,76 @@
+@if (suggesting()) {
+  <div aria-busy="true" data-testid="compose-loading">
+    <p class="text-body text-mid-gray">Redactando sugerencia…</p>
+    <div class="mt-12 space-y-8" aria-hidden="true">
+      <app-skeleton variant="line" />
+      <app-skeleton variant="line" />
+      <app-skeleton variant="line" />
+    </div>
+  </div>
+} @else if (planGated()) {
+  <div class="py-16 text-center">
+    <app-icon name="lock" class="text-mid-gray" />
+    <p class="mt-12 text-subheading text-ink">El asistente no está incluido en tu plan</p>
+    <p class="mt-4 text-body text-mid-gray">
+      La redacción con IA es una funcionalidad de planes superiores.
+    </p>
+    <div class="mt-16 flex justify-end">
+      <app-button variant="ghost" (clicked)="cancel()">Cerrar</app-button>
+    </div>
+  </div>
+} @else if (suggestError(); as error) {
+  <div class="py-16 text-center" role="alert">
+    <p class="text-body text-danger-deep">{{ error }}</p>
+    <div class="mt-16 flex justify-end gap-8">
+      <app-button variant="ghost" (clicked)="cancel()">Cerrar</app-button>
+      <app-button variant="secondary" (clicked)="suggest()">Reintentar</app-button>
+    </div>
+  </div>
+} @else {
+  @if (isFallback()) {
+    <p class="text-caption text-mid-gray">
+      Sugerencia de respaldo: revísala con cuidado antes de enviar.
+    </p>
+  }
+
+  <form class="mt-8 space-y-16" (submit)="send(); $event.preventDefault()">
+    <app-form-field label="Canal de envío" [field]="composeForm.channel">
+      <app-select
+        inputId="compose-channel"
+        [options]="channelOptions"
+        [field]="composeForm.channel"
+        (valueChange)="onChannelChange($event)"
+      />
+    </app-form-field>
+
+    @if (showSubject()) {
+      <app-form-field label="Asunto" [field]="composeForm.subject">
+        <app-text-input
+          inputId="compose-subject"
+          placeholder="Motivo del correo"
+          [field]="composeForm.subject"
+        />
+      </app-form-field>
+    }
+
+    <app-form-field label="Mensaje (revísalo y edítalo)" [field]="composeForm.body">
+      <app-text-area
+        inputId="compose-body"
+        [rows]="6"
+        placeholder="Mensaje para el paciente…"
+        [field]="composeForm.body"
+      />
+    </app-form-field>
+
+    @if (sendError(); as error) {
+      <p class="text-caption text-danger-deep" role="alert">{{ error }}</p>
+    }
+
+    <div class="flex justify-end gap-8 pt-8">
+      <app-button variant="ghost" [disabled]="sending()" (clicked)="cancel()">Cancelar</app-button>
+      <app-button type="submit" variant="primary" [loading]="sending()">
+        Enviar mensaje
+      </app-button>
+    </div>
+  </form>
+}

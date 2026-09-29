@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { ApiClient } from '@core/api/api-client';
-import { AskResponse } from './assistant-models';
+import { AskResponse, SentNotification, SuggestMessageResponse } from './assistant-models';
 import { AssistantService } from './assistant.service';
 
 const MOCK_ANSWER: AskResponse = {
@@ -44,5 +44,35 @@ describe('AssistantService', () => {
       question: '¿Qué citas están en riesgo?',
     });
     expect(result).toEqual(MOCK_ANSWER);
+  });
+
+  it('should suggest a message draft for an appointment', () => {
+    vi.spyOn(api, 'post').mockReturnValue(of({ message: 'Hola.', suggestedChannel: 'whatsapp' }));
+
+    let result: SuggestMessageResponse | undefined;
+    service.suggestMessage('appt-1').subscribe((res) => {
+      result = res;
+    });
+
+    expect(api.post).toHaveBeenCalledWith('/api/v1/assistant/suggest-message', {
+      appointmentId: 'appt-1',
+    });
+    expect(result?.suggestedChannel).toBe('whatsapp');
+  });
+
+  it('should send the reviewed message with its channel', () => {
+    vi.spyOn(api, 'post').mockReturnValue(of({ id: 'n-1', status: 'enviada' }));
+
+    let result: SentNotification | undefined;
+    service.sendMessage('appt-1', 'whatsapp', 'Hola, te esperamos.').subscribe((res) => {
+      result = res;
+    });
+
+    expect(api.post).toHaveBeenCalledWith('/api/v1/notifications/send', {
+      appointmentId: 'appt-1',
+      channel: 'whatsapp',
+      body: 'Hola, te esperamos.',
+    });
+    expect(result?.status).toBe('enviada');
   });
 });
