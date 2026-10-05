@@ -3,9 +3,19 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { CurrentUser, SessionService } from '@core/auth/session.service';
 import { components } from '@core/api/schema';
+import {
+  PLAN_FEATURE_AI_ASSISTANT,
+  PLAN_FEATURE_CARTERA,
+  PLAN_FEATURE_CRM_LEADS,
+  PLAN_FEATURE_INVENTORY,
+  PLAN_FEATURE_OPPORTUNITIES,
+  PLAN_FEATURE_SPECIALISTS,
+} from '@app/features/plans/plan-models';
+import { PlanService } from '@app/features/plans/plan.service';
 import { BrandMark } from '@shared/brand-mark/brand-mark';
 import { Icon, IconName } from '@shared/icon/icon';
 import { IconButton } from '@shared/icon-button/icon-button';
+import { Skeleton } from '@shared/skeleton/skeleton';
 import { Toasts } from '@shared/toast/toasts';
 import { initialsOf } from '@shared/table/table-models';
 
@@ -17,6 +27,7 @@ export interface NavItem {
   readonly icon: IconName;
   readonly exact?: boolean;
   readonly roles: ReadonlyArray<UserRole>;
+  readonly feature?: string;
 }
 
 export const NAV_ITEMS: ReadonlyArray<NavItem> = [
@@ -32,6 +43,7 @@ export const NAV_ITEMS: ReadonlyArray<NavItem> = [
     label: 'Oportunidades',
     icon: 'target',
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
+    feature: PLAN_FEATURE_OPPORTUNITIES,
   },
   {
     path: '/patients',
@@ -62,24 +74,28 @@ export const NAV_ITEMS: ReadonlyArray<NavItem> = [
     label: 'Prospectos',
     icon: 'target',
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
+    feature: PLAN_FEATURE_CRM_LEADS,
   },
   {
     path: '/portfolio',
     label: 'Cartera',
     icon: 'wallet',
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
+    feature: PLAN_FEATURE_CARTERA,
   },
   {
     path: '/specialists',
     label: 'Especialistas',
     icon: 'stethoscope',
     roles: ['propietario'],
+    feature: PLAN_FEATURE_SPECIALISTS,
   },
   {
     path: '/inventory',
     label: 'Inventario',
     icon: 'package',
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
+    feature: PLAN_FEATURE_INVENTORY,
   },
   {
     path: '/tasks',
@@ -98,6 +114,7 @@ export const NAV_ITEMS: ReadonlyArray<NavItem> = [
     label: 'Asistente',
     icon: 'search',
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
+    feature: PLAN_FEATURE_AI_ASSISTANT,
   },
 ];
 
@@ -112,21 +129,34 @@ const ROLE_LABELS: Record<UserRole, string> = {
 export function visibleNavItems(
   items: ReadonlyArray<NavItem>,
   role: UserRole | null | undefined,
+  hasFeature: (feature: string) => boolean = () => true,
 ): ReadonlyArray<NavItem> {
   if (!role) {
     return [];
   }
-  return items.filter((item) => item.roles.includes(role));
+  return items.filter(
+    (item) => item.roles.includes(role) && (item.feature ? hasFeature(item.feature) : true),
+  );
 }
 
 @Component({
   selector: 'app-shell',
-  imports: [BrandMark, Icon, IconButton, RouterLink, RouterLinkActive, RouterOutlet, Toasts],
+  imports: [
+    BrandMark,
+    Icon,
+    IconButton,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    Skeleton,
+    Toasts,
+  ],
   templateUrl: './shell.html',
 })
 export class Shell {
   private readonly session = inject(SessionService);
   private readonly auth = inject(AuthService);
+  private readonly plan = inject(PlanService);
 
   readonly user = computed<CurrentUser | null>(() => this.session.currentUser());
   readonly initials = computed(() => initialsOf(this.user()?.fullName ?? ''));
@@ -134,7 +164,10 @@ export class Shell {
     const role = this.user()?.role;
     return role ? ROLE_LABELS[role] : '';
   });
-  readonly visibleItems = computed(() => visibleNavItems(NAV_ITEMS, this.user()?.role));
+  readonly planReady = computed(() => this.plan.ready());
+  readonly visibleItems = computed(() =>
+    visibleNavItems(NAV_ITEMS, this.user()?.role, (feature) => this.plan.hasFeature(feature)),
+  );
 
   logout(): void {
     this.auth.logout().subscribe();
