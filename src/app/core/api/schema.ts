@@ -1236,6 +1236,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/billing/plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ver catálogo de planes
+         * @description Planes activos con sus precios, features y límites, ordenados por precio. Sin hardcodear nada en el frontend.
+         */
+        get: operations["catalogoPlanes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/billing/plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ver resumen del plan
+         * @description Plan actual del tenant con sus features y límites, para ocultar o explicar funciones no incluidas antes de usarlas.
+         */
+        get: operations["resumenPlan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/appointments/{id}/waitlist-candidates": {
         parameters: {
             query?: never;
@@ -2336,6 +2376,23 @@ export interface components {
             currentPeriodEnd?: string;
             monthlyPriceCop?: number;
             annualPriceCop?: number;
+        };
+        PlanCatalogResponse: {
+            code?: string;
+            name?: string;
+            monthlyPriceCop?: number;
+            annualPriceCop?: number;
+            features?: string[];
+            limits?: {
+                [key: string]: number;
+            };
+        };
+        PlanSummaryResponse: {
+            planCode?: string;
+            features?: string[];
+            limits?: {
+                [key: string]: number;
+            };
         };
         AppointmentValueSummary: {
             /** Format: date-time */
@@ -4531,6 +4588,46 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["SubscriptionResponse"];
+                };
+            };
+        };
+    };
+    catalogoPlanes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PlanCatalogResponse"][];
+                };
+            };
+        };
+    };
+    resumenPlan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PlanSummaryResponse"];
                 };
             };
         };

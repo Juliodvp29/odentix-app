@@ -228,6 +228,10 @@ describe('patient detail routing', () => {
     for (const request of incidental) {
       request.flush({ content: [] });
     }
+    const planCalls = httpTesting.match((call) => call.url.endsWith('/api/v1/billing/plan'));
+    for (const request of planCalls) {
+      request.flush({ planCode: 'clinica', features: [], limits: {} });
+    }
     await new Promise((resolve) => setTimeout(resolve, 0));
     httpTesting
       .expectOne((call) => call.url.endsWith('/api/v1/patients/patient-9'))

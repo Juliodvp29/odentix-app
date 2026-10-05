@@ -43,7 +43,7 @@ export const routes: Routes = [
         loadChildren: () => import('./features/opportunities/opportunities.routes'),
       },
       { path: 'assistant', loadChildren: () => import('./features/assistant/assistant.routes') },
-      { path: 'plans', loadChildren: () => import('./features/plans/plans.routes') },
+      { path: 'configuracion', loadChildren: () => import('./features/plans/plans.routes') },
     ],
   },
   {

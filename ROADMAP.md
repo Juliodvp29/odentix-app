@@ -1153,12 +1153,12 @@ backend adjustments summary).
 
 **Tasks:**
 
-- [ ] UI to review and edit an AI-suggested message before it's sent —
+- [x] UI to review and edit an AI-suggested message before it's sent —
       per the backend's principle, this must never auto-send.
 
 **Acceptance criteria:**
 
-- [ ] There is no path in the UI that sends an AI-generated message
+- [x] There is no path in the UI that sends an AI-generated message
       without an explicit user confirmation step.
 
 ---
@@ -1182,15 +1182,15 @@ features before the request is even made.
 
 **Tasks:**
 
-- [ ] A service exposing the current tenant's plan/features/limits
+- [x] A service exposing the current tenant's plan/features/limits
       (fetched once, cached as a signal).
-- [ ] Navigation items and feature entry points check this before
+- [x] Navigation items and feature entry points check this before
       rendering — a gated feature is either hidden or shown with a
       clear "upgrade to access this" affordance, never a broken link.
 
 **Acceptance criteria:**
 
-- [ ] A tenant on the Esencial plan never sees a navigation item that
+- [x] A tenant on the Esencial plan never sees a navigation item that
       would immediately 403 if clicked.
 
 ---
