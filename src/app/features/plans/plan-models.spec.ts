@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { planHasFeature, planLimit } from './plan-models';
+import {
+  featureLabel,
+  isCurrentPlan,
+  limitLabel,
+  limitValueLabel,
+  planHasFeature,
+  planLimit,
+} from './plan-models';
 import { PlanSummaryResponse } from './plan-models';
 
 const ESENCIAL: PlanSummaryResponse = {
@@ -42,5 +49,34 @@ describe('planLimit', () => {
     expect(planLimit(ESENCIAL, 'max_patients')).toBe(150);
     expect(planLimit(ESENCIAL, 'unknown_key')).toBeNull();
     expect(planLimit(null, 'max_patients')).toBeNull();
+  });
+});
+
+describe('featureLabel and limitLabel', () => {
+  it('should label known catalog keys in Spanish', () => {
+    expect(featureLabel('ai_assistant')).toBe('Asistente con IA');
+    expect(limitLabel('max_patients')).toBe('Pacientes');
+  });
+
+  it('should show unknown keys raw instead of hiding them', () => {
+    expect(featureLabel('future_key')).toBe('future_key');
+    expect(limitLabel('future_limit')).toBe('future_limit');
+  });
+});
+
+describe('limitValueLabel', () => {
+  it('should read zero as not included and null as unlimited', () => {
+    expect(limitValueLabel(0)).toBe('No incluido');
+    expect(limitValueLabel(150)).toBe('150');
+    expect(limitValueLabel(null)).toBe('Ilimitado');
+  });
+});
+
+describe('isCurrentPlan', () => {
+  it('should match equal codes only', () => {
+    expect(isCurrentPlan('esencial', 'esencial')).toBe(true);
+    expect(isCurrentPlan('clinica', 'esencial')).toBe(false);
+    expect(isCurrentPlan(null, 'esencial')).toBe(false);
+    expect(isCurrentPlan('esencial', null)).toBe(false);
   });
 });

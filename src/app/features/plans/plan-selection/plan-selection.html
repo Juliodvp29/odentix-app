@@ -1,0 +1,142 @@
+<div>
+  <h1 class="text-heading text-ink">Configuración</h1>
+  <p class="mt-4 text-body text-mid-gray">
+    Tu suscripción: plan actual, precios, funciones y límites.
+  </p>
+</div>
+
+@if (loadError()) {
+  <section class="rounded-card bg-paper p-24 text-center shadow-resting" role="alert">
+    <p class="text-body text-danger-deep">No pudimos cargar los planes.</p>
+    <app-button class="mt-12" variant="secondary" (clicked)="retry()">Reintentar</app-button>
+  </section>
+} @else {
+  <div class="flex gap-16 border-b border-hairline" role="tablist" aria-label="Ciclo de pago">
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="cycle() === 'monthly'"
+      [class]="
+        cycle() === 'monthly'
+          ? 'border-b-2 border-teal pb-8 text-body font-medium text-ink'
+          : 'pb-8 text-body text-mid-gray'
+      "
+      (click)="showCycle('monthly')"
+    >
+      Mensual
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="cycle() === 'annual'"
+      [class]="
+        cycle() === 'annual'
+          ? 'border-b-2 border-teal pb-8 text-body font-medium text-ink'
+          : 'pb-8 text-body text-mid-gray'
+      "
+      (click)="showCycle('annual')"
+    >
+      Anual
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="grid gap-16 md:grid-cols-3" aria-busy="true" data-testid="plans-loading">
+      @for (index of [0, 1, 2]; track index) {
+        <div class="rounded-card bg-paper p-20 shadow-resting">
+          <app-skeleton variant="line" />
+          <div class="mt-12 space-y-8" aria-hidden="true">
+            <app-skeleton variant="line" />
+            <app-skeleton variant="line" />
+            <app-skeleton variant="line" />
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (plans().length === 0) {
+    <div class="mx-auto max-w-5xl py-32 text-center">
+      <p class="text-subheading text-ink">No hay planes disponibles</p>
+      <p class="mt-4 text-body text-mid-gray">Vuelve a intentarlo más tarde.</p>
+    </div>
+  } @else {
+    @if (!isOwner()) {
+      <p class="text-body text-mid-gray" role="note">
+        Solo el propietario puede cambiar el plan. Si necesitas un cambio, habla con tu
+        administrador.
+      </p>
+    }
+    @if (currentPlan(); as current) {
+      <section
+        class="rounded-card border border-teal bg-teal-soft p-20"
+        aria-label="Tu plan actual"
+      >
+        <p class="text-caption font-medium uppercase text-teal-deep">Tu plan actual</p>
+        <p class="mt-4 text-heading-sm text-ink">
+          {{ current.name }} · {{ price(current) }}
+          <span class="text-caption text-mid-gray">
+            {{ cycle() === 'annual' ? 'al año' : 'al mes' }}
+          </span>
+        </p>
+      </section>
+    }
+    <h2 class="text-subheading text-ink">Cambiar de plan</h2>
+    <div class="grid items-stretch gap-16 md:grid-cols-3">
+      @for (plan of plans(); track plan.code) {
+        <article
+          class="flex flex-col rounded-card border bg-paper p-20 shadow-resting"
+          [class.border-teal]="isCurrent(plan)"
+          [class.border-hairline]="!isCurrent(plan)"
+          [attr.aria-label]="'Plan ' + plan.name"
+        >
+          <div class="flex items-center justify-between gap-8">
+            <h2 class="text-subheading text-ink">{{ plan.name }}</h2>
+          </div>
+          <p class="mt-8">
+            <span class="text-display text-ink">{{ price(plan) }}</span>
+            <span class="text-caption text-mid-gray">
+              {{ cycle() === 'annual' ? 'al año' : 'al mes' }}
+            </span>
+          </p>
+
+          <h3 class="mt-16 text-caption font-medium uppercase text-mid-gray">Incluye</h3>
+          @if (featureLabels(plan).length === 0) {
+            <p class="mt-4 text-body text-mid-gray">Funciones básicas de la clínica.</p>
+          } @else {
+            <ul class="mt-4 space-y-8">
+              @for (feature of featureLabels(plan); track feature) {
+                <li class="flex items-start gap-8 text-body text-ink">
+                  <app-icon name="check" class="mt-2 shrink-0 text-teal" />
+                  {{ feature }}
+                </li>
+              }
+            </ul>
+          }
+
+          <h3 class="mt-16 text-caption font-medium uppercase text-mid-gray">Límites</h3>
+          <dl class="mt-4 space-y-8 text-body">
+            @for (entry of limitEntries(plan); track entry.label) {
+              <div class="flex justify-between gap-8">
+                <dt class="text-mid-gray">{{ entry.label }}</dt>
+                <dd class="font-medium text-ink">{{ entry.value }}</dd>
+              </div>
+            }
+          </dl>
+
+          <div class="mt-16 flex-1 content-end">
+            @if (isCurrent(plan)) {
+              <app-button variant="secondary" [disabled]="true">Plan actual</app-button>
+            } @else if (isOwner()) {
+              <app-button
+                variant="primary"
+                [loading]="isCheckingOut(plan)"
+                (clicked)="choose(plan)"
+              >
+                Elegir {{ plan.name }}
+              </app-button>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+}

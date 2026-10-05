@@ -40,4 +40,36 @@ describe('PlanService', () => {
     expect(service.ready()).toBe(true);
     httpTesting.expectNone((request) => request.url.endsWith('/api/v1/billing/plan'));
   });
+
+  it('should start a checkout through the checkout endpoint', async () => {
+    await flushEffects();
+    httpTesting
+      .expectOne((request) => request.url.endsWith('/api/v1/billing/plan'))
+      .flush({ planCode: 'esencial', features: [], limits: {} });
+    await flushEffects();
+
+    const ref = TestBed.runInInjectionContext(() => service.catalog());
+
+    await flushEffects();
+    const catalogCall = httpTesting.expectOne((request) =>
+      request.url.endsWith('/api/v1/billing/plans'),
+    );
+    catalogCall.flush([
+      { code: 'esencial', name: 'Esencial', monthlyPriceCop: 99900, features: [], limits: {} },
+    ]);
+    await flushEffects();
+    expect(ref.value()?.[0]?.code).toBe('esencial');
+
+    let paymentUrl: string | undefined;
+    service.checkout('clinica', 'monthly').subscribe((res) => {
+      paymentUrl = res.paymentUrl;
+    });
+    const checkoutCall = httpTesting.expectOne((request) =>
+      request.url.endsWith('/api/v1/billing/checkout'),
+    );
+    expect(checkoutCall.request.method).toBe('POST');
+    checkoutCall.flush({ planCode: 'clinica', paymentUrl: 'https://bold.test/pay/1' });
+    await flushEffects();
+    expect(paymentUrl).toBe('https://bold.test/pay/1');
+  });
 });

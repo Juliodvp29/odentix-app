@@ -116,6 +116,12 @@ export const NAV_ITEMS: ReadonlyArray<NavItem> = [
     roles: ['propietario', 'odontologo', 'recepcion', 'auxiliar'],
     feature: PLAN_FEATURE_AI_ASSISTANT,
   },
+  {
+    path: '/configuracion',
+    label: 'Configuración',
+    icon: 'settings',
+    roles: ['propietario'],
+  },
 ];
 
 const ROLE_LABELS: Record<UserRole, string> = {
